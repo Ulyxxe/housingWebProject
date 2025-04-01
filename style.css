@@ -9,16 +9,6 @@
     --placeholder-bg: #EAEAEA;
 }
 
-.dark-mode {
-    --primary-pink: #FF007F; /* Hot pink */
-    --light-pink: #FFE3F2;  /* Light pink for tags */
-    --grey-border: #444;
-    --grey-background: #333;
-    --text-color: #fff;
-    --light-text: #bbb;
-    --placeholder-bg: #555;
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -31,6 +21,19 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: #fff; /* Assuming white background overall */
+}
+
+.dark-mode {
+    background-color: #121212; /* Dark mode background */
+    color: white; /* Dark mode text color */
+    --primary-pink: #FF007F; /* Hot pink */
+    --light-pink: #FFE3F2;  /* Light pink for tags */
+    --grey-border: #444;
+    --grey-background: #333;
+    --text-color: #fff;
+    --light-text: #bbb;
+    --placeholder-bg: #555;
+
 }
 
 a {
@@ -253,6 +256,7 @@ button {
 .search-container {
     display: flex;
     border: 1px solid var(--grey-border);
+    
     border-radius: 20px;
     overflow: hidden; /* Keep button contained */
     max-width: 300px; /* Limit width */
@@ -260,6 +264,7 @@ button {
 
 .search-container input[type="search"] {
     border: none;
+    background-color: var(--grey-background);
     padding: 8px 15px;
     outline: none;
     flex-grow: 1;
@@ -292,7 +297,7 @@ button {
 }
 .sort-btn.active {
     background-color: var(--primary-pink);
-    color: white;
+    color: var(--text-color);
     border-color: var(--primary-pink);
 }
 .sort-btn i {
@@ -312,7 +317,7 @@ button {
     border: 1px solid var(--grey-border);
     border-radius: 8px;
     overflow: hidden; /* Ensures image placeholder respects border-radius */
-    background-color: white;
+    background-color: var(--grey-background);
     transition: box-shadow 0.2s ease-in-out;
 }
 .result-card:hover {
@@ -325,7 +330,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #bbb; /* Icon color */
+    color: var(--grey-background); /* Icon color */
     font-size: 3em; /* Icon size */
 }
 
