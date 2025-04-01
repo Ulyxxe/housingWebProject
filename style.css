@@ -2,6 +2,7 @@
 :root {
     --primary-pink: #FF007F; /* Hot pink */
     --light-pink: #FFE3F2;  /* Light pink for tags */
+    --keywords-txt-color:var(--primary-pink) ;
     --grey-border: #E0E0E0;
     --grey-background: #F8F8F8;
     --text-color: #333;
@@ -27,7 +28,8 @@ body {
     background-color: #121212; /* Dark mode background */
     color: white; /* Dark mode text color */
     --primary-pink: #FF007F; /* Hot pink */
-    --light-pink: #FFE3F2;  /* Light pink for tags */
+    --light-pink: #FF007F;  /* Light pink for tags */
+    --keywords-txt-color:#ffe3f2 ;
     --grey-border: #444;
     --grey-background: #333;
     --text-color: #fff;
@@ -130,7 +132,7 @@ button {
 .keyword-tags .tag {
     display: inline-block;
     background-color: var(--light-pink);
-    color: var(--primary-pink);
+    color: var(--keywords-txt-color);
     padding: 5px 10px;
     border-radius: 15px;
     margin-right: 5px;
@@ -291,13 +293,14 @@ button {
     background-color: var(--grey-background);
     color: var(--light-text);
     font-size: 0.9em;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 .sort-btn.active {
     background-color: var(--primary-pink);
-    color: var(--text-color);
+    color: white;
     border-color: var(--primary-pink);
 }
 .sort-btn i {
