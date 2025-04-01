@@ -3,48 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Housing - Find Your Perfect Home</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>CROUS-X</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Simple placeholder icon (optional, using text) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Student Housing</div>
+
+    <header class="site-header">
+        <div class="logo">CROUS-X</div>
+        <nav class="main-nav">
             <ul>
-                <li><a href="#search">Search</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#">News stand</a></li>
+                <li><a href="#">Need help ?</a></li>
+                <li><a href="#">My profile</a></li>
+
+                <!-- === DARK MODE TOGGLE BUTTON START === -->
+                <li>
+                    <button id="darkModeToggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon"></i> <!-- Example using Font Awesome -->
+                        <!-- Or you could use text: <span>Dark Mode</span> -->
+                    </button>
+                </li>
+                <!-- === DARK MODE TOGGLE BUTTON END === -->
+
+                <li><a href="#" class="btn btn-signin">Sign in</a></li>
+                <li><a href="#" class="btn btn-register">Register</a></li>
+
             </ul>
         </nav>
     </header>
-    <main>
-        <section class="hero">
-            <h1>Find Your Perfect Student Home</h1>
-            <p>Easily search for your ideal student accommodation near your university.</p>
-            <button onclick="document.getElementById('search').scrollIntoView({behavior: 'smooth'})">
-                Start Searching
-            </button>
-        </section>
-        <section id="about" class="about">
-            <h2>About Us</h2>
-            <p>We provide the best student housing options with flexible leasing and near college amenities.</p>
-        </section>
-        <section id="search" class="search">
-            <h2>Search Properties</h2>
-            <form>
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" required>
 
-                <label for="price">Max Price:</label>
-                <input type="number" id="price" name="price" required>
+    <div class="main-content-wrapper">
+        <aside class="filters-sidebar">
+            <section class="filter-group">
+                <h3>Keywords</h3>
+                <div class="keyword-tags">
+                    <span class="tag">Lone housing <button>×</button></span>
+                    <span class="tag">Room-share <button>×</button></span>
+                    <span class="tag">Modern <button>×</button></span>
+                </div>
+            </section>
 
-                <button type="submit">Search</button>
-            </form>
-        </section>
-    </main>
-    <footer>
-        <p>© 2023 Student Housing. All rights reserved.</p>
-    </footer>
-    <script src="script.js"></script>
+            <section class="filter-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="label1" checked>
+                    <label for="label1">Location</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="label2" checked>
+                    <label for="label2">Buy</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="label3" checked>
+                    <label for="label3">Landlords co-living</label>
+                </div>
+            </section>
+
+            <section class="filter-group">
+                <div class="range-header">
+                    <label for="price-range">Price-range</label>
+                    <span>$0-10 000</span>
+                </div>
+                <input type="range" id="price-range" name="price-range" min="0" max="10 000" value="50" class="slider">
+             </section>
+
+            <section class="filter-group">
+                <div class="range-header">
+                    <label for="size-range">Size</label>
+                    <span>9-250 m²</span>
+                </div>
+                <input type="range" id="size-range" name="size-range" min="10" max="250" value="50" class="slider">
+            </section>
+        </aside>
+
+        <main class="results-area">
+            <div class="search-and-sort">
+                <div class="search-container">
+                    <input type="search" placeholder="Search">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="sort-options">
+                    <button class="sort-btn active"><i class="fas fa-check"></i> New</button>
+                    <button class="sort-btn">Price ascending</button>
+                    <button class="sort-btn">Price descending</button>
+                    <button class="sort-btn">Rating</button>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                         <i class="far fa-image"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                     <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                     <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                     <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+                <article class="result-card">
+                    <div class="card-image-placeholder">
+                        <i class="far fa-image"></i>
+                    </div>
+                     <div class="card-content">
+                        <h4 class="card-title">House</h4>
+                        <p class="card-price">$0</p>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
 </body>
 </html>
