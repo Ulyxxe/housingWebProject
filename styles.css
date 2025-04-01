@@ -1,119 +1,347 @@
-/* styles.css */
-body {
-    font-family: Arial, sans-serif;
+/* Basic Reset & Variables */
+:root {
+    --primary-pink: #FF007F; /* Hot pink */
+    --light-pink: #FFE3F2;  /* Light pink for tags */
+    --grey-border: #E0E0E0;
+    --grey-background: #F8F8F8;
+    --text-color: #333;
+    --light-text: #666;
+    --placeholder-bg: #EAEAEA;
+}
+
+.dark-mode {
+    --primary-pink: #FF007F; /* Hot pink */
+    --light-pink: #FFE3F2;  /* Light pink for tags */
+    --grey-border: #444;
+    --grey-background: #333;
+    --text-color: #fff;
+    --light-text: #bbb;
+    --placeholder-bg: #555;
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-header {
-    background: #333;
-    color: white;
-    padding: 1rem 2rem;
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #fff; /* Assuming white background overall */
 }
 
-header nav {
+a {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* Header */
+.site-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 15px 40px;
+    border-bottom: 1px solid var(--grey-border);
 }
 
-header .logo {
-    font-size: 1.5rem;
+.logo {
+    font-size: 2.5em; /* Adjust as needed */
+    font-weight: bold;
+    color: var(--primary-pink);
+    /* Add letter-spacing or specific font if needed */
+    letter-spacing: -1px;
 }
 
-header ul {
+.main-nav ul {
     list-style: none;
     display: flex;
+    align-items: center;
+    gap: 25px; /* Spacing between nav items */
 }
 
-header li {
-    margin-left: 1rem;
+.main-nav a {
+    font-weight: 500;
+}
+.main-nav a:hover {
+    color: var(--primary-pink);
 }
 
-header a {
-    color: white;
-    text-decoration: none;
-}
-
-.hero {
-    background: url('hero-image.jpg') no-repeat center center/cover;
-    color: white;
-    text-align: center;
-    padding: 10rem 2rem;
-}
-
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-}
-
-.hero button {
-    background: #ff5733;
-    color: white;
+.btn {
+    padding: 8px 18px;
     border: none;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
+    border-radius: 20px; /* Rounded buttons */
+    font-weight: 500;
+    font-size: 0.9em;
 }
 
-.hero button:hover {
-    background: #ff754a;
+.btn-signin {
+    background-color: var(--grey-background);
+    border: 1px solid var(--grey-border);
+    color: var(--text-color);
 }
 
-.about, .search {
-    padding: 2rem;
+.btn-register {
+    background-color: var(--primary-pink);
+    color: white;
 }
 
-.about h2, .search h2 {
-    margin-bottom: 1rem;
-}
-
-.about p {
-    font-size: 1.1rem;
-}
-
-.search form {
+/* Main Content Layout */
+.main-content-wrapper {
     display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
+    gap: 30px;
+    padding: 30px 40px;
 }
 
-.search label {
-    margin-bottom: 0.5rem;
+/* Sidebar */
+.filters-sidebar {
+    flex: 0 0 250px; /* Fixed width, doesn't grow or shrink */
+    border: 1px solid var(--grey-border);
+    border-radius: 8px;
+    padding: 20px;
+    align-self: flex-start; /* Align to top */
+    height: fit-content; /* Take only needed height */
 }
 
-.search input {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.filter-group {
+    margin-bottom: 25px;
+}
+.filter-group:last-child {
+    margin-bottom: 0;
 }
 
-.search button {
-    background: #333;
-    color: white;
+.filter-group h3 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+/* Keywords */
+.keyword-tags .tag {
+    display: inline-block;
+    background-color: var(--light-pink);
+    color: var(--primary-pink);
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 5px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.keyword-tags .tag button {
+    background: none;
     border: none;
-    padding: 1rem;
-    font-size: 1rem;
+    color: var(--primary-pink);
+    margin-left: 5px;
+    padding: 0;
+    font-size: 1.1em;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Checkboxes */
+.checkbox-item {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item label {
+    margin-left: 8px;
     cursor: pointer;
-    border-radius: 5px;
+    color: var(--light-text);
 }
 
-.search button:hover {
-    background: #555;
+/* Simple custom checkbox style */
+.checkbox-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--grey-border);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    margin-top: -2px; /* Fine-tune alignment */
 }
 
-footer {
-    background: #333;
+.checkbox-item input[type="checkbox"]:checked {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+}
+
+.checkbox-item input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Checkmark character */
     color: white;
-    text-align: center;
-    padding: 1rem 0;
+    font-size: 12px;
+    position: absolute;
+    top: 0px;
+    left: 2px;
+    font-weight: bold;
+}
+
+/* Range Slider */
+.range-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+.range-header label {
+    color: var(--primary-pink);
+}
+.range-header span {
+    color: var(--light-text);
+}
+
+.slider {
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--grey-border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Style the thumb (circle) */
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--primary-pink);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary-pink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none; /* Remove default border in Firefox */
+}
+
+/* Results Area */
+.results-area {
+    flex: 1; /* Takes remaining space */
+}
+
+/* Search and Sort */
+.search-and-sort {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px;
+}
+
+.search-container {
+    display: flex;
+    border: 1px solid var(--grey-border);
+    border-radius: 20px;
+    overflow: hidden; /* Keep button contained */
+    max-width: 300px; /* Limit width */
+}
+
+.search-container input[type="search"] {
+    border: none;
+    padding: 8px 15px;
+    outline: none;
+    flex-grow: 1;
+}
+
+.search-container .search-btn {
+    border: none;
+    background: none;
+    padding: 0 15px;
+    color: var(--primary-pink);
+    font-size: 1.1em;
+}
+
+.sort-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+}
+
+.sort-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--grey-border);
+    border-radius: 20px;
+    background-color: var(--grey-background);
+    color: var(--light-text);
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.sort-btn.active {
+    background-color: var(--primary-pink);
+    color: white;
+    border-color: var(--primary-pink);
+}
+.sort-btn i {
+    font-size: 0.8em;
+}
+
+
+/* Results Grid */
+.results-grid {
+    display: grid;
+    /* Responsive grid: creates as many columns as fit with min 200px width */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.result-card {
+    border: 1px solid var(--grey-border);
+    border-radius: 8px;
+    overflow: hidden; /* Ensures image placeholder respects border-radius */
+    background-color: white;
+    transition: box-shadow 0.2s ease-in-out;
+}
+.result-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-image-placeholder {
+    height: 180px; /* Adjust height as needed */
+    background-color: var(--placeholder-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb; /* Icon color */
+    font-size: 3em; /* Icon size */
+}
+
+.card-content {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--primary-pink);
+    margin-bottom: 5px;
+}
+
+.card-price {
+    font-size: 1em;
+    font-weight: bold;
+    color: var(--text-color);
 }
