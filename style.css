@@ -1083,3 +1083,41 @@ button {
 #results-layout.map-hidden .map-container {
   opacity: 0; /* Fade out */
 }
+
+/* ========================================
+   Map Resizing Styles
+   ======================================== */
+
+#map {
+  /* height/width/border/radius already defined */
+  position: relative; /* Needed for absolute positioning of the handle */
+  overflow: hidden; /* Keep handle contained visually */
+}
+
+#map-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 15px; /* Size of the handle */
+  height: 15px;
+  background-color: var(--primary-pink);
+  opacity: 0.7;
+  border: 1px solid white;
+  border-top-left-radius: 5px; /* Optional visual flair */
+  cursor: nwse-resize; /* Diagonal resize cursor */
+  z-index: 401; /* Ensure it's above map tiles (usually z-index 1-400) */
+  transition: opacity 0.2s ease;
+}
+
+#map-resize-handle:hover {
+  opacity: 1;
+}
+
+/* Optional: Change body cursor while resizing */
+body.map-resizing {
+  cursor: nwse-resize !important; /* Force cursor */
+  user-select: none; /* Prevent text selection during drag */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}

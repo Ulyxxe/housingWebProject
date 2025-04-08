@@ -3,7 +3,7 @@
 // ==========================================
 // Includes: Dark Mode, Filtering, Sorting,
 // Leaflet Map with Clustering & Custom Icons,
-// Toggleable Map View.
+// Toggleable Map View, Resizable Map.
 // ==========================================
 
 (function () {
@@ -16,6 +16,8 @@
   const MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const MAP_ATTRIBUTION = "© OpenStreetMap contributors";
   const MAP_INVALIDATE_DELAY = 50; // ms delay before invalidating map size
+  const MIN_MAP_WIDTH = 200; // Minimum dimensions for resize
+  const MIN_MAP_HEIGHT = 150;
 
   // Define custom map marker icon once
   const customMarkerIcon =
@@ -43,8 +45,9 @@
   const sortButtons = document.querySelectorAll(".sort-btn");
   const searchInput = document.getElementById("search-input");
   const mapElement = document.getElementById("map");
-  const mapToggleButton = document.getElementById("map-toggle-button"); // <-- Added
-  const resultsLayout = document.getElementById("results-layout"); // <-- Added
+  const mapToggleButton = document.getElementById("map-toggle-button");
+  const resultsLayout = document.getElementById("results-layout");
+  const mapResizeHandle = document.getElementById("map-resize-handle"); // <-- Added for resize
 
   // --- State Management ---
   let activeFilters = {
@@ -56,6 +59,11 @@
   let activeSort = "new"; // Default sort
   let map = null;
   let markersLayer = null;
+  let isResizingMap = false; // <-- Added state for resizing
+  let mapResizeStartX,
+    mapResizeStartY,
+    mapResizeInitialWidth,
+    mapResizeInitialHeight; // <-- Added state
 
   // --- Sample Data ---
   const allHousingData = [
@@ -245,27 +253,34 @@
   function initializeMap() {
     if (!mapElement || typeof L === "undefined") {
       console.error("Map container or Leaflet library not found.");
-      return;
+      return false; // Indicate failure
     }
     if (map) map.remove(); // Remove existing map instance if present
 
-    map = L.map(mapElement).setView(MAP_INITIAL_COORDS, MAP_INITIAL_ZOOM);
+    try {
+      map = L.map(mapElement).setView(MAP_INITIAL_COORDS, MAP_INITIAL_ZOOM);
 
-    L.tileLayer(MAP_TILE_URL, {
-      maxZoom: MAP_MAX_ZOOM,
-      attribution: MAP_ATTRIBUTION,
-    }).addTo(map);
+      L.tileLayer(MAP_TILE_URL, {
+        maxZoom: MAP_MAX_ZOOM,
+        attribution: MAP_ATTRIBUTION,
+      }).addTo(map);
 
-    // Initialize marker layer (clustered or regular)
-    if (typeof L.markerClusterGroup === "function") {
-      markersLayer = L.markerClusterGroup();
-    } else {
-      console.warn(
-        "Leaflet.markercluster not loaded. Using basic layer group."
-      );
-      markersLayer = L.layerGroup();
+      // Initialize marker layer (clustered or regular)
+      if (typeof L.markerClusterGroup === "function") {
+        markersLayer = L.markerClusterGroup();
+      } else {
+        console.warn(
+          "Leaflet.markercluster not loaded. Using basic layer group."
+        );
+        markersLayer = L.layerGroup();
+      }
+      map.addLayer(markersLayer);
+      return true; // Indicate success
+    } catch (error) {
+      console.error("Error initializing Leaflet map:", error);
+      map = null; // Ensure map is null if init failed
+      return false; // Indicate failure
     }
-    map.addLayer(markersLayer);
   }
 
   function renderMapMarkers(housingToDisplay) {
@@ -300,11 +315,17 @@
     if (map) {
       // Delay slightly to ensure the container is visible and has dimensions after CSS transition/render.
       setTimeout(() => {
-        map.invalidateSize();
-        console.log("Map size invalidated.");
-        // Optional: Recenter map after resize if needed
-        // map.flyTo(MAP_INITIAL_COORDS, map.getZoom());
+        try {
+          map.invalidateSize();
+          console.log("Map size invalidated.");
+        } catch (error) {
+          console.error("Error during map.invalidateSize():", error);
+        }
       }, MAP_INVALIDATE_DELAY);
+    } else {
+      console.warn(
+        "Cannot invalidate size: Map object is null or not initialized."
+      );
     }
   }
 
@@ -314,7 +335,8 @@
 
   function renderHousing(housingToDisplay) {
     if (!resultsGrid) {
-      console.error("Results grid container not found.");
+      // This is expected if not on the main page
+      // console.warn("Results grid container not found.");
       return;
     }
 
@@ -365,6 +387,12 @@
     const { maxPrice, maxSize, types, searchTerm } = activeFilters;
     const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
 
+    // Ensure data exists before filtering
+    if (!Array.isArray(allHousingData)) {
+      console.error("Housing data is not available or not an array.");
+      return [];
+    }
+
     return allHousingData.filter((item) => {
       const priceMatch = maxPrice === null || item.price <= maxPrice;
       const sizeMatch = maxSize === null || item.size <= maxSize;
@@ -401,11 +429,24 @@
   // ==========================================
 
   function updateDisplay() {
-    const filteredResults = filterHousing();
-    const sortedAndFilteredResults = sortHousing(filteredResults, activeSort);
+    // Only run if the necessary elements exist (e.g., on index.html)
+    if (!resultsGrid || (!map && mapElement)) {
+      // Don't try to update if grid is missing, or map element exists but map object failed init
+      return;
+    }
 
-    renderHousing(sortedAndFilteredResults); // Update grid
-    renderMapMarkers(filteredResults); // Update map markers (only filtered needed)
+    try {
+      const filteredResults = filterHousing();
+      const sortedAndFilteredResults = sortHousing(filteredResults, activeSort);
+
+      renderHousing(sortedAndFilteredResults); // Update grid
+      if (map && markersLayer) {
+        // Check map objects before rendering markers
+        renderMapMarkers(filteredResults); // Update map markers
+      }
+    } catch (error) {
+      console.error("Error during updateDisplay:", error);
+    }
   }
 
   // ==========================================
@@ -413,11 +454,12 @@
   // ==========================================
 
   function handleDarkModeToggle() {
+    if (!themeToggleButton) return;
     document.body.classList.toggle("dark-mode");
     const isDarkMode = document.body.classList.contains("dark-mode");
     const icon = themeToggleButton.querySelector("i");
     if (icon) {
-      icon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon"; // Simpler toggle
+      icon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon";
     }
   }
 
@@ -430,13 +472,16 @@
 
     // Update state from checkboxes
     activeFilters.types = [];
-    typeCheckboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        activeFilters.types.push(checkbox.value);
-      }
-    });
+    if (typeCheckboxes) {
+      // Check if checkboxes exist
+      typeCheckboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+          activeFilters.types.push(checkbox.value);
+        }
+      });
+    }
 
-    // Update display values (no need for if check here, function handles it)
+    // Update display values
     updateSliderValueDisplay(priceRangeSlider, priceRangeValueSpan, "$");
     updateSliderValueDisplay(sizeRangeSlider, sizeRangeValueSpan, "", " m²");
 
@@ -447,10 +492,12 @@
     const button = event.target.closest(".sort-btn");
     if (button && button.dataset.sort && button.dataset.sort !== activeSort) {
       activeSort = button.dataset.sort;
-      // Update button active states
-      sortButtons.forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.sort === activeSort);
-      });
+      if (sortButtons) {
+        // Check if sortButtons exist
+        sortButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.sort === activeSort);
+        });
+      }
       updateDisplay();
     }
   }
@@ -475,7 +522,9 @@
     }
 
     // Reset checkboxes and state
-    typeCheckboxes.forEach((checkbox) => (checkbox.checked = false));
+    if (typeCheckboxes) {
+      typeCheckboxes.forEach((checkbox) => (checkbox.checked = false));
+    }
     activeFilters.types = [];
 
     // Reset search and state
@@ -484,9 +533,11 @@
 
     // Reset sorting and button states
     activeSort = "new";
-    sortButtons.forEach((button) => {
-      button.classList.toggle("active", button.dataset.sort === "new");
-    });
+    if (sortButtons) {
+      sortButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.sort === "new");
+      });
+    }
 
     updateDisplay();
     console.log("Filters, Sort, Search Cleared");
@@ -495,7 +546,7 @@
   // --- Map Toggle Event Handler ---
   function handleMapToggle() {
     if (!resultsLayout || !mapToggleButton) {
-      console.error("Map layout or toggle button not found.");
+      console.error("Map layout or toggle button not found for toggle action.");
       return;
     }
 
@@ -515,57 +566,158 @@
     }
   }
 
+  // --- Map Resizing Event Handlers ---
+  function handleMapResizeStart(event) {
+    // Only proceed if the event target is the handle itself or its descendant
+    if (
+      !mapResizeHandle ||
+      !mapResizeHandle.contains(event.target) ||
+      !mapElement
+    )
+      return;
+
+    // Prevent default drag behavior ONLY for the handle to allow map dragging elsewhere
+    if (event.target === mapResizeHandle) {
+      event.preventDefault();
+    }
+
+    isResizingMap = true;
+    const currentX = event.touches ? event.touches[0].clientX : event.clientX;
+    const currentY = event.touches ? event.touches[0].clientY : event.clientY;
+    mapResizeStartX = currentX;
+    mapResizeStartY = currentY;
+    mapResizeInitialWidth = mapElement.offsetWidth;
+    mapResizeInitialHeight = mapElement.offsetHeight;
+
+    document.body.classList.add("map-resizing"); // Add class for cursor/user-select
+
+    // Add listeners to the whole document to capture mouse movements anywhere
+    document.addEventListener("mousemove", handleMapResizeMove);
+    document.addEventListener("mouseup", handleMapResizeEnd);
+    // Add touch listeners as well for mobile
+    document.addEventListener("touchmove", handleMapResizeMove, {
+      passive: false,
+    }); // Prevent scroll during drag
+    document.addEventListener("touchend", handleMapResizeEnd);
+    console.log("Map resize started");
+  }
+
+  function handleMapResizeMove(event) {
+    if (!isResizingMap || !mapElement) return;
+
+    // Optional: Prevent map drag/zoom while resizing its container
+    if (map && map.dragging) map.dragging.disable();
+    if (map && map.touchZoom) map.touchZoom.disable();
+    if (map && map.doubleClickZoom) map.doubleClickZoom.disable();
+    if (map && map.scrollWheelZoom) map.scrollWheelZoom.disable();
+
+    // Handle touch events
+    const currentX = event.touches ? event.touches[0].clientX : event.clientX;
+    const currentY = event.touches ? event.touches[0].clientY : event.clientY;
+
+    const dx = currentX - mapResizeStartX;
+    const dy = currentY - mapResizeStartY;
+
+    let newWidth = mapResizeInitialWidth + dx;
+    let newHeight = mapResizeInitialHeight + dy;
+
+    // Apply minimum size constraints
+    newWidth = Math.max(MIN_MAP_WIDTH, newWidth);
+    newHeight = Math.max(MIN_MAP_HEIGHT, newHeight);
+
+    // Apply new dimensions directly to the map element's style
+    mapElement.style.width = `${newWidth}px`;
+    mapElement.style.height = `${newHeight}px`;
+
+    // Prevent scroll during touch drag
+    if (event.touches) {
+      event.preventDefault();
+    }
+  }
+
+  function handleMapResizeEnd() {
+    if (!isResizingMap) return;
+
+    isResizingMap = false;
+    document.body.classList.remove("map-resizing"); // Remove class
+
+    // Remove document listeners
+    document.removeEventListener("mousemove", handleMapResizeMove);
+    document.removeEventListener("mouseup", handleMapResizeEnd);
+    document.removeEventListener("touchmove", handleMapResizeMove);
+    document.removeEventListener("touchend", handleMapResizeEnd);
+
+    // Re-enable map interactions if they were disabled
+    if (map && map.dragging) map.dragging.enable();
+    if (map && map.touchZoom) map.touchZoom.enable();
+    if (map && map.doubleClickZoom) map.doubleClickZoom.enable();
+    if (map && map.scrollWheelZoom) map.scrollWheelZoom.enable();
+
+    // IMPORTANT: Invalidate map size after resizing is finished
+    invalidateMapSize(); // Use the existing function
+    console.log("Map resize finished.");
+  }
+
   // ==========================================
   //          Event Listener Setup
   // ==========================================
 
   function setupEventListeners() {
+    // --- Theme Toggle ---
     if (themeToggleButton) {
       themeToggleButton.addEventListener("click", handleDarkModeToggle);
     }
 
-    // Use event delegation for filters
+    // --- Filters ---
     if (filtersContainer) {
       filtersContainer.addEventListener("input", (event) => {
         if (event.target.classList.contains("filter-range")) {
-          handleFilterChange(); // Range sliders trigger this
+          handleFilterChange();
         }
       });
       filtersContainer.addEventListener("change", (event) => {
         if (event.target.classList.contains("filter-type")) {
-          handleFilterChange(); // Checkboxes trigger this
+          handleFilterChange();
         }
       });
     } else if (document.querySelector(".filters-sidebar")) {
-      console.warn(
-        "Filters container with ID 'filters-container' not found for event listeners."
-      );
+      console.warn("Filters container with ID 'filters-container' not found.");
+    }
+    if (clearFiltersButton) {
+      clearFiltersButton.addEventListener("click", clearAllFilters);
     }
 
-    // Use event delegation for sort buttons
+    // --- Sorting ---
     if (sortButtonsContainer) {
       sortButtonsContainer.addEventListener("click", handleSortChange);
     } else if (document.querySelector(".sort-options")) {
       console.warn(
-        "Sort buttons container with class '.sort-options' not found for event listeners."
+        "Sort buttons container with class '.sort-options' not found."
       );
     }
 
+    // --- Search ---
     if (searchInput) {
       searchInput.addEventListener("input", handleSearchInput);
     } else if (document.getElementById("search-input")) {
       console.warn("Search input element not found.");
     }
 
-    if (clearFiltersButton) {
-      clearFiltersButton.addEventListener("click", clearAllFilters);
-    }
-
-    // --- Add Map Toggle Listener ---
+    // --- Map Toggle Button ---
     if (mapToggleButton) {
       mapToggleButton.addEventListener("click", handleMapToggle);
     } else if (document.getElementById("map-toggle-button")) {
       console.warn("Map toggle button element not found.");
+    }
+
+    // --- Map Resize Handle ---
+    if (mapResizeHandle) {
+      mapResizeHandle.addEventListener("mousedown", handleMapResizeStart);
+      mapResizeHandle.addEventListener("touchstart", handleMapResizeStart, {
+        passive: false,
+      });
+    } else if (mapElement) {
+      console.warn("Map resize handle element (#map-resize-handle) not found.");
     }
   }
 
@@ -576,7 +728,7 @@
   function initialize() {
     console.log("Initializing CROUS-X Script...");
 
-    // Set initial state based on default HTML values (if elements exist)
+    // Set initial filter state based on default HTML values (if elements exist)
     if (priceRangeSlider)
       activeFilters.maxPrice = parseInt(priceRangeSlider.value, 10);
     if (sizeRangeSlider)
@@ -586,16 +738,17 @@
     updateSliderValueDisplay(priceRangeSlider, priceRangeValueSpan, "$");
     updateSliderValueDisplay(sizeRangeSlider, sizeRangeValueSpan, "", " m²");
 
-    // Initialize the map (only if map element exists)
+    let mapInitialized = false;
+    // Initialize the map (only if map element exists and Leaflet loaded)
     if (mapElement && typeof L !== "undefined") {
       console.log("Initializing Map...");
-      initializeMap();
+      mapInitialized = initializeMap(); // Check if successful
     } else if (mapElement) {
       console.error("Map element found, but Leaflet (L) is not defined.");
     }
 
-    // Initial display render (only if results grid exists and map has initialized or doesn't exist)
-    if (resultsGrid && (map || !mapElement)) {
+    // Initial display render (only if grid exists and map is ready or not needed)
+    if (resultsGrid && (!mapElement || mapInitialized)) {
       console.log("Performing initial display update...");
       updateDisplay();
     } else if (document.querySelector(".results-area")) {
