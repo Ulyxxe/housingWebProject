@@ -1160,3 +1160,66 @@ button {
     font-size: 13px;
   }
 }
+
+/* HAMBURGER BUTTON - hidden on desktop by default */
+.hamburger {
+  display: none;             /* Only show on smaller screens via @media */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;         /* Moves it to the right if needed */
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-color);
+  transition: background-color var(--transition-speed);
+}
+
+/* When nav is hidden, transform it off-screen or hide with display: none */
+.main-nav {
+  /* If your desktop nav uses flex row, keep it as-is for large screens */
+  transition: transform 0.3s ease;
+}
+
+/* --- MEDIA QUERIES FOR MOBILE --- */
+@media screen and (max-width: 768px) {
+  /* Show the hamburger, hide normal nav layout */
+  .hamburger {
+    display: flex;
+    z-index: 9999; /* So the button stays above the nav if it slides over */
+  }
+
+  .main-nav {
+    position: absolute;
+    top: 70px;               /* Adjust to match header height */
+    left: 0;
+    width: 100%;
+    background-color: var(--body-bg);
+    transform: translateY(-120%); /* Moves nav off-screen initially */
+    /* or you can use display: none initially if you prefer that approach */
+  }
+
+  /* The nav-open class (added by JS) slides the menu in */
+  .main-nav.nav-open {
+    transform: translateY(0);
+  }
+
+  /* Make links stack vertically */
+  .main-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .main-nav li {
+    margin-bottom: 0; /* override if needed */
+  }
+}
