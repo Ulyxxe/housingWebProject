@@ -1211,3 +1211,151 @@ body.map-resizing {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
+/* --- Dashboard Page Specific Styles --- */
+
+/* Wrapper for dashboard page content */
+.dashboard-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align container to the top */
+  padding: 40px 20px; /* Vertical and horizontal padding */
+}
+
+.dashboard-container {
+  background-color: #fff; /* White background */
+  padding: 30px 40px;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  max-width: 800px; /* Allow dashboard to be wider than login */
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  margin: 20px 0; /* Margin top/bottom */
+}
+
+.dashboard-container h1 {
+  color: var(--primary-pink);
+  margin-bottom: 15px;
+  font-size: 2em;
+  text-align: center;
+  font-weight: 600;
+}
+
+.dashboard-container h2 {
+  color: var(--text-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  border-bottom: 1px solid var(--grey-border);
+  padding-bottom: 8px;
+}
+
+.dashboard-container .user-info {
+  text-align: center;
+  color: var(--light-text);
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.dashboard-container .user-info strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.dashboard-actions {
+  display: flex;
+  justify-content: center; /* Center buttons */
+  gap: 15px; /* Space between buttons */
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px dashed var(--grey-border); /* Separator */
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+}
+
+/* Optionally adjust logout button spacing if needed */
+.dashboard-actions .btn-logout {
+  /* Add specific styles if btn-signin isn't quite right */
+}
+
+.dashboard-content p {
+  color: var(--text-color);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+/* Placeholder style for future sections */
+.placeholder-section {
+  background-color: var(--grey-background);
+  border: 1px dashed var(--grey-border);
+  border-radius: 6px;
+  padding: 25px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--light-text);
+}
+
+.placeholder-section i {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: var(--primary-pink);
+  opacity: 0.7;
+}
+
+.placeholder-section p {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+/* --- Dark Mode Dashboard Styles --- */
+.dark-mode .dashboard-container {
+  background-color: #1e1e1e; /* Slightly lighter dark bg */
+  border-color: var(--grey-border); /* Uses dark mode variable */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .dashboard-container h1 {
+  /* Pink color defined in :root should work */
+}
+
+.dark-mode .dashboard-container h2 {
+  color: var(--text-color); /* Dark mode text */
+  border-bottom-color: var(--grey-border);
+}
+
+.dark-mode .dashboard-container .user-info {
+  color: var(--light-text); /* Dark mode light text */
+}
+
+.dark-mode .dashboard-container .user-info strong {
+  color: var(--text-color); /* Dark mode main text */
+}
+
+.dark-mode .dashboard-actions {
+  border-bottom-color: var(--grey-border);
+}
+
+/* Ensure button text colors are correct in dark mode */
+.dark-mode .dashboard-actions .btn-register {
+  color: white; /* Already set */
+}
+.dark-mode .dashboard-actions .btn-signin {
+  color: var(--text-color); /* Use dark mode text for secondary button */
+  border-color: var(--grey-border);
+  background-color: var(--grey-background);
+}
+
+.dark-mode .dashboard-content p {
+  color: var(--text-color); /* Dark mode text */
+}
+
+.dark-mode .placeholder-section {
+  background-color: var(--grey-background); /* Dark mode grey bg */
+  border-color: var(--grey-border);
+  color: var(--light-text);
+}
+
+.dark-mode .placeholder-section i {
+  /* Pink should still be okay */
+}
