@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 
 // --- API Key Check ---
 // Check if the constant is defined, not empty, and not the placeholder value
-if (!defined('DeepSeek_Api_Key') || empty(DeepSeek_Api_Key) || DeepSeek_Api_Key === 'sk-YourActualDeepSeekapiKeyHEREq9x...') {
+if (!defined('DEEPSEEK_API_KEY') || empty(DEEPSEEK_API_KEY) || DEEPSEEK_API_KEY === 'DEEPSEEK_API_KEY') {
      http_response_code(500); // Internal Server Error
      // Log the error on the server for debugging, don't expose details to the client
      error_log("FATAL: DeepSeek API Key is not configured correctly in config.php or is still the placeholder.");
@@ -19,7 +19,7 @@ if (!defined('DeepSeek_Api_Key') || empty(DeepSeek_Api_Key) || DeepSeek_Api_Key 
      exit; // Stop execution
 }
 // Use the API key defined in config.php (ensure this holds your ACTUAL DeepSeek key)
-$apiKey = DeepSeek_Api_Key;
+$apiKey = DEEPSEEK_API_KEY;
 
 
 // --- Get Input ---

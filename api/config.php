@@ -24,12 +24,12 @@ $apiKey = getenv($envVariableName);
 // Check if the environment variable was retrieved successfully AND is not empty/whitespace.
 if ($apiKey !== false && !empty(trim($apiKey))) {
     // Environment variable found and has a non-empty value.
-    define('DeepSeek_Api_Key', trim($apiKey));
+    define('DEEPSEEK_API_KEY', trim($apiKey));
 } else {
     // Environment variable was not found, or it was empty/whitespace.
     // Define the constant as an empty string. The check in chat_handler.php
     // (!defined(...) || empty(...) ) will correctly catch this state.
-    define('DeepSeek_Api_Key', '');
+    define('DEEPSEEK_API_KEY');
 
     // Optional but Recommended: Log a warning server-side during setup/startup
     // if the key is missing, to help with debugging deployment issues.
