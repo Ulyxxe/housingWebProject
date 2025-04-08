@@ -1,6 +1,32 @@
 <?php
 // api/chat_handler.php
 
+$host   = getenv('MYSQL_HOST');
+$dbname = getenv('MYSQL_DATABASE');
+$dbUser = getenv('MYSQL_USER');
+$dbPass = getenv('MYSQL_PASSWORD');
+
+try {
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
+    $pdo = new PDO($dsn, $dbUser, $dbPass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Query to retrieve all housing data
+    $stmt = $pdo->query("SELECT id, name, price, size, type, rating, lat, lng FROM Housing");
+    $housingData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Build a summary string of housing data
+    $housingSummary = "Housing Listings: ";
+    // For brevity, you might include only a summary for each listing.
+    foreach ($housingData as $listing) {
+        $housingSummary .= "ID {$listing['id']} - {$listing['name']} ({$listing['type']}, \$" . number_format($listing['price']) . ", {$listing['size']} sqm, Rating: {$listing['rating']}, Location: [{$listing['lat']}, {$listing['lng']}]); ";
+    }
+
+} catch (PDOException $e) {
+    // In case of an error, log it and continue with an empty summary
+    error_log("Housing Data Query Error: " . $e->getMessage());
+    $housingSummary = "No housing data available.";
+}
 // Include the configuration file with the API key
 // Use absolute path for reliability
 require_once __DIR__ . '/config.php';
@@ -39,29 +65,28 @@ $userMessage = trim($requestData->message);
 // ***** MODIFIED: Use the official DeepSeek API endpoint *****
 $apiUrl = 'https://api.deepseek.com/chat/completions'; // CORRECT DEEPSEEK ENDPOINT
 
-$payload = json_encode([
-    // ***** MODIFIED: Use a valid DeepSeek model name *****
-    // Common options: 'deepseek-chat' or 'deepseek-coder'
-    // Choose 'deepseek-chat' for general conversational tasks.
-    'model' => 'deepseek-chat',
+// --- Prepare DeepSeek API Request ---
 
+$systemPrompt = 'You are a helpful assistant for the CROUS-X website, a platform for finding student housing. Answer questions concisely about navigating the site, understanding housing types (Studio, Apartment, Shared Room, House), login/registration, and other website-related issues. ';
+$systemPrompt .= "Here is the current housing data: " . $housingSummary;
+
+$payload = json_encode([
+    'model' => 'deepseek-chat',
     'messages' => [
         [
             'role' => 'system',
-            // Keep the system prompt as it's relevant to the CROUS-X assistant task
-            'content' => 'You are a helpful assistant for the CROUS-X website, a platform for finding student housing. Answer questions concisely about: navigating the site (finding filters, search bar, map), explaining housing types (Studio, Apartment, Shared Room, House), understanding login/registration, and general tips for using the website. Do NOT provide external links or information unrelated to the CROUS-X website itself. Keep responses brief and friendly.'
+            'content' => $systemPrompt,
         ],
         [
             'role' => 'user',
             'content' => $userMessage
         ]
-        // Consider adding conversation history for better context in future versions
+        // Optionally: Additional conversation history can be appended here
     ],
-    'max_tokens' => 150,   // Limit response length (adjust as needed)
-    'temperature' => 0.7, // Adjust creativity vs determinism
-    // 'n' => 1,             // Default: We only want one response choice
-    // 'stop' => null        // Default stop sequences
+    'max_tokens' => 150,
+    'temperature' => 0.7,
 ]);
+
 
 // --- Use cURL to make the API call ---
 $ch = curl_init();
