@@ -121,3 +121,140 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 }); // End DOMContentLoaded
+
+// --- Chat Widget Logic ---
+const chatToggleButton = document.getElementById("chat-toggle-button");
+const chatContainer = document.getElementById("chat-container");
+const chatCloseButton = document.getElementById("chat-close-button");
+const chatInput = document.getElementById("chat-input");
+const chatSendButton = document.getElementById("chat-send-button");
+const chatMessages = document.getElementById("chat-messages");
+const chatLoading = document.getElementById("chat-loading"); // Get loading indicator
+
+// --- Function to toggle chat visibility ---
+function toggleChat() {
+  if (chatContainer) {
+    const isHidden = chatContainer.classList.toggle("chat-hidden");
+    // Optional: Change toggle button icon based on state
+    const icon = chatToggleButton ? chatToggleButton.querySelector("i") : null;
+    if (icon) {
+      if (isHidden) {
+        icon.classList.remove("fa-times"); // Change back to chat icon
+        icon.classList.add("fa-comments");
+        chatToggleButton.setAttribute("aria-label", "Open chat");
+      } else {
+        icon.classList.remove("fa-comments"); // Change to close icon
+        icon.classList.add("fa-times");
+        chatToggleButton.setAttribute("aria-label", "Close chat");
+        // Focus input when opening
+        if (chatInput) chatInput.focus();
+      }
+    }
+  }
+}
+
+// --- Event Listeners ---
+if (chatToggleButton) {
+  chatToggleButton.addEventListener("click", toggleChat);
+}
+
+if (chatCloseButton) {
+  chatCloseButton.addEventListener("click", toggleChat); // Close button does the same toggle
+}
+
+// --- Function to add a message to the chat ---
+function addChatMessage(message, sender = "bot") {
+  if (!chatMessages) return;
+
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("message", sender); // 'user' or 'bot'
+  messageElement.textContent = message;
+  chatMessages.appendChild(messageElement);
+
+  // Auto-scroll to the bottom
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// --- Function to show/hide loading indicator ---
+function showLoading(isLoading) {
+  if (!chatLoading) return;
+  if (isLoading) {
+    chatLoading.classList.remove("chat-hidden");
+  } else {
+    chatLoading.classList.add("chat-hidden");
+  }
+}
+
+// --- Function to handle sending a message ---
+async function handleSendMessage() {
+  if (!chatInput || !chatInput.value.trim()) return; // Ignore empty messages
+
+  const userMessage = chatInput.value.trim();
+  addChatMessage(userMessage, "user"); // Display user's message
+  chatInput.value = ""; // Clear input field
+  chatInput.disabled = true; // Disable input while waiting
+  chatSendButton.disabled = true;
+  showLoading(true); // Show thinking indicator
+
+  // --- API Call ---
+  try {
+    const response = await fetch("api/chat_handler.php", {
+      // Ensure this path is correct
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Display specific error from API if available, otherwise generic
+      addChatMessage(
+        `Error: ${data.error || `HTTP ${response.status}`}`,
+        "bot"
+      );
+    } else if (data.reply) {
+      addChatMessage(data.reply, "bot"); // Display bot's reply
+    } else if (data.error) {
+      addChatMessage(`Error: ${data.error}`, "bot"); // Display error from JSON payload
+    } else {
+      addChatMessage("Sorry, I couldn't get a response.", "bot"); // Fallback
+    }
+  } catch (error) {
+    console.error("Chat API Error:", error);
+    addChatMessage(
+      "Sorry, something went wrong trying to connect. Please try again.",
+      "bot"
+    );
+  } finally {
+    chatInput.disabled = false; // Re-enable input
+    chatSendButton.disabled = false;
+    showLoading(false); // Hide thinking indicator
+    chatInput.focus(); // Refocus input
+  }
+}
+
+// --- Event Listeners for Sending ---
+if (chatSendButton) {
+  chatSendButton.addEventListener("click", handleSendMessage);
+}
+
+if (chatInput) {
+  // Allow sending message by pressing Enter key
+  chatInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent default form submission (if any)
+      handleSendMessage();
+    }
+  });
+}
+
+// --- Initialize Chat State (Optional: Start hidden) ---
+// The chat starts hidden because of the chat-hidden class in HTML.
+// No extra JS needed for initial state unless you want it to open automatically under certain conditions.
+
+// --- Make sure the rest of your existing script.js code is still present ---
+// (e.g., dark mode toggle, map initialization, filtering logic, etc.)
+// ...

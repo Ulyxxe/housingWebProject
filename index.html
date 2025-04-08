@@ -59,21 +59,39 @@
       </nav>
     </header>
 
-    <!-- Chat Widget HTML -->
-    <div id="chat-widget-container">
-      <div id="chat-header">CROUS-X AI Assistant</div>
-      <div id="chatbox">
-        <!-- Messages will appear here -->
-        <div class="message ai-message">
-          Hello! How can I help you with CROUS-X today?
+    <!-- ========== START: Chat Widget HTML ========== -->
+    <div id="chat-widget">
+      <!-- The main chat window (initially hidden) -->
+      <div id="chat-container" class="chat-hidden">
+        <div id="chat-header">
+          <span>CROUS-X Assistant</span>
+          <button id="chat-close-button" aria-label="Close chat">×</button>
+        </div>
+        <div id="chat-messages">
+          <!-- Messages will appear here -->
+          <div class="message bot">
+            Hi there! How can I help you navigate CROUS-X today?
+          </div>
+        </div>
+        <div id="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Ask a question..." />
+          <button id="chat-send-button" aria-label="Send message">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+        <div id="chat-loading" class="chat-hidden">
+          <!-- Loading Indicator -->
+          <i class="fas fa-spinner fa-spin"></i> Thinking...
         </div>
       </div>
-      <div id="chat-input-area">
-        <input type="text" id="userInput" placeholder="Ask a question..." />
-        <button id="sendButton">Send</button>
-      </div>
+
+      <!-- The button to toggle the chat window -->
+      <button id="chat-toggle-button" aria-label="Toggle chat">
+        <i class="fas fa-comments"></i>
+        <!-- Chat icon -->
+      </button>
     </div>
-    <!-- End Chat Widget HTML -->
+    <!-- ========== END: Chat Widget HTML ========== -->
 
     <div class="main-content-wrapper">
       <aside class="filters-sidebar" id="filters-container">
@@ -218,6 +236,7 @@
         </div>
       </main>
     </div>
+
     <!-- Leaflet JS -->
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
