@@ -353,3 +353,118 @@ button {
     font-weight: bold;
     color: var(--text-color);
 }
+
+
+/*MAAAAAAAP*/
+
+/* Results Area */
+/* Results Area Layout: Grid and Map side-by-side */
+.results-layout {
+    display: flex;
+    gap: 20px; /* Space between grid and map */
+}
+
+.results-grid-container {
+    /* Increase the grid's share slightly (optional) */
+    flex: 1 1 65%; /* Example: was 60% */
+    min-width: 300px;
+}
+
+.map-container {
+     /* Decrease the map's share */
+    flex: 1 1 35%; /* Example: was 40% */
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+}
+
+#map {
+    /* Decrease the explicit height */
+    height: 400px; /* Example: was 500px */
+    width: 100%;
+    border: 5px solid var(--primary-pink);
+    /* Increase the rounding */
+    border-radius: 15px; /* Example: was 8px, or add if missing */
+    z-index: 1;
+    /* Ensure Leaflet controls respect the border-radius (optional but good) */
+    overflow: hidden;
+    clip-path: inset(0 round 15px); /* Matches border-radius */
+}
+
+
+/* ... (rest of CSS) ... */
+
+/* Make popups look okay in dark mode */
+.dark-mode .leaflet-popup-content-wrapper,
+.dark-mode .leaflet-popup-tip {
+    background: #333;
+    color: #fff;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.custom-div-icon {
+    background-color: var(--primary-pink); /* Red color */
+    border: 2px solid #ecf0f1; /* Light border */
+    border-radius: 50%;      /* Make it a circle */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    text-align: center;      /* For potential content inside */
+    line-height: 20px;       /* Adjust if adding text/icons inside */
+    font-weight: bold;
+    color: white;            /* Text color if needed */
+}
+
+/* Optional: Different color */
+.custom-div-icon.blue-marker {
+    background-color: #2980b9; /* Blue color */
+}
+.custom-div-icon.green-marker {
+    background-color: #27ae60; /* Green color */
+}
+
+/* --- Custom Marker Cluster Colors --- */
+
+/* SMALL Clusters (Default: Blue) - Change to Green */
+.marker-cluster-small {
+    background-color: rgba(110, 204, 57, 0.6); /* Semi-transparent green background */
+}
+.marker-cluster-small div {
+    background-color: rgba(57, 163, 1, 0.6); /* Darker solid green for the number circle */
+    color: #fff; /* Ensure text is visible */
+}
+
+/* MEDIUM Clusters (Default: Yellow) - Change to Orange */
+.marker-cluster-medium {
+    background-color: rgba(240, 150, 50, 0.6); /* Semi-transparent orange background */
+}
+.marker-cluster-medium div {
+    background-color: rgba(241, 128, 23, 0.6); /* Darker solid orange for the number circle */
+    color: #fff; /* Ensure text is visible */
+}
+
+/* LARGE Clusters (Default: Red) - Change to Purple */
+.marker-cluster-large {
+    background-color: rgba(180, 100, 200, 0.6); /* Semi-transparent purple background */
+}
+.marker-cluster-large div {
+    background-color: rgba(128, 61, 155, 0.6); /* Darker solid purple for the number circle */
+    color: #fff; /* Ensure text is visible */
+}
+
+/* General style for all clusters (optional tweaks) */
+.marker-cluster {
+    /* You could potentially change border-radius, box-shadow etc. here */
+    /* Example: Make them slightly more rounded */
+    /* border-radius: 50%; */
+}
+
+.marker-cluster div {
+     /* You could potentially change font-size, font-weight etc. here */
+     /* Example: Make text bolder */
+     /* font-weight: bold; */
+}
+
+/* Also ensure text color works in dark mode if background changes significantly */
+.dark-mode .marker-cluster div {
+    /* Example: Keep text white even in dark mode */
+    color: #fff;
+}
