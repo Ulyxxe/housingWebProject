@@ -1084,6 +1084,96 @@ button {
   opacity: 0; /* Fade out */
 }
 
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  /* Header & Navigation */
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 20px;
+  }
+  .main-nav ul {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .main-nav li {
+    margin-bottom: 10px;
+  }
+
+  /* Main Layout Adjustments */
+  .main-content-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  /* Sidebar becomes full width and adds spacing */
+  .filters-sidebar {
+    flex: 1 1 100%;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  /* Stack results grid and map vertically */
+  .results-layout {
+    flex-direction: column;
+  }
+
+  /* Results grid: adjust columns for smaller cards */
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  /* Map container repositioned */
+  .map-container {
+    position: relative;
+    top: 0;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /* Optional: Adjust chat widget position for mobile */
+  #chat-widget {
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Ensure login & register forms fit smaller screens */
+  .login-container,
+  .register-container {
+    padding: 20px;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  /* Widen the search container */
+  .search-container {
+    max-width: 100%;
+  }
+
+  /* Adjust font sizes if needed */
+  body {
+    font-size: 13px;
+  }
+}
+
+/* HAMBURGER BUTTON - hidden on desktop by default */
+.hamburger {
+  display: none; /* Only show on smaller screens via @media */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: auto; /* Moves it to the right if needed */
+}
+
 /* ========================================
    Map Resizing Styles
    ======================================== */
