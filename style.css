@@ -1,26 +1,35 @@
-/* Basic Reset & Variables */
+/* ========================================
+   Base Styles & CSS Variables
+   ======================================== */
 :root {
   --primary-pink: #ff007f; /* Hot pink */
-  --light-pink: #ffe3f2; /* Light pink for tags */
+  --light-pink: #ffe3f2; /* Light pink for tags/highlights */
   --keywords-txt-color: var(--primary-pink);
   --grey-border: #e0e0e0;
   --grey-background: #f8f8f8;
   --text-color: #333;
   --light-text: #666;
   --placeholder-bg: #eaeaea;
-  --container-bg: #fff; /* Added variable for container backgrounds */
-  --input-bg: var(--grey-background); /* Added variable for input backgrounds */
-  --body-bg: #fff; /* Added variable for body background */
-  --hover-lift: -2px; /* Define standard lift amount */
-  --hover-scale: 1.05; /* Define standard scale amount */
-  --transition-speed: 0.2s; /* Define standard transition speed */
+  --container-bg: #fff; /* Standard container background */
+  --input-bg: var(--grey-background); /* Standard input background */
+  --body-bg: #fff; /* Standard body background */
+  --hover-lift: -2px;
+  --hover-scale: 1.05;
+  --transition-speed: 0.2s;
   --transition-timing: ease-in-out;
+  /* Add variables for language hover if you want more control */
+  --lang-hover-bg: rgba(255, 0, 127, 0.1); /* Light pink translucent */
+  --lang-hover-text: var(--primary-pink);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -30,9 +39,10 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--body-bg);
-  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* --- Dark Mode Variables --- */
 .dark-mode {
   --keywords-txt-color: #ffe3f2;
   --grey-border: #444;
@@ -43,15 +53,24 @@ body {
   --container-bg: #1e1e1e; /* Dark container background */
   --input-bg: #3a3a3c; /* Dark input background */
   --body-bg: #121212; /* Dark body background */
+  /* Dark mode language hover */
+  --lang-hover-bg: rgba(
+    255,
+    0,
+    127,
+    0.2
+  ); /* Slightly stronger pink translucent */
+  --lang-hover-text: #ffe3f2; /* Light pink text */
 }
 
+/* --- Basic Element Styling --- */
 a {
   text-decoration: none;
   color: var(--text-color);
-  transition: color var(--transition-speed) var(--transition-timing); /* Smooth color change */
+  transition: color var(--transition-speed) var(--transition-timing);
 }
 a:hover {
-  color: var(--primary-pink); /* General link hover */
+  color: var(--primary-pink);
 }
 
 button {
@@ -60,19 +79,35 @@ button {
   transition: background-color var(--transition-speed) var(--transition-timing),
     border-color var(--transition-speed) var(--transition-timing),
     transform var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing); /* Base transition for buttons */
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+/* Common container style for discrete sections */
+.content-box {
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  margin-bottom: 20px; /* Add default spacing */
+}
+.dark-mode .content-box {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================================
-   Header & Navigation
-   ======================================== */
+       Header & Navigation
+       ======================================== */
 .site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
   border-bottom: 1px solid var(--grey-border);
-  background-color: var(--body-bg); /* Ensure header matches body bg */
+  background-color: var(--body-bg);
+  position: sticky; /* Make header sticky */
+  top: 0;
+  z-index: 900; /* Ensure header is above most content */
 }
 
 .logo {
@@ -83,7 +118,7 @@ button {
   transition: transform var(--transition-speed) var(--transition-timing);
 }
 .logo:hover {
-  transform: scale(1.03); /* Slight scale on logo hover */
+  transform: scale(1.03);
 }
 
 .main-nav ul {
@@ -91,14 +126,15 @@ button {
   display: flex;
   align-items: center;
   gap: 25px;
+  padding: 0; /* Ensure no default padding */
+  margin: 0; /* Ensure no default margin */
 }
 
 .main-nav a {
   font-weight: 500;
-  position: relative; /* For potential underline effect */
+  position: relative;
   padding-bottom: 2px;
 }
-/* Example underline effect for nav links */
 .main-nav a::after {
   content: "";
   position: absolute;
@@ -114,25 +150,58 @@ button {
   width: 100%;
 }
 
+/* Hamburger Menu Button - Hidden by default */
+.hamburger {
+  display: none; /* Shown via media query */
+  flex-direction: column;
+  justify-content: space-around; /* Evenly space bars */
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 950; /* Above nav links if they overlay */
+}
+.hamburger .bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+}
+/* No need for separate dark mode bar color if var(--text-color) is used */
+
+/* Hamburger Animation (Add class 'active' via JS) */
+.hamburger.active .bar:nth-child(1) {
+  transform: translateY(10.5px) rotate(45deg); /* Adjusted translate for 3px height */
+}
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active .bar:nth-child(3) {
+  transform: translateY(-10.5px) rotate(-45deg); /* Adjusted translate */
+}
+
 /* ========================================
-   Buttons
-   ======================================== */
+       Buttons
+       ======================================== */
+/* (Keep existing .btn, .btn-signin, .btn-register, icon button styles) */
 .btn {
   padding: 8px 18px;
-  border: 1px solid transparent; /* Base border */
+  border: 1px solid transparent;
   border-radius: 20px;
   font-weight: 500;
   font-size: 0.9em;
-  /* transition already defined in base button style */
+  /* transition inherited from button base */
 }
-
-/* Add subtle lift and active state to general buttons */
 .btn:hover {
   transform: translateY(var(--hover-lift));
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 .btn:active {
-  transform: translateY(0px) scale(0.98); /* Push down slightly on click */
+  transform: translateY(0px) scale(0.98);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .dark-mode .btn:hover {
@@ -143,62 +212,83 @@ button {
 }
 
 .btn-signin {
+  /* Also used for secondary actions like logout */
   background-color: var(--grey-background);
   border-color: var(--grey-border);
   color: var(--text-color);
 }
 .btn-signin:hover {
-  background-color: var(--grey-border); /* Keep existing bg change */
-  transform: translateY(var(--hover-lift)); /* Add lift */
+  background-color: var(--grey-border);
+  /* transform inherited */
 }
 
 .btn-register {
-  /* Also used for main submit buttons */
+  /* Also used for primary actions */
   background-color: var(--primary-pink);
   border-color: var(--primary-pink);
   color: white;
 }
 .btn-register:hover {
-  background-color: #d6006a; /* Keep existing bg change */
+  background-color: #d6006a;
   border-color: #d6006a;
-  transform: translateY(var(--hover-lift)); /* Add lift */
+  /* transform inherited */
 }
 
-/* Specific button types */
+/* Icon/Utility Buttons */
+#theme-toggle,
+.search-btn,
+#chat-toggle-button,
+#chat-send-button,
+#chat-close-button,
+.btn-view-toggle {
+  /* If you add a map view toggle button */
+  background: none;
+  border: none;
+  padding: 5px;
+  color: inherit; /* Inherit text color */
+  font-size: 1.2em; /* Adjust size as needed */
+  line-height: 1;
+  /* specific styles defined later, inherit base transitions */
+}
 #theme-toggle:hover,
-.search-btn:hover,
-#chat-toggle-button:hover,
-#chat-send-button:hover,
-#chat-close-button:hover {
-  transform: scale(1.1); /* Scale icon buttons */
-  /* Override translateY if needed */
+  .search-btn:hover,
+  #chat-toggle-button:hover, /* Exclude main chat bubble */
+  #chat-send-button:hover,
+  #chat-close-button:hover,
+  .btn-view-toggle:hover {
+  color: var(--primary-pink); /* Add color change on hover */
+  transform: scale(1.1) translateY(var(--hover-lift)); /* Combine effects */
 }
 #theme-toggle:active,
-.search-btn:active,
-#chat-toggle-button:active,
-#chat-send-button:active,
-#chat-close-button:active {
-  transform: scale(1); /* Scale back on click */
+  .search-btn:active,
+  /* #chat-toggle-button:active, */ /* Exclude main chat bubble */
+  #chat-send-button:active,
+  #chat-close-button:active,
+  .btn-view-toggle:active {
+  transform: scale(1) translateY(0); /* Reset on active */
 }
+/* Special styles for main chat toggle button are below in chat section */
 
 /* ========================================
-   Main Layout (Index Page)
-   ======================================== */
+       Main Layout & Index Page Components
+       ======================================== */
+/* (Keep existing .main-content-wrapper, .filters-sidebar, .filter-group, .keyword-tags, .checkbox-item, .range-header, .slider styles) */
 .main-content-wrapper {
   display: flex;
   gap: 30px;
   padding: 30px 40px;
 }
 
-/* Sidebar */
+/* --- Sidebar --- */
 .filters-sidebar {
-  flex: 0 0 250px;
+  flex: 0 0 250px; /* Fixed width */
   border: 1px solid var(--grey-border);
   border-radius: 8px;
   padding: 20px;
-  align-self: flex-start;
+  align-self: flex-start; /* Stick to top */
   height: fit-content;
-  background-color: var(--container-bg); /* Use container bg variable */
+  background-color: var(--container-bg);
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* Theme transition */
 }
 
 .filter-group {
@@ -207,21 +297,20 @@ button {
 .filter-group:last-child {
   margin-bottom: 0;
 }
-
 .filter-group h3 {
   font-size: 1.1em;
   margin-bottom: 15px;
   color: var(--text-color);
 }
 
-/* Keywords */
+/* --- Keywords --- (If used) */
 .keyword-tags .tag {
   display: inline-block;
   background-color: var(--light-pink);
   color: var(--keywords-txt-color);
   padding: 5px 10px;
   border-radius: 15px;
-  margin: 0 5px 8px 0; /* Consistent margin */
+  margin: 0 5px 8px 0;
   font-size: 0.9em;
   font-weight: 500;
   transition: transform var(--transition-speed) var(--transition-timing),
@@ -231,7 +320,6 @@ button {
   transform: translateY(var(--hover-lift));
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .keyword-tags .tag button {
   background: none;
   border: none;
@@ -247,30 +335,27 @@ button {
   transform: scale(1.2);
 }
 
-/* Common Checkbox Style (used in Filters & Register Terms) */
+/* --- Unified Checkbox Styling --- */
 .checkbox-item,
 .terms-group {
+  /* Common parent styles */
   display: flex;
   align-items: center;
-  margin-bottom: 12px; /* Default spacing */
-  padding: 2px 0; /* Add padding for hover background */
+  margin-bottom: 12px;
+  padding: 3px 0; /* Padding for hover effect */
   border-radius: 4px;
   transition: background-color var(--transition-speed) var(--transition-timing);
+  cursor: pointer; /* Indicate the whole item is clickable */
 }
 .checkbox-item:hover,
 .terms-group:hover {
-  background-color: rgba(0, 0, 0, 0.03); /* Subtle background on hover */
+  background-color: rgba(0, 0, 0, 0.03);
 }
 .dark-mode .checkbox-item:hover,
 .dark-mode .terms-group:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.terms-group {
-  margin-bottom: 25px; /* Override for terms */
-}
-
-/* Use a common class or attribute selector if possible, else group */
 .checkbox-item input[type="checkbox"],
 .terms-group input[type="checkbox"] {
   appearance: none;
@@ -279,54 +364,27 @@ button {
   height: 16px;
   border: 1px solid var(--grey-border);
   border-radius: 3px;
-  cursor: pointer;
   position: relative;
   vertical-align: middle;
-  margin-top: -2px;
-  flex-shrink: 0; /* Prevent shrinking in flex */
+  margin-top: -1px; /* Fine-tune alignment */
   margin-right: 8px; /* Space between box and label */
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    border-color var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-timing);
 }
-/* Hover effect for the checkbox square itself */
 .checkbox-item input[type="checkbox"]:hover,
 .terms-group input[type="checkbox"]:hover {
   transform: scale(1.1);
   border-color: var(--primary-pink);
 }
-
-/* Remove margin from direct child label of checkbox-item only */
-.checkbox-item label {
-  margin-left: 0; /* Was 8px, now handled by checkbox margin */
-  cursor: pointer;
-  color: var(--light-text);
-}
-/* Style terms label */
-.terms-group label {
-  margin-bottom: 0;
-  font-size: 0.9em;
-  color: var(--light-text);
-  line-height: 1.4;
-  cursor: pointer;
-}
-.terms-group label a {
-  color: var(--primary-pink);
-  text-decoration: none;
-}
-.terms-group label a:hover {
-  text-decoration: underline;
-}
-
 .checkbox-item input[type="checkbox"]:checked,
 .terms-group input[type="checkbox"]:checked {
   background-color: var(--primary-pink);
   border-color: var(--primary-pink);
 }
-
 .checkbox-item input[type="checkbox"]:checked::after,
 .terms-group input[type="checkbox"]:checked::after {
-  content: "\2713"; /* Checkmark */
+  content: "\2713";
   color: white;
   font-size: 12px;
   position: absolute;
@@ -335,7 +393,24 @@ button {
   font-weight: bold;
 }
 
-/* Range Slider */
+.checkbox-item label, /* Filter label */
+    .terms-group label {
+  /* Terms label */
+  color: var(--light-text);
+  line-height: 1.4;
+  cursor: pointer;
+}
+.terms-group label {
+  font-size: 0.9em;
+} /* Specific size for terms */
+.terms-group label a {
+  color: var(--primary-pink);
+}
+.terms-group label a:hover {
+  text-decoration: underline;
+}
+
+/* --- Range Slider --- */
 .range-header {
   display: flex;
   justify-content: space-between;
@@ -359,14 +434,12 @@ button {
   border-radius: 3px;
   outline: none;
   cursor: pointer;
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
+  transition: all var(--transition-speed) var(--transition-timing);
 }
 .slider:hover {
-  /* Make track slightly darker/more prominent on hover */
   background-color: color-mix(in srgb, var(--grey-border) 80%, black);
 }
-
+/* Thumb */
 .slider::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
@@ -375,37 +448,35 @@ button {
   background: var(--primary-pink);
   border-radius: 50%;
   cursor: pointer;
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
+  transition: all var(--transition-speed) var(--transition-timing);
 }
 .slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2); /* Make thumb bigger on hover */
+  transform: scale(1.2);
   box-shadow: 0 0 5px var(--primary-pink);
 }
-
 .slider::-moz-range-thumb {
+  /* Firefox */
   width: 16px;
   height: 16px;
   background: var(--primary-pink);
   border-radius: 50%;
   cursor: pointer;
   border: none;
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
+  transition: all var(--transition-speed) var(--transition-timing);
 }
 .slider::-moz-range-thumb:hover {
-  transform: scale(1.2); /* Make thumb bigger on hover */
+  transform: scale(1.2);
   box-shadow: 0 0 5px var(--primary-pink);
 }
 
-/* Results Area */
+/* --- Results Area --- */
+/* (Keep existing .results-area, .search-and-sort, .search-container, .sort-options, .sort-btn styles) */
 .results-area {
   flex: 1;
+  min-width: 0; /* Allow shrinking */
 }
 
-/* Search and Sort */
+/* --- Search and Sort --- */
 .search-and-sort {
   display: flex;
   justify-content: space-between;
@@ -421,39 +492,40 @@ button {
   border-radius: 20px;
   overflow: hidden;
   max-width: 300px;
-  background-color: var(--input-bg); /* Use input bg variable */
-  transition: border-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
+  background-color: var(--input-bg);
+  transition: all var(--transition-speed) var(--transition-timing);
+  flex-grow: 1; /* Allow search to grow if space allows */
 }
-/* Highlight search container on hover */
-.search-container:hover {
+.search-container:hover,
+.search-container:focus-within {
+  /* Add focus-within for highlight */
   border-color: var(--primary-pink);
   box-shadow: 0 0 5px var(--light-pink);
 }
-.dark-mode .search-container:hover {
+.dark-mode .search-container:hover,
+.dark-mode .search-container:focus-within {
   box-shadow: 0 0 5px rgba(255, 0, 127, 0.5);
 }
 
 .search-container input[type="search"] {
   border: none;
-  background-color: transparent; /* Inherit from parent */
+  background-color: transparent;
   padding: 8px 15px;
   outline: none;
   flex-grow: 1;
-  color: var(--text-color); /* Ensure text color is set */
+  color: var(--text-color);
   font-size: 0.95em;
+  min-width: 100px; /* Prevent it becoming too small */
 }
 .dark-mode .search-container input[type="search"]::placeholder {
   color: var(--light-text);
 }
-
 .search-container .search-btn {
   border: none;
   background: none;
   padding: 0 15px;
   color: var(--primary-pink);
   font-size: 1.1em;
-  /* Uses button base transition/hover */
 }
 
 .sort-options {
@@ -461,7 +533,6 @@ button {
   gap: 10px;
   flex-wrap: wrap;
 }
-
 .sort-btn {
   padding: 8px 15px;
   border: 1px solid var(--grey-border);
@@ -473,85 +544,95 @@ button {
   display: flex;
   align-items: center;
   gap: 5px;
-  /* Uses button base transition/hover */
 }
 .sort-btn:not(.active):hover {
   border-color: color-mix(in srgb, var(--grey-border) 70%, black);
   color: var(--text-color);
-  transform: translateY(
-    var(--hover-lift)
-  ); /* Add lift on hover if not active */
+  transform: translateY(var(--hover-lift));
 }
 .sort-btn.active {
   background-color: var(--primary-pink);
   color: white;
   border-color: var(--primary-pink);
-  /* Remove hover lift if active */
 }
-
 .sort-btn.active:hover {
-  background-color: #d6006a; /* Darker pink */
+  /* Allow hover effect even when active */
+  background-color: #d6006a;
   border-color: #d6006a;
-  /* Apply the lift effect even when active */
-  transform: translateY(var(--hover-lift)); /* <--- CHANGE THIS LINE */
-  /* Keep the active box-shadow, or match non-active hover shadow */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Match .btn:hover shadow */
+  transform: translateY(var(--hover-lift));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 .dark-mode .sort-btn.active:hover {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* Match dark mode .btn:hover shadow */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
-
 .sort-btn i {
   font-size: 0.8em;
 }
 
-/* Results Grid & Cards */
+/* --- Results Grid & Cards --- */
+/* (Keep existing .results-layout, grid/map containers, .results-grid, .result-card styles) */
 .results-layout {
   display: flex;
   gap: 20px;
 }
 .results-grid-container {
   flex: 1 1 65%;
-  min-width: 300px;
+  min-width: 0;
+} /* Allow shrinking */
+.map-container {
+  flex: 0 0 35%; /* Start with flex-basis for map */
+  min-width: 200px; /* Min width for map */
+  position: relative; /* Needed for sticky and resize handle */
 }
+
 .results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
-
 .result-card {
   border: 1px solid var(--grey-border);
   border-radius: 8px;
   overflow: hidden;
-  background-color: var(--grey-background); /* Use grey bg */
-  transition: box-shadow var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing); /* Add transform to transition */
-  cursor: pointer; /* Indicate card is clickable */
+  background-color: var(--container-bg); /* Use container bg for cards */
+  transition: all var(--transition-speed) var(--transition-timing);
+  cursor: pointer;
+  display: flex; /* Use flex for better internal layout control */
+  flex-direction: column;
 }
 .result-card:hover {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Enhance shadow */
-  transform: translateY(-4px); /* Increase lift */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
 }
 .dark-mode .result-card:hover {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
 }
-
 .card-image-placeholder {
   height: 180px;
   background-color: var(--placeholder-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--grey-background); /* Icon color contrasts with placeholder bg */
+  color: var(--grey-border); /* Lighter color for icon */
   font-size: 3em;
+  overflow: hidden; /* Ensure image doesn't overflow */
+  flex-shrink: 0; /* Prevent image area from shrinking */
 }
+.card-image-placeholder img {
+  /* Style actual image */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .dark-mode .card-image-placeholder {
   color: var(--grey-border);
 }
-
 .card-content {
   padding: 15px;
+  flex-grow: 1; /* Allow content to take remaining space */
+  display: flex;
+  flex-direction: column;
 }
 .card-title {
   font-size: 1.1em;
@@ -563,138 +644,238 @@ button {
   font-size: 1em;
   font-weight: bold;
   color: var(--text-color);
+  margin-bottom: auto; /* Push subsequent elements down */
+}
+.card-size,
+.card-rating {
+  /* Shared style for bottom details */
+  font-size: 0.9em;
+  color: var(--light-text);
+  margin-top: 4px;
 }
 
-/* Map Specific */
+/* --- Map --- */
+/* (Keep existing .map-container, #map, #map-resize-handle styles, but ensure map-container is setup for sticky) */
 .map-container {
-  flex: 1 1 35%;
-  position: sticky;
-  top: 20px;
-  align-self: flex-start;
+  /* ... existing flex properties */
+  position: sticky; /* Make map sticky */
+  top: calc(71px + 30px); /* Header height (adjust if needed) + desired gap */
+  align-self: flex-start; /* Align to the top of the flex container */
+  height: calc(
+    100vh - 71px - 60px
+  ); /* Approx viewport height minus header and padding */
+  max-height: 600px; /* Optional: Limit max height */
 }
-
 #map {
-  height: 400px;
+  height: 100%; /* Fill map-container height */
   width: 100%;
   border: 5px solid var(--primary-pink);
   border-radius: 15px;
   z-index: 1;
   overflow: hidden;
-  clip-path: inset(0 round 15px);
+  clip-path: inset(0 round 10px); /* Adjusted radius to match border */
+  position: relative; /* For resize handle */
+}
+#map-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0; /* Position bottom-right for horizontal resize */
+  width: 20px; /* Make handle slightly larger */
+  height: 100%; /* Full height handle */
+  /* background-color: var(--primary-pink); */
+  background: linear-gradient(
+    to left,
+    rgba(255, 0, 127, 0.4),
+    rgba(255, 0, 127, 0)
+  ); /* Gradient handle */
+  /* opacity: 0.7; */
+  /* border: 1px solid white; */
+  border-left: 3px dotted rgba(255, 255, 255, 0.5);
+  /* border-top-left-radius: 5px; */
+  cursor: col-resize; /* Use column resize cursor */
+  z-index: 401;
+  transition: background-color 0.2s ease;
+}
+#map-resize-handle:hover {
+  /* opacity: 1; */
+  background-color: rgba(255, 0, 127, 0.6); /* Highlight on hover */
+  border-left-style: solid;
+}
+/* Change cursor for the entire body during resize */
+body.map-resizing {
+  cursor: col-resize !important; /* Force cursor override */
+  user-select: none; /* Prevent text selection */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE */
 }
 
-/* Leaflet Overrides & Custom Markers */
+/* Leaflet Overrides */
+/* (Keep existing Leaflet Overrides, .custom-div-icon, Marker Clusters) */
+.dark-mode .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
+    brightness(0.7);
+}
 .dark-mode .leaflet-popup-content-wrapper,
 .dark-mode .leaflet-popup-tip {
-  background: #333; /* Specific dark background for popups */
+  background: #333;
   color: #fff;
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
 }
-
 .custom-div-icon {
   background-color: var(--primary-pink);
-  border: 2px solid #ecf0f1; /* Keep light border for visibility */
+  border: 2px solid #ecf0f1;
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-  text-align: center;
-  line-height: 20px; /* Corresponds to iconSize below */
-  font-weight: bold;
-  color: white;
-  /* Ensure size matches JS */
-  width: 24px;
-  height: 24px;
+  width: 24px; /* Match JS */
+  height: 24px; /* Match JS */
   transition: transform var(--transition-speed) var(--transition-timing),
     box-shadow var(--transition-speed) var(--transition-timing);
 }
-/* Hover effect for map markers */
 .leaflet-marker-icon:hover .custom-div-icon {
   transform: scale(1.2);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
 }
-
-/* Marker Clusters - Keep specific as they override library defaults */
+/* Marker Clusters */
 .marker-cluster {
-  transition: background-color var(--transition-speed) var(--transition-timing); /* Smooth color changes if needed */
-}
-.marker-cluster:hover {
-  filter: brightness(1.1); /* Make cluster slightly brighter on hover */
-}
-
-.marker-cluster-small div {
-  background-color: rgba(57, 163, 1, 0.6);
-  color: #fff;
-}
-.marker-cluster-small {
-  background-color: rgba(110, 204, 57, 0.6);
-}
-.marker-cluster-medium div {
-  background-color: rgba(241, 128, 23, 0.6);
-  color: #fff;
-}
-.marker-cluster-medium {
-  background-color: rgba(240, 150, 50, 0.6);
-}
-.marker-cluster-large div {
-  background-color: rgba(128, 61, 155, 0.6);
-  color: #fff;
-}
-.marker-cluster-large {
-  background-color: rgba(180, 100, 200, 0.6);
+  transition: filter 0.2s ease;
+  color: #fff !important; /* Ensure text is white */
 }
 .marker-cluster div {
-  /* Common cluster text styles if needed */
+  color: #fff !important; /* Ensure text is white */
+  font-weight: bold;
 }
-.dark-mode .marker-cluster div {
-  color: #fff; /* Ensure text visibility */
+
+.marker-cluster:hover {
+  filter: brightness(1.1);
+}
+.marker-cluster-small div {
+  background-color: hsla(145, 63%, 42%, 0.7); /* Greenish */
+}
+.marker-cluster-small {
+  background-color: hsla(145, 63%, 52%, 0.6);
+}
+.marker-cluster-medium div {
+  background-color: hsla(40, 88%, 50%, 0.7); /* Orangey */
+}
+.marker-cluster-medium {
+  background-color: hsla(40, 88%, 60%, 0.6);
+}
+.marker-cluster-large div {
+  background-color: hsla(330, 70%, 50%, 0.7); /* Pinkish/Reddish */
+}
+.marker-cluster-large {
+  background-color: hsla(330, 70%, 60%, 0.6);
+}
+/* Dark mode clusters already use white text, looks okay */
+
+/* --- View Controls (Map Toggle) --- */
+/* (Keep existing .view-controls, .btn-view-toggle, map hidden state styles) */
+.view-controls {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.btn-view-toggle {
+  background-color: var(--grey-background);
+  border: 1px solid var(--grey-border);
+  color: var(--text-color);
+  padding: 6px 12px;
+  font-size: 0.85em;
+  border-radius: 6px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  /* Inherits button hover/active */
+}
+.btn-view-toggle i {
+  font-size: 1.1em;
+}
+/* Map Hidden State */
+#results-layout.map-hidden .map-container {
+  display: none;
+}
+#results-layout.map-hidden .results-grid-container {
+  flex-basis: 100%;
+}
+.results-grid-container,
+.map-container {
+  transition: flex-basis 0.4s var(--transition-timing),
+    opacity 0.4s var(--transition-timing);
+}
+#results-layout .map-container {
+  opacity: 1;
+}
+#results-layout.map-hidden .map-container {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ========================================
-   Login & Register Pages - CONSOLIDATED
-   ======================================== */
-
-/* Common Wrapper for Login/Register Pages */
+       Login, Register, Dashboard Pages (Shared Styles)
+       ======================================== */
+/* (Keep existing login, register, dashboard styles) */
+/* Common Wrapper */
 .login-page-wrapper,
-.register-page-wrapper {
+.register-page-wrapper,
+.dashboard-page-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center; /* Center vertically */
+  align-items: flex-start; /* Align top */
   padding: 40px 20px 60px 20px; /* Top/Horiz/Bottom */
   min-height: calc(
     100vh - 71px - 100px
   ); /* Approx Full height minus header minus padding */
 }
 
-/* Common Container for Login/Register Forms */
+/* Common Container */
 .login-container,
-.register-container {
+.register-container,
+.dashboard-container {
   background-color: var(--container-bg);
-  padding: 35px 45px; /* Adjusted padding */
+  padding: 35px 45px;
   border: 1px solid var(--grey-border);
   border-radius: 10px;
-  max-width: 450px;
+  max-width: 450px; /* Default max-width */
   width: 100%;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
+.dashboard-container {
+  max-width: 800px;
+} /* Override for dashboard */
 .dark-mode .login-container,
-.dark-mode .register-container {
+.dark-mode .register-container,
+.dark-mode .dashboard-container {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* Common Heading */
 .login-container h2,
-.register-container h2 {
+.register-container h2,
+.dashboard-container h1 {
+  /* Use h1 for dashboard primary heading */
   text-align: center;
   color: var(--primary-pink);
-  margin-bottom: 30px; /* Consistent spacing */
-  font-size: 2em; /* Consistent size */
+  margin-bottom: 30px;
+  font-size: 2em;
   font-weight: 600;
+}
+.dashboard-container h2 {
+  /* Secondary headings in dashboard */
+  color: var(--text-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  border-bottom: 1px solid var(--grey-border);
+  padding-bottom: 8px;
+  text-align: left;
+}
+.dark-mode .dashboard-container h2 {
+  border-bottom-color: var(--grey-border);
 }
 
 /* Common Form Group */
-.login-container .form-group,
-.register-container .form-group {
+.form-group {
   margin-bottom: 22px;
   text-align: left;
 }
@@ -703,17 +884,16 @@ button {
 .login-container label,
 .register-container label {
   display: block;
-  margin-bottom: 8px; /* Consistent spacing */
+  margin-bottom: 8px;
   font-weight: 500;
   color: var(--text-color);
-  font-size: 1em; /* Consistent size */
-  text-align: left;
-  cursor: pointer; /* Indicate label is interactive (clicks input) */
+  font-size: 1em;
+  cursor: pointer;
   transition: color var(--transition-speed) var(--transition-timing);
 }
 .login-container label:hover,
 .register-container label:hover {
-  color: var(--primary-pink); /* Highlight label on hover */
+  color: var(--primary-pink);
 }
 
 /* Common Input Fields */
@@ -723,7 +903,7 @@ button {
 .register-container input[type="password"],
 .register-container input[type="text"] {
   width: 100%;
-  padding: 13px 15px; /* Consistent padding */
+  padding: 13px 15px;
   border: 1px solid var(--grey-border);
   border-radius: 6px;
   font-size: 1em;
@@ -733,24 +913,20 @@ button {
   transition: border-color var(--transition-speed) var(--transition-timing),
     box-shadow var(--transition-speed) var(--transition-timing);
 }
-.dark-mode .login-container input::placeholder,
-.dark-mode .register-container input::placeholder {
+.dark-mode input::placeholder {
   color: var(--light-text);
 }
-
-/* Common Focus Style (keep focus distinct from hover) */
-.login-container input:focus,
-.register-container input:focus {
+input:focus {
+  /* Covers all inputs */
   outline: none;
   border-color: var(--primary-pink);
   box-shadow: 0 0 0 3px var(--light-pink);
 }
-.dark-mode .login-container input:focus,
-.dark-mode .register-container input:focus {
+.dark-mode input:focus {
   box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
 }
 
-/* Login Specific Options (Forgot Password) */
+/* Login Specific */
 .login-container .form-options {
   display: block;
   text-align: right;
@@ -758,16 +934,13 @@ button {
 }
 .forgot-password {
   color: var(--primary-pink);
-  text-decoration: none;
   font-size: 0.95em;
-  /* Uses standard link hover */
 }
-/* Add underline specifically on hover */
 .forgot-password:hover {
   text-decoration: underline;
 }
 
-/* Common Submit Button Styling */
+/* Common Submit Button */
 .btn-login-submit,
 .btn-register-submit {
   width: 100%;
@@ -775,11 +948,19 @@ button {
   font-size: 1.1em;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  /* Inherits .btn and .btn-register styles + hover/active */
+  /* Inherit .btn-register styles by default */
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: white;
+}
+.btn-login-submit:hover,
+.btn-register-submit:hover {
+  background-color: #d6006a;
+  border-color: #d6006a;
 }
 
 /* Common Links Below Form */
-.login-container .login-links, /* Use same class for consistency */
+.login-container .login-links,
 .register-container .login-links {
   text-align: center;
   margin-top: 30px;
@@ -790,19 +971,78 @@ button {
 .register-container .login-links a {
   color: var(--primary-pink);
   font-weight: 500;
-  text-decoration: none;
-  /* Uses standard link hover */
 }
 .login-container .login-links a:hover,
 .register-container .login-links a:hover {
   text-decoration: underline;
 }
 
-/* Register Specific - Terms Group already styled with Checkbox common styles */
+/* Dashboard Specific */
+.dashboard-container .user-info {
+  text-align: center;
+  color: var(--light-text);
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+.dashboard-container .user-info strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px dashed var(--grey-border);
+  flex-wrap: wrap;
+}
+.dark-mode .dashboard-actions {
+  border-bottom-color: var(--grey-border);
+}
+.dark-mode .dashboard-actions .btn-signin {
+  /* Logout button in dark mode */
+  color: var(--text-color);
+  border-color: var(--grey-border);
+  background-color: var(--grey-background);
+}
+.dashboard-content p {
+  color: var(--text-color);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.placeholder-section {
+  /* Dashboard placeholder */
+  background-color: var(--grey-background);
+  border: 1px dashed var(--grey-border);
+  border-radius: 6px;
+  padding: 25px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--light-text);
+}
+.placeholder-section i {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: var(--primary-pink);
+  opacity: 0.7;
+}
+.placeholder-section p {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+.dark-mode .placeholder-section {
+  background-color: var(--grey-background);
+  border-color: var(--grey-border);
+  color: var(--light-text);
+}
 
 /* ========================================
-   Chat Widget
-   ======================================== */
+       Chat Widget
+       ======================================== */
+/* (Keep existing chat widget styles) */
 #chat-widget {
   position: fixed;
   bottom: 20px;
@@ -814,6 +1054,7 @@ button {
 }
 
 #chat-toggle-button {
+  /* The main bubble */
   background-color: var(--primary-pink);
   color: white;
   border: none;
@@ -821,27 +1062,26 @@ button {
   width: 60px;
   height: 60px;
   font-size: 28px;
-  cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  /* transition added via base button style */
-  margin-top: 10px; /* Only appears when chat window is visible */
+  margin-top: 10px; /* Space when window is open */
+  transition: background-color var(--transition-speed) var(--transition-timing),
+    transform var(--transition-speed) var(--transition-timing);
 }
-/* Uses icon button hover/active */
 #chat-toggle-button:hover {
   background-color: #d6006a;
-  transform: scale(1.1); /* Ensure scale is applied */
+  transform: scale(1.05); /* Slight grow on hover */
 }
 #chat-toggle-button:active {
-  transform: scale(1);
+  transform: scale(0.95); /* Shrink on click */
 }
 
 #chat-container {
   width: 350px;
   max-height: 500px;
-  background-color: var(--container-bg); /* Use variable */
+  background-color: var(--container-bg);
   border: 1px solid var(--grey-border);
   border-radius: 10px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
@@ -849,9 +1089,10 @@ button {
   flex-direction: column;
   overflow: hidden;
   transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
-    margin-bottom 0.3s ease;
+    margin-bottom 0.3s ease, visibility 0.3s ease;
   opacity: 1;
   transform: translateY(0);
+  visibility: visible;
 }
 .dark-mode #chat-container {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
@@ -863,7 +1104,8 @@ button {
   pointer-events: none;
   height: 0;
   border: none;
-  margin-bottom: -10px; /* Counteract toggle button margin */
+  margin-bottom: -10px; /* Overlap toggle button slightly */
+  visibility: hidden;
 }
 
 #chat-header {
@@ -874,7 +1116,7 @@ button {
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 #chat-header span {
   font-size: 1.1em;
@@ -885,31 +1127,27 @@ button {
   color: white;
   font-size: 24px;
   font-weight: bold;
-  cursor: pointer;
   padding: 0 5px;
   line-height: 1;
-  /* Uses button base transition/hover */
+  /* Inherits icon button hover/active */
 }
 #chat-close-button:hover {
-  transform: scale(1.2); /* Specific scale */
-  color: #ffdddd; /* Lighten slightly */
-}
-#chat-close-button:active {
-  transform: scale(1.1);
+  transform: scale(1.2);
+  color: #ffdddd;
 }
 
 #chat-messages {
   flex-grow: 1;
   padding: 15px;
   overflow-y: auto;
-  background-color: var(--grey-background); /* Use variable */
+  background-color: var(--grey-background);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 .dark-mode #chat-messages {
-  background-color: #1e1e1e; /* Different dark bg for messages */
-}
+  background-color: var(--container-bg);
+} /* Match container */
 
 .message {
   padding: 8px 12px;
@@ -917,21 +1155,10 @@ button {
   max-width: 80%;
   line-height: 1.4;
   word-wrap: break-word;
-  /* Can add subtle hover to messages if desired, e.g., brightness */
-  /* transition: filter 0.2s ease; */
 }
-/*
-.message:hover {
-    filter: brightness(0.95);
-}
-.dark-mode .message:hover {
-    filter: brightness(1.1);
-}
-*/
-
 .message.user {
   background-color: var(--light-pink);
-  color: var(--keywords-txt-color); /* Use keyword color var */
+  color: var(--keywords-txt-color);
   border-bottom-right-radius: 5px;
   align-self: flex-end;
 }
@@ -940,7 +1167,7 @@ button {
   color: #f0f0f0;
 }
 .message.bot {
-  background-color: #e5e5ea; /* Specific light grey for bot */
+  background-color: #e5e5ea;
   color: #333;
   border-bottom-left-radius: 5px;
   align-self: flex-start;
@@ -954,10 +1181,9 @@ button {
   display: flex;
   padding: 10px;
   border-top: 1px solid var(--grey-border);
-  background-color: var(--container-bg); /* Match container */
-  flex-shrink: 0; /* Prevent shrinking */
+  background-color: var(--container-bg);
+  flex-shrink: 0;
 }
-
 #chat-input {
   flex-grow: 1;
   border: 1px solid var(--grey-border);
@@ -966,23 +1192,12 @@ button {
   margin-right: 8px;
   outline: none;
   font-size: 0.95em;
-  background-color: var(--input-bg); /* Use variable */
+  background-color: var(--input-bg);
   color: var(--text-color);
   transition: border-color var(--transition-speed) var(--transition-timing),
     box-shadow var(--transition-speed) var(--transition-timing);
 }
-/* Keep focus distinct */
-#chat-input:focus {
-  border-color: var(--primary-pink);
-  box-shadow: 0 0 0 2px var(--light-pink); /* Focus style */
-}
-.dark-mode #chat-input:focus {
-  box-shadow: 0 0 0 2px rgba(255, 0, 127, 0.4);
-}
-
-.dark-mode #chat-input::placeholder {
-  color: var(--light-text);
-}
+/* Inherits general input focus */
 
 #chat-send-button {
   background-color: var(--primary-pink);
@@ -992,114 +1207,150 @@ button {
   width: 38px;
   height: 38px;
   flex-shrink: 0;
-  cursor: pointer;
   font-size: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* transition added via base button style */
 }
-/* Uses icon button hover/active */
 #chat-send-button:hover {
   background-color: #d6006a;
-  transform: scale(1.1); /* Ensure scale is applied */
 }
-#chat-send-button:active {
-  transform: scale(1);
+#chat-send-button:disabled {
+  /* Style for when sending */
+  background-color: var(--light-text);
+  cursor: not-allowed;
 }
 
 #chat-loading {
   padding: 10px 15px;
   text-align: center;
   color: var(--light-text);
-  background-color: var(--grey-background); /* Match message area bg */
+  background-color: var(--grey-background); /* Match message area */
   border-top: 1px solid var(--grey-border);
   font-style: italic;
   flex-shrink: 0;
+  display: none; /* Hidden by default */
+  align-items: center; /* Align icon and text */
+  justify-content: center; /* Center content */
 }
-#chat-loading i {
-  margin-right: 5px;
-  /* Could add animation to spinner if needed */
-}
-#chat-loading.chat-hidden {
-  display: none;
+#chat-loading.active {
+  /* JS should add/remove .active class */
+  display: flex;
 }
 .dark-mode #chat-loading {
-  background-color: #1e1e1e; /* Match dark message area bg */
+  background-color: var(--container-bg);
+}
+#chat-loading i {
+  margin-right: 8px;
+  animation: spin 1.5s linear infinite; /* Add spin animation */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========================================
-   View Controls (Map Toggle)
-   ======================================== */
+       Responsiveness
+       ======================================== */
 
-.view-controls {
-  margin-bottom: 15px; /* Space below the button */
-  text-align: right; /* Position button to the right */
+/* --- Tablet & Smaller Desktop (<= 1024px) --- */
+@media screen and (max-width: 1024px) {
+  .main-content-wrapper {
+    gap: 20px;
+    padding: 20px 30px;
+  }
+  .results-layout {
+    gap: 15px;
+  }
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+  }
+  .map-container {
+    /* Adjust sticky top if header height changes */
+    top: calc(71px + 20px); /* Adjust if header height different */
+    max-height: 500px; /* Reduce max height slightly */
+    flex-basis: 30%; /* Slightly smaller map basis */
+  }
 }
 
-.btn-view-toggle {
-  background-color: var(--grey-background);
-  border: 1px solid var(--grey-border);
-  color: var(--text-color);
-  padding: 6px 12px; /* Slightly smaller padding */
-  font-size: 0.85em;
-  border-radius: 6px; /* Less rounded */
-  gap: 6px;
-  display: inline-flex; /* Align icon and text */
-  align-items: center;
-  /* Uses button base transition/hover/active */
-}
-
-.btn-view-toggle i {
-  font-size: 1.1em; /* Make icon slightly larger than text */
-}
-
-.btn-view-toggle:hover {
-  background-color: var(--grey-border);
-  transform: translateY(var(--hover-lift)); /* Apply lift */
-}
-
-/* --- Styles for When Map is Hidden --- */
-
-/* Add class 'map-hidden' to #results-layout */
-#results-layout.map-hidden .map-container {
-  display: none; /* Hide the map container */
-}
-
-#results-layout.map-hidden .results-grid-container {
-  flex-basis: 100%; /* Make grid take full width */
-  transition: flex-basis 0.4s var(--transition-timing);
-}
-
-/* Default state transition (optional) */
-.results-grid-container,
-.map-container {
-  transition: flex-basis 0.4s var(--transition-timing),
-    opacity 0.4s var(--transition-timing); /* Added opacity */
-}
-#results-layout .map-container {
-  opacity: 1;
-}
-#results-layout.map-hidden .map-container {
-  opacity: 0; /* Fade out */
-}
-
-/* Responsive Styles */
+/* --- Tablet & Mobile (<= 768px) --- */
 @media screen and (max-width: 768px) {
   /* Header & Navigation */
   .site-header {
-    flex-direction: column;
-    align-items: flex-start;
     padding: 10px 20px;
+    position: relative; /* Keep relative for absolute nav */
   }
-  .main-nav ul {
-    flex-direction: column;
-    gap: 10px;
+
+  /* >>> HAMBURGER NAV ACTIVATION <<< */
+  .main-nav {
+    display: none; /* Hide the nav container by default */
+    position: absolute;
+    top: 100%; /* Position below header */
+    left: 0;
     width: 100%;
-    margin-top: 10px;
+    background-color: var(--body-bg);
+    border-top: 1px solid var(--grey-border);
+    border-bottom: 1px solid var(--grey-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 899; /* Below header */
+    max-height: calc(100vh - 60px); /* Prevent full screen overlap */
+    overflow-y: auto; /* Allow scrolling if content overflows */
   }
+  .main-nav.active {
+    /* Show the nav container when it has .active class */
+    display: block;
+  }
+  /* <<< END HAMBURGER NAV ACTIVATION >>> */
+
+  .main-nav ul {
+    display: flex; /* Reset display to flex for the UL *inside* the nav */
+    flex-direction: column;
+    align-items: flex-start; /* Align items left */
+    padding: 10px 0; /* Add vertical padding, remove horizontal */
+    gap: 0; /* Reset gap for vertical */
+    width: 100%; /* Ensure UL takes full width of parent */
+  }
+
   .main-nav li {
-    margin-bottom: 10px;
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .main-nav a,
+    .main-nav #language-toggle, /* Style language toggle like links */
+    .main-nav #theme-toggle {
+    /* Style theme toggle like links */
+    display: block;
+    padding: 12px 20px; /* Consistent padding */
+    width: 100%;
+    border-bottom: 1px solid var(--grey-border);
+    font-weight: 500;
+  }
+  .main-nav li:last-child > a, /* Target direct child link/button */
+    .main-nav li:last-child > button {
+    border-bottom: none;
+  }
+
+  .main-nav a::after {
+    /* Disable underline */
+    display: none;
+  }
+
+  .main-nav .btn {
+    /* Buttons like Sign In / Register */
+    width: calc(100% - 40px); /* Full width minus padding */
+    text-align: center;
+    margin: 10px 20px; /* Add margin */
+  }
+
+  .hamburger {
+    display: flex;
+    /* margin-left: auto; Keep default positioning */
   }
 
   /* Main Layout Adjustments */
@@ -1108,254 +1359,253 @@ button {
     gap: 20px;
     padding: 20px;
   }
-
-  /* Sidebar becomes full width and adds spacing */
   .filters-sidebar {
-    flex: 1 1 100%;
+    flex: 1 1 auto; /* Let it size naturally */
     margin-bottom: 20px;
     width: 100%;
+    position: static;
+    height: auto; /* Reset height */
   }
-
-  /* Stack results grid and map vertically */
   .results-layout {
     flex-direction: column;
+    gap: 25px; /* Increase gap when stacked */
   }
-
-  /* Results grid: adjust columns for smaller cards */
-  .results-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  /* Map container repositioned */
   .map-container {
     position: relative;
     top: 0;
     width: 100%;
-    margin-top: 20px;
+    height: 350px; /* Fixed map height for mobile */
+    margin-top: 0; /* Remove potential top margin */
+    flex-basis: auto;
+    order: -1; /* Show map *before* results grid on mobile */
+    max-height: none; /* Remove max-height */
+  }
+  #map-resize-handle {
+    display: none; /* Hide resize handle on mobile */
   }
 
-  /* Optional: Adjust chat widget position for mobile */
+  /* Adjust grid columns */
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  /* Search/Sort adjustments */
+  .search-and-sort {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-container {
+    max-width: 100%;
+  }
+  .sort-options {
+    justify-content: center;
+  }
+
+  /* Form Containers */
+  .login-container,
+  .register-container,
+  .dashboard-container {
+    padding: 25px 20px;
+    max-width: 100%; /* Allow full width */
+  }
+
+  /* Chat Widget */
   #chat-widget {
     bottom: 10px;
     right: 10px;
   }
+  #chat-container {
+    width: calc(100vw - 40px);
+    max-width: 350px;
+    max-height: calc(100vh - 90px);
+  }
 }
 
+/* --- Small Mobile (< 480px) --- */
 @media screen and (max-width: 480px) {
-  /* Ensure login & register forms fit smaller screens */
-  .login-container,
-  .register-container {
-    padding: 20px;
-    width: 90%;
-    margin: 0 auto;
-  }
-
-  /* Widen the search container */
-  .search-container {
-    max-width: 100%;
-  }
-
-  /* Adjust font sizes if needed */
   body {
     font-size: 13px;
   }
+
+  .site-header {
+    padding: 10px 15px;
+  }
+  .main-content-wrapper {
+    padding: 15px;
+  }
+
+  .logo {
+    font-size: 2em;
+  }
+
+  .login-container,
+  .register-container,
+  .dashboard-container {
+    padding: 20px 15px;
+  }
+  .login-container h2,
+  .register-container h2,
+  .dashboard-container h1 {
+    font-size: 1.8em;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr; /* Single column grid */
+    gap: 15px;
+  }
+  .result-card {
+    flex-direction: row; /* Horizontal card layout */
+    align-items: center;
+  }
+  .card-image-placeholder {
+    height: 80px; /* Smaller fixed height */
+    width: 80px; /* Fixed width */
+    font-size: 2em;
+  }
+  .card-content {
+    padding: 10px 15px;
+  }
+  .card-price {
+    margin-bottom: 5px; /* Reduce bottom margin */
+  }
+
+  #chat-widget {
+    bottom: 5px;
+    right: 5px;
+  }
+  #chat-toggle-button {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
 }
 
-/* HAMBURGER BUTTON - hidden on desktop by default */
-.hamburger {
-  display: none; /* Only show on smaller screens via @media */
-  flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
-  background: transparent;
+/* ========================
+     Language Switcher Styles (Integrated and Corrected)
+     ======================== */
+
+.language-switcher {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+#language-toggle {
+  background: none;
   border: none;
+  color: inherit;
   cursor: pointer;
-  margin-left: auto; /* Moves it to the right if needed */
+  font-size: 1em;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+/* Inherits base button transition */
+#language-toggle:hover,
+#language-toggle:focus {
+  color: var(--primary-pink); /* Consistent hover */
+  opacity: 0.9; /* Slight fade */
 }
 
-/* ========================================
-   Map Resizing Styles
-   ======================================== */
-
-#map {
-  /* height/width/border/radius already defined */
-  position: relative; /* Needed for absolute positioning of the handle */
-  overflow: hidden; /* Keep handle contained visually */
+#language-toggle .current-lang {
+  font-weight: bold;
 }
 
-#map-resize-handle {
+.language-dropdown {
+  display: none;
   position: absolute;
-  bottom: 0;
+  top: calc(100% + 5px); /* Position below button with small gap */
   right: 0;
-  width: 15px; /* Size of the handle */
-  height: 15px;
-  background-color: var(--primary-pink);
-  opacity: 0.7;
-  border: 1px solid white;
-  border-top-left-radius: 5px; /* Optional visual flair */
-  cursor: nwse-resize; /* Diagonal resize cursor */
-  z-index: 401; /* Ensure it's above map tiles (usually z-index 1-400) */
-  transition: opacity 0.2s ease;
+  background-color: var(--container-bg); /* Use container background */
+  border: 1px solid var(--grey-border); /* Use grey border */
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 5px 0;
+  margin: 0; /* Reset margin */
+  min-width: 120px;
+  z-index: 1001;
+}
+.dark-mode .language-dropdown {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-#map-resize-handle:hover {
-  opacity: 1;
+.language-dropdown.show {
+  display: block;
 }
 
-/* Optional: Change body cursor while resizing */
-body.map-resizing {
-  cursor: nwse-resize !important; /* Force cursor */
-  user-select: none; /* Prevent text selection during drag */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+.language-dropdown li {
+  margin: 0;
 }
 
-/* --- Dashboard Page Specific Styles --- */
-
-/* Wrapper for dashboard page content */
-.dashboard-page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align container to the top */
-  padding: 40px 20px; /* Vertical and horizontal padding */
-}
-
-.dashboard-container {
-  background-color: #fff; /* White background */
-  padding: 30px 40px;
-  border: 1px solid var(--grey-border);
-  border-radius: 8px;
-  max-width: 800px; /* Allow dashboard to be wider than login */
-  width: 100%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-  margin: 20px 0; /* Margin top/bottom */
-}
-
-.dashboard-container h1 {
-  color: var(--primary-pink);
-  margin-bottom: 15px;
-  font-size: 2em;
-  text-align: center;
-  font-weight: 600;
-}
-
-.dashboard-container h2 {
+.language-dropdown li a {
+  display: block;
+  padding: 8px 15px;
   color: var(--text-color);
-  margin-top: 30px;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  border-bottom: 1px solid var(--grey-border);
-  padding-bottom: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 0.9em;
+  transition: background-color var(--transition-speed) var(--transition-timing),
+    color var(--transition-speed) var(--transition-timing);
 }
 
-.dashboard-container .user-info {
-  text-align: center;
-  color: var(--light-text);
-  font-size: 1.1em;
-  margin-bottom: 30px;
-  line-height: 1.6;
+/* CORRECTED HOVER STYLES using defined variables */
+.language-dropdown li a:hover,
+.language-dropdown li a:focus {
+  background-color: var(--lang-hover-bg); /* Use defined variable */
+  color: var(--lang-hover-text); /* Use defined variable */
 }
 
-.dashboard-container .user-info strong {
-  color: var(--text-color);
-  font-weight: 600;
-}
+/* Language Switcher within Mobile Nav */
+@media (max-width: 768px) {
+  .language-switcher {
+    margin-right: 0;
+    width: 100%;
+    /* border-bottom: 1px solid var(--grey-border); */ /* Optional separator if needed */
+  }
 
-.dashboard-actions {
-  display: flex;
-  justify-content: center; /* Center buttons */
-  gap: 15px; /* Space between buttons */
-  margin-bottom: 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px dashed var(--grey-border); /* Separator */
-  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-}
+  #language-toggle {
+    /* Inherit padding/width from .main-nav a in mobile */
+    justify-content: flex-start; /* Align left like other nav items */
+    border-bottom: none; /* Remove bottom border if applied above */
+    /* Ensure it takes full width from parent li */
+    width: 100%;
+    box-sizing: border-box; /* Include padding in width */
+    padding: 12px 20px; /* Match link padding */
+  }
+  #language-toggle[aria-expanded="true"] {
+    /* Optional: Style when dropdown is open */
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .dark-mode #language-toggle[aria-expanded="true"] {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 
-/* Optionally adjust logout button spacing if needed */
-.dashboard-actions .btn-logout {
-  /* Add specific styles if btn-signin isn't quite right */
-}
+  .language-dropdown {
+    position: static; /* Flow naturally */
+    width: 100%;
+    box-shadow: none;
+    border: none;
+    /* border-top: 1px solid var(--grey-border); Optional separator */
+    background-color: rgba(0, 0, 0, 0.02); /* Slightly different background */
+    padding: 0;
+    margin-top: 0;
+    border-radius: 0; /* No radius inside nav */
+  }
+  .dark-mode .language-dropdown {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
 
-.dashboard-content p {
-  color: var(--text-color);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
+  .language-dropdown li a {
+    padding: 10px 20px 10px 40px; /* Indent dropdown items */
+  }
 
-/* Placeholder style for future sections */
-.placeholder-section {
-  background-color: var(--grey-background);
-  border: 1px dashed var(--grey-border);
-  border-radius: 6px;
-  padding: 25px;
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--light-text);
+  /* Remove border from last item if dropdown is last */
+  .main-nav li.language-switcher:last-child #language-toggle {
+    border-bottom: none;
+  }
 }
-
-.placeholder-section i {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: var(--primary-pink);
-  opacity: 0.7;
-}
-
-.placeholder-section p {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin-bottom: 0;
-}
-
-/* --- Dark Mode Dashboard Styles --- */
-.dark-mode .dashboard-container {
-  background-color: #1e1e1e; /* Slightly lighter dark bg */
-  border-color: var(--grey-border); /* Uses dark mode variable */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.dark-mode .dashboard-container h1 {
-  /* Pink color defined in :root should work */
-}
-
-.dark-mode .dashboard-container h2 {
-  color: var(--text-color); /* Dark mode text */
-  border-bottom-color: var(--grey-border);
-}
-
-.dark-mode .dashboard-container .user-info {
-  color: var(--light-text); /* Dark mode light text */
-}
-
-.dark-mode .dashboard-container .user-info strong {
-  color: var(--text-color); /* Dark mode main text */
-}
-
-.dark-mode .dashboard-actions {
-  border-bottom-color: var(--grey-border);
-}
-
-/* Ensure button text colors are correct in dark mode */
-.dark-mode .dashboard-actions .btn-register {
-  color: white; /* Already set */
-}
-.dark-mode .dashboard-actions .btn-signin {
-  color: var(--text-color); /* Use dark mode text for secondary button */
-  border-color: var(--grey-border);
-  background-color: var(--grey-background);
-}
-
-.dark-mode .dashboard-content p {
-  color: var(--text-color); /* Dark mode text */
-}
-
-.dark-mode .placeholder-section {
-  background-color: var(--grey-background); /* Dark mode grey bg */
-  border-color: var(--grey-border);
-  color: var(--light-text);
-}
-
-.dark-mode .placeholder-section i {
-  /* Pink should still be okay */
-}
+/* ========================
+     End of Language Switcher Styles
+     ======================== */
