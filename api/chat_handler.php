@@ -9,16 +9,17 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 // --- API Key Check ---
-// Check if the constant is defined and not the placeholder value
-if (!defined('OPENAI_API_KEY') || empty(OPENAI_API_KEY) || OPENAI_API_KEY === 'sk-YourActualOpenAIapiKeyHEREq9x...') {
+// Check if the constant is defined, not empty, and not the placeholder value
+if (!defined('DeepSeek_Api_Key') || empty(DeepSeek_Api_Key) || DeepSeek_Api_Key === 'sk-YourActualDeepSeekapiKeyHEREq9x...') {
      http_response_code(500); // Internal Server Error
      // Log the error on the server for debugging, don't expose details to the client
-     error_log("FATAL: OpenAI API Key is not configured correctly in config.php or is still the placeholder.");
+     error_log("FATAL: DeepSeek API Key is not configured correctly in config.php or is still the placeholder.");
      // Send a generic error message to the client
      echo json_encode(['error' => 'AI service configuration error. Please contact support.']);
      exit; // Stop execution
 }
-$apiKey = OPENAI_API_KEY; // Get key from config
+// Use the API key defined in config.php (ensure this holds your ACTUAL DeepSeek key)
+$apiKey = DeepSeek_Api_Key;
 
 
 // --- Get Input ---
@@ -34,16 +35,21 @@ if (!$requestData || !isset($requestData->message) || empty(trim($requestData->m
 $userMessage = trim($requestData->message);
 
 
-// --- Prepare OpenAI API Request ---
-$apiUrl = 'https://api.openai.com/v1/chat/completions';
+// --- Prepare DeepSeek API Request ---
+// ***** MODIFIED: Use the official DeepSeek API endpoint *****
+$apiUrl = 'https://api.deepseek.com/chat/completions'; // CORRECT DEEPSEEK ENDPOINT
 
 $payload = json_encode([
-    'model' => 'gpt-3.5-turbo', // Or 'gpt-4', 'gpt-4-turbo-preview' etc.
+    // ***** MODIFIED: Use a valid DeepSeek model name *****
+    // Common options: 'deepseek-chat' or 'deepseek-coder'
+    // Choose 'deepseek-chat' for general conversational tasks.
+    'model' => 'deepseek-chat',
+
     'messages' => [
         [
             'role' => 'system',
+            // Keep the system prompt as it's relevant to the CROUS-X assistant task
             'content' => 'You are a helpful assistant for the CROUS-X website, a platform for finding student housing. Answer questions concisely about: navigating the site (finding filters, search bar, map), explaining housing types (Studio, Apartment, Shared Room, House), understanding login/registration, and general tips for using the website. Do NOT provide external links or information unrelated to the CROUS-X website itself. Keep responses brief and friendly.'
-            // You might add more specific instructions or examples here
         ],
         [
             'role' => 'user',
@@ -51,9 +57,9 @@ $payload = json_encode([
         ]
         // Consider adding conversation history for better context in future versions
     ],
-    'max_tokens' => 150,   // Limit response length to prevent overly long answers
-    'temperature' => 0.7, // Balance creativity and determinism
-    // 'n' => 1,             // We only want one response choice
+    'max_tokens' => 150,   // Limit response length (adjust as needed)
+    'temperature' => 0.7, // Adjust creativity vs determinism
+    // 'n' => 1,             // Default: We only want one response choice
     // 'stop' => null        // Default stop sequences
 ]);
 
@@ -66,11 +72,11 @@ curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
-    'Authorization: Bearer ' . $apiKey // Crucial: Send the API Key securely
+    'Authorization: Bearer ' . $apiKey // Send the DeepSeek API Key
 ]);
 // Timeouts to prevent hanging indefinitely
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Connection timeout (seconds)
-curl_setopt($ch, CURLOPT_TIMEOUT, 30); // Total operation timeout (seconds)
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);       // Total operation timeout (seconds)
 
 // Execute the request
 $response = curl_exec($ch);
@@ -81,31 +87,33 @@ curl_close($ch);
 // --- Handle Response ---
 if ($curlError) {
     http_response_code(500);
-    error_log("cURL Error contacting OpenAI: " . $curlError);
+    // Log the specific error source for easier debugging server-side
+    error_log("cURL Error contacting DeepSeek API: " . $curlError);
     echo json_encode(['error' => 'Failed to communicate with AI service (Network). Please try again later.']);
     exit;
 }
 
 if ($httpcode >= 400) {
-    // OpenAI returned an error (e.g., 401 Unauthorized, 429 Rate Limit, 500 Server Error)
-    http_response_code(500); // Send a generic 500 to client
-    error_log("OpenAI API Error: HTTP Status " . $httpcode . " | Response: " . $response); // Log details server-side
+    // DeepSeek API returned an error
+    http_response_code(500); // Send a generic 500 to the client
+    error_log("DeepSeek API Error: HTTP Status " . $httpcode . " | Response: " . $response); // Log details server-side
     $errorDetails = json_decode($response);
+    // Attempt to parse the specific error message from DeepSeek's response
     $errorMessage = $errorDetails->error->message ?? 'Unknown error from AI service.';
     echo json_encode(['error' => 'AI service returned an error: ' . $errorMessage]);
     exit;
 }
 
-// Decode the successful JSON response from OpenAI
+// Decode the successful JSON response from DeepSeek
 $responseData = json_decode($response);
 
-// Extract the AI's reply text
+// Extract the AI's reply text using the standard OpenAI-compatible structure
 // Use null coalescing operator for safety
 $aiReply = $responseData->choices[0]->message->content ?? null;
 
 if ($aiReply === null) {
     http_response_code(500);
-    error_log("Failed to parse AI response or content missing. Response: " . $response);
+    error_log("Failed to parse DeepSeek response or content missing. Response: " . $response);
     echo json_encode(['error' => 'Received an invalid response from the AI service.']);
     exit;
 }
