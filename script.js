@@ -239,7 +239,7 @@
       price: 890,
       size: 24,
       type: "Studio",
-      image: null,
+      image: "icon.png",
       rating: 4.0,
       lat: 48.8765,
       lng: 2.3574,
