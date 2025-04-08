@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - CROUS-X</title>
+    <title>Register - CROUS-X</title>
     <!-- Changed Title -->
-    <!-- Leaflet CSS (Optional for login, but keep if header uses it indirectly or for consistency) -->
+    <!-- Leaflet CSS (Optional for register, keep for consistency) -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -13,7 +13,7 @@
       crossorigin=""
     />
 
-    <!-- Marker Cluster CSS (Optional for login) -->
+    <!-- Marker Cluster CSS (Optional for register) -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
@@ -45,7 +45,6 @@
           <li><a href="index.html">Search Housing</a></li>
           <!-- Link back to main page -->
           <li><a href="#">Need help ?</a></li>
-          <!-- Removed My Profile, Sign in, Register -->
           <li>
             <button
               id="theme-toggle"
@@ -56,19 +55,30 @@
               <!-- Icon will be toggled by JS -->
             </button>
           </li>
-          <!-- Added a register link here for easier access from login page -->
-          <li><a href="register.html" class="btn btn-register">Register</a></li>
+          <!-- Changed Register button to Sign In -->
+          <li><a href="login.html" class="btn btn-signin">Sign in</a></li>
         </ul>
       </nav>
     </header>
 
-    <div class="main-content-wrapper login-page-wrapper">
-      <!-- Added login-page-wrapper class -->
-
-      <div class="login-container">
-        <h2>Sign In</h2>
+    <!-- Using register-page-wrapper and register-container for clarity -->
+    <div class="main-content-wrapper register-page-wrapper">
+      <div class="register-container">
+        <!-- Changed class -->
+        <h2>Create Account</h2>
+        <!-- Changed Heading -->
         <form action="#" method="post">
-          <!-- Add your backend endpoint to action attribute -->
+          <!-- Add your backend endpoint -->
+          <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
           <div class="form-group">
             <label for="email">Email Address</label>
             <input
@@ -85,20 +95,37 @@
               type="password"
               id="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Create a password"
               required
             />
           </div>
-          <div class="form-group form-options">
-            <a href="#" class="forgot-password">Forgot Password?</a>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              placeholder="Confirm your password"
+              required
+            />
           </div>
-          <button type="submit" class="btn btn-register btn-login-submit">
-            Sign In
+          <!-- Optional: Terms Agreement -->
+          <div class="form-group terms-group">
+            <input type="checkbox" id="terms" name="terms" required />
+            <label for="terms"
+              >I agree to the <a href="#">Terms of Service</a> &
+              <a href="#">Privacy Policy</a></label
+            >
+          </div>
+          <!-- Changed button text and potentially class if needed -->
+          <button type="submit" class="btn btn-register btn-register-submit">
+            Register
           </button>
-          <!-- Reused register style -->
         </form>
         <div class="login-links">
-          <p>Don't have an account? <a href="#">Register here</a></p>
+          <!-- Reused class name, style should be general -->
+          <p>Already have an account? <a href="login.html">Sign in here</a></p>
+          <!-- Link to login -->
         </div>
       </div>
     </div>

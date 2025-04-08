@@ -1,601 +1,619 @@
 /* Basic Reset & Variables */
 :root {
-    --primary-pink: #FF007F; /* Hot pink */
-    --light-pink: #FFE3F2;  /* Light pink for tags */
-    --keywords-txt-color:var(--primary-pink) ;
-    --grey-border: #E0E0E0;
-    --grey-background: #F8F8F8;
-    --text-color: #333;
-    --light-text: #666;
-    --placeholder-bg: #EAEAEA;
+  --primary-pink: #ff007f; /* Hot pink */
+  --light-pink: #ffe3f2; /* Light pink for tags */
+  --keywords-txt-color: var(--primary-pink);
+  --grey-border: #e0e0e0;
+  --grey-background: #f8f8f8;
+  --text-color: #333;
+  --light-text: #666;
+  --placeholder-bg: #eaeaea;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: #fff; /* Assuming white background overall */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: #fff; /* Assuming white background overall */
 }
 
 .dark-mode {
-    background-color: #121212; /* Dark mode background */
-    color: white; /* Dark mode text color */
-    --primary-pink: #FF007F; /* Hot pink */
-    --light-pink: #FF007F;  /* Light pink for tags */
-    --keywords-txt-color:#ffe3f2 ;
-    --grey-border: #444;
-    --grey-background: #333;
-    --text-color: #fff;
-    --light-text: #bbb;
-    --placeholder-bg: #555;
-
+  background-color: #121212; /* Dark mode background */
+  color: white; /* Dark mode text color */
+  --primary-pink: #ff007f; /* Hot pink */
+  --light-pink: #ff007f; /* Light pink for tags */
+  --keywords-txt-color: #ffe3f2;
+  --grey-border: #444;
+  --grey-background: #333;
+  --text-color: #fff;
+  --light-text: #bbb;
+  --placeholder-bg: #555;
 }
 
 a {
-    text-decoration: none;
-    color: var(--text-color);
+  text-decoration: none;
+  color: var(--text-color);
 }
 
 button {
-    font-family: inherit;
-    cursor: pointer;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 /* Header */
 .site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 40px;
-    border-bottom: 1px solid var(--grey-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  border-bottom: 1px solid var(--grey-border);
 }
 
 .logo {
-    font-size: 2.5em; /* Adjust as needed */
-    font-weight: bold;
-    color: var(--primary-pink);
-    /* Add letter-spacing or specific font if needed */
-    letter-spacing: -1px;
+  font-size: 2.5em; /* Adjust as needed */
+  font-weight: bold;
+  color: var(--primary-pink);
+  /* Add letter-spacing or specific font if needed */
+  letter-spacing: -1px;
 }
 
 .main-nav ul {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 25px; /* Spacing between nav items */
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Spacing between nav items */
 }
 
 .main-nav a {
-    font-weight: 500;
+  font-weight: 500;
 }
 .main-nav a:hover {
-    color: var(--primary-pink);
+  color: var(--primary-pink);
 }
 
 .btn {
-    padding: 8px 18px;
-    border: none;
-    border-radius: 20px; /* Rounded buttons */
-    font-weight: 500;
-    font-size: 0.9em;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 20px; /* Rounded buttons */
+  font-weight: 500;
+  font-size: 0.9em;
 }
 
 .btn-signin {
-    background-color: var(--grey-background);
-    border: 1px solid var(--grey-border);
-    color: var(--text-color);
+  background-color: var(--grey-background);
+  border: 1px solid var(--grey-border);
+  color: var(--text-color);
 }
 
 .btn-register {
-    background-color: var(--primary-pink);
-    color: white;
+  background-color: var(--primary-pink);
+  color: white;
 }
 
 /* Main Content Layout */
 .main-content-wrapper {
-    display: flex;
-    gap: 30px;
-    padding: 30px 40px;
+  display: flex;
+  gap: 30px;
+  padding: 30px 40px;
 }
 
 /* Sidebar */
 .filters-sidebar {
-    flex: 0 0 250px; /* Fixed width, doesn't grow or shrink */
-    border: 1px solid var(--grey-border);
-    border-radius: 8px;
-    padding: 20px;
-    align-self: flex-start; /* Align to top */
-    height: fit-content; /* Take only needed height */
+  flex: 0 0 250px; /* Fixed width, doesn't grow or shrink */
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  padding: 20px;
+  align-self: flex-start; /* Align to top */
+  height: fit-content; /* Take only needed height */
 }
 
 .filter-group {
-    margin-bottom: 25px;
+  margin-bottom: 25px;
 }
 .filter-group:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .filter-group h3 {
-    font-size: 1.1em;
-    margin-bottom: 15px;
-    color: var(--text-color);
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: var(--text-color);
 }
 
 /* Keywords */
 .keyword-tags .tag {
-    display: inline-block;
-    background-color: var(--light-pink);
-    color: var(--keywords-txt-color);
-    padding: 5px 10px;
-    border-radius: 15px;
-    margin-right: 5px;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-    font-weight: 500;
+  display: inline-block;
+  background-color: var(--light-pink);
+  color: var(--keywords-txt-color);
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin-right: 5px;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  font-weight: 500;
 }
 
 .keyword-tags .tag button {
-    background: none;
-    border: none;
-    color: var(--primary-pink);
-    margin-left: 5px;
-    padding: 0;
-    font-size: 1.1em;
-    line-height: 1;
-    vertical-align: middle;
+  background: none;
+  border: none;
+  color: var(--primary-pink);
+  margin-left: 5px;
+  padding: 0;
+  font-size: 1.1em;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 /* Checkboxes */
 .checkbox-item {
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
 }
 
 .checkbox-item label {
-    margin-left: 8px;
-    cursor: pointer;
-    color: var(--light-text);
+  margin-left: 8px;
+  cursor: pointer;
+  color: var(--light-text);
 }
 
 /* Simple custom checkbox style */
 .checkbox-item input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--grey-border);
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-    vertical-align: middle;
-    margin-top: -2px; /* Fine-tune alignment */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grey-border);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  margin-top: -2px; /* Fine-tune alignment */
 }
 
 .checkbox-item input[type="checkbox"]:checked {
-    background-color: var(--primary-pink);
-    border-color: var(--primary-pink);
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
 }
 
 .checkbox-item input[type="checkbox"]:checked::after {
-    content: '\2713'; /* Checkmark character */
-    color: white;
-    font-size: 12px;
-    position: absolute;
-    top: 0px;
-    left: 2px;
-    font-weight: bold;
+  content: "\2713"; /* Checkmark character */
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 0px;
+  left: 2px;
+  font-weight: bold;
 }
 
 /* Range Slider */
 .range-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-size: 0.9em;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 0.9em;
 }
 .range-header label {
-    color: var(--primary-pink);
+  color: var(--primary-pink);
 }
 .range-header span {
-    color: var(--light-text);
+  color: var(--light-text);
 }
 
 .slider {
-    width: 100%;
-    height: 6px;
-    appearance: none;
-    -webkit-appearance: none;
-    background: var(--grey-border);
-    border-radius: 3px;
-    outline: none;
-    cursor: pointer;
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--grey-border);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
 }
 
 /* Style the thumb (circle) */
 .slider::-webkit-slider-thumb {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: var(--primary-pink);
-    border-radius: 50%;
-    cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--primary-pink);
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: var(--primary-pink);
-    border-radius: 50%;
-    cursor: pointer;
-    border: none; /* Remove default border in Firefox */
+  width: 16px;
+  height: 16px;
+  background: var(--primary-pink);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none; /* Remove default border in Firefox */
 }
 
 /* Results Area */
 .results-area {
-    flex: 1; /* Takes remaining space */
+  flex: 1; /* Takes remaining space */
 }
 
 /* Search and Sort */
 .search-and-sort {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 15px;
 }
 
 .search-container {
-    display: flex;
-    border: 1px solid var(--grey-border);
-    
-    border-radius: 20px;
-    overflow: hidden; /* Keep button contained */
-    max-width: 300px; /* Limit width */
+  display: flex;
+  border: 1px solid var(--grey-border);
+
+  border-radius: 20px;
+  overflow: hidden; /* Keep button contained */
+  max-width: 300px; /* Limit width */
 }
 
 .search-container input[type="search"] {
-    border: none;
-    background-color: var(--grey-background);
-    padding: 8px 15px;
-    outline: none;
-    flex-grow: 1;
+  border: none;
+  background-color: var(--grey-background);
+  padding: 8px 15px;
+  outline: none;
+  flex-grow: 1;
 }
 
 .search-container .search-btn {
-    border: none;
-    background: none;
-    padding: 0 15px;
-    color: var(--primary-pink);
-    font-size: 1.1em;
+  border: none;
+  background: none;
+  padding: 0 15px;
+  color: var(--primary-pink);
+  font-size: 1.1em;
 }
 
 .sort-options {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap; /* Allow buttons to wrap */
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; /* Allow buttons to wrap */
 }
 
 .sort-btn {
-    padding: 8px 15px;
-    border: 1px solid var(--grey-border);
-    border-radius: 20px;
-    background-color: var(--grey-background);
-    color: var(--light-text);
-    font-size: 0.9em;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  padding: 8px 15px;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px;
+  background-color: var(--grey-background);
+  color: var(--light-text);
+  font-size: 0.9em;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 .sort-btn.active {
-    background-color: var(--primary-pink);
-    color: white;
-    border-color: var(--primary-pink);
+  background-color: var(--primary-pink);
+  color: white;
+  border-color: var(--primary-pink);
 }
 .sort-btn i {
-    font-size: 0.8em;
+  font-size: 0.8em;
 }
-
 
 /* Results Grid */
 .results-grid {
-    display: grid;
-    /* Responsive grid: creates as many columns as fit with min 200px width */
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+  display: grid;
+  /* Responsive grid: creates as many columns as fit with min 200px width */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
 }
 
 .result-card {
-    border: 1px solid var(--grey-border);
-    border-radius: 8px;
-    overflow: hidden; /* Ensures image placeholder respects border-radius */
-    background-color: var(--grey-background);
-    transition: box-shadow 0.2s ease-in-out;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  overflow: hidden; /* Ensures image placeholder respects border-radius */
+  background-color: var(--grey-background);
+  transition: box-shadow 0.2s ease-in-out;
 }
 .result-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card-image-placeholder {
-    height: 180px; /* Adjust height as needed */
-    background-color: var(--placeholder-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--grey-background); /* Icon color */
-    font-size: 3em; /* Icon size */
+  height: 180px; /* Adjust height as needed */
+  background-color: var(--placeholder-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-background); /* Icon color */
+  font-size: 3em; /* Icon size */
 }
 
 .card-content {
-    padding: 15px;
+  padding: 15px;
 }
 
 .card-title {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--primary-pink);
-    margin-bottom: 5px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--primary-pink);
+  margin-bottom: 5px;
 }
 
 .card-price {
-    font-size: 1em;
-    font-weight: bold;
-    color: var(--text-color);
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--text-color);
 }
-
 
 /*MAAAAAAAP*/
 
 /* Results Area */
 /* Results Area Layout: Grid and Map side-by-side */
 .results-layout {
-    display: flex;
-    gap: 20px; /* Space between grid and map */
+  display: flex;
+  gap: 20px; /* Space between grid and map */
 }
 
 .results-grid-container {
-    /* Increase the grid's share slightly (optional) */
-    flex: 1 1 65%; /* Example: was 60% */
-    min-width: 300px;
+  /* Increase the grid's share slightly (optional) */
+  flex: 1 1 65%; /* Example: was 60% */
+  min-width: 300px;
 }
 
 .map-container {
-     /* Decrease the map's share */
-    flex: 1 1 35%; /* Example: was 40% */
-    position: sticky;
-    top: 20px;
-    align-self: flex-start;
+  /* Decrease the map's share */
+  flex: 1 1 35%; /* Example: was 40% */
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
 }
 
 #map {
-    /* Decrease the explicit height */
-    height: 400px; /* Example: was 500px */
-    width: 100%;
-    border: 5px solid var(--primary-pink);
-    /* Increase the rounding */
-    border-radius: 15px; /* Example: was 8px, or add if missing */
-    z-index: 1;
-    /* Ensure Leaflet controls respect the border-radius (optional but good) */
-    overflow: hidden;
-    clip-path: inset(0 round 15px); /* Matches border-radius */
+  /* Decrease the explicit height */
+  height: 400px; /* Example: was 500px */
+  width: 100%;
+  border: 5px solid var(--primary-pink);
+  /* Increase the rounding */
+  border-radius: 15px; /* Example: was 8px, or add if missing */
+  z-index: 1;
+  /* Ensure Leaflet controls respect the border-radius (optional but good) */
+  overflow: hidden;
+  clip-path: inset(0 round 15px); /* Matches border-radius */
 }
-
 
 /* ... (rest of CSS) ... */
 
 /* Make popups look okay in dark mode */
 .dark-mode .leaflet-popup-content-wrapper,
 .dark-mode .leaflet-popup-tip {
-    background: #333;
-    color: #fff;
-    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+  background: #333;
+  color: #fff;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
 }
 
 .custom-div-icon {
-    background-color: var(--primary-pink); /* Red color */
-    border: 2px solid #ecf0f1; /* Light border */
-    border-radius: 50%;      /* Make it a circle */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    text-align: center;      /* For potential content inside */
-    line-height: 20px;       /* Adjust if adding text/icons inside */
-    font-weight: bold;
-    color: white;            /* Text color if needed */
+  background-color: var(--primary-pink); /* Red color */
+  border: 2px solid #ecf0f1; /* Light border */
+  border-radius: 50%; /* Make it a circle */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  text-align: center; /* For potential content inside */
+  line-height: 20px; /* Adjust if adding text/icons inside */
+  font-weight: bold;
+  color: white; /* Text color if needed */
 }
 
 /* Optional: Different color */
 .custom-div-icon.blue-marker {
-    background-color: #2980b9; /* Blue color */
+  background-color: #2980b9; /* Blue color */
 }
 .custom-div-icon.green-marker {
-    background-color: #27ae60; /* Green color */
+  background-color: #27ae60; /* Green color */
 }
 
 /* --- Custom Marker Cluster Colors --- */
 
 /* SMALL Clusters (Default: Blue) - Change to Green */
 .marker-cluster-small {
-    background-color: rgba(110, 204, 57, 0.6); /* Semi-transparent green background */
+  background-color: rgba(
+    110,
+    204,
+    57,
+    0.6
+  ); /* Semi-transparent green background */
 }
 .marker-cluster-small div {
-    background-color: rgba(57, 163, 1, 0.6); /* Darker solid green for the number circle */
-    color: #fff; /* Ensure text is visible */
+  background-color: rgba(
+    57,
+    163,
+    1,
+    0.6
+  ); /* Darker solid green for the number circle */
+  color: #fff; /* Ensure text is visible */
 }
 
 /* MEDIUM Clusters (Default: Yellow) - Change to Orange */
 .marker-cluster-medium {
-    background-color: rgba(240, 150, 50, 0.6); /* Semi-transparent orange background */
+  background-color: rgba(
+    240,
+    150,
+    50,
+    0.6
+  ); /* Semi-transparent orange background */
 }
 .marker-cluster-medium div {
-    background-color: rgba(241, 128, 23, 0.6); /* Darker solid orange for the number circle */
-    color: #fff; /* Ensure text is visible */
+  background-color: rgba(
+    241,
+    128,
+    23,
+    0.6
+  ); /* Darker solid orange for the number circle */
+  color: #fff; /* Ensure text is visible */
 }
 
 /* LARGE Clusters (Default: Red) - Change to Purple */
 .marker-cluster-large {
-    background-color: rgba(180, 100, 200, 0.6); /* Semi-transparent purple background */
+  background-color: rgba(
+    180,
+    100,
+    200,
+    0.6
+  ); /* Semi-transparent purple background */
 }
 .marker-cluster-large div {
-    background-color: rgba(128, 61, 155, 0.6); /* Darker solid purple for the number circle */
-    color: #fff; /* Ensure text is visible */
+  background-color: rgba(
+    128,
+    61,
+    155,
+    0.6
+  ); /* Darker solid purple for the number circle */
+  color: #fff; /* Ensure text is visible */
 }
 
 /* General style for all clusters (optional tweaks) */
 .marker-cluster {
-    /* You could potentially change border-radius, box-shadow etc. here */
-    /* Example: Make them slightly more rounded */
-    /* border-radius: 50%; */
+  /* You could potentially change border-radius, box-shadow etc. here */
+  /* Example: Make them slightly more rounded */
+  /* border-radius: 50%; */
 }
 
 .marker-cluster div {
-     /* You could potentially change font-size, font-weight etc. here */
-     /* Example: Make text bolder */
-     /* font-weight: bold; */
+  /* You could potentially change font-size, font-weight etc. here */
+  /* Example: Make text bolder */
+  /* font-weight: bold; */
 }
 
 /* Also ensure text color works in dark mode if background changes significantly */
 .dark-mode .marker-cluster div {
-    /* Example: Keep text white even in dark mode */
-    color: #fff;
+  /* Example: Keep text white even in dark mode */
+  color: #fff;
 }
-
-
-
-
-
-
-
-
-
-
 
 /* --- Login Page Specific Styles (Updated) --- */
 
 /* Wrapper to center the login box vertically and horizontally */
 .login-page-wrapper {
-    display: flex;
-    justify-content: center;
-     /* Align items in the center vertically */
-    align-items: center;
-    padding-top: 40px; /* Can reduce top padding now */
-    padding-bottom: 60px;
-    /* Adjusted min-height calculation slightly */
-    min-height: calc(100vh - 71px - 100px); /* Full height minus header height minus padding */
+  display: flex;
+  justify-content: center;
+  /* Align items in the center vertically */
+  align-items: center;
+  padding-top: 40px; /* Can reduce top padding now */
+  padding-bottom: 60px;
+  /* Adjusted min-height calculation slightly */
+  min-height: calc(
+    100vh - 71px - 100px
+  ); /* Full height minus header height minus padding */
 }
 
 .login-container {
-    background-color: #fff; /* Use white background for contrast in light mode */
-    padding: 40px 45px; /* Slightly increase padding */
-    border: 1px solid var(--grey-border);
-    border-radius: 10px; /* Slightly more rounded */
-    max-width: 450px;  /* Slightly wider */
-    width: 100%;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
-    margin: 20px;
-    text-align: center; /* Center align text within the container by default */
+  background-color: #fff; /* Use white background for contrast in light mode */
+  padding: 40px 45px; /* Slightly increase padding */
+  border: 1px solid var(--grey-border);
+  border-radius: 10px; /* Slightly more rounded */
+  max-width: 450px; /* Slightly wider */
+  width: 100%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  margin: 20px;
+  text-align: center; /* Center align text within the container by default */
 }
 
 .login-container h2 {
-    text-align: center; /* Explicitly center */
-    color: var(--primary-pink);
-    margin-bottom: 35px; /* More space below heading */
-    font-size: 2.3em; /* INCREASED heading size */
-    font-weight: 600;
+  text-align: center; /* Explicitly center */
+  color: var(--primary-pink);
+  margin-bottom: 35px; /* More space below heading */
+  font-size: 2.3em; /* INCREASED heading size */
+  font-weight: 600;
 }
 
 .form-group {
-    margin-bottom: 22px;
-    text-align: left; /* Keep form groups aligned left for readability */
+  margin-bottom: 22px;
+  text-align: left; /* Keep form groups aligned left for readability */
 }
 
 .login-container label {
-    display: block;
-    margin-bottom: 10px; /* More space below label */
-    font-weight: 500;
-    color: var(--text-color);
-    font-size: 1.05em; /* INCREASED label size */
-    text-align: left; /* Ensure labels align left */
+  display: block;
+  margin-bottom: 10px; /* More space below label */
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 1.05em; /* INCREASED label size */
+  text-align: left; /* Ensure labels align left */
 }
 
 .login-container input[type="email"],
 .login-container input[type="password"] {
-    width: 100%;
-    padding: 14px 15px; /* Slightly taller inputs */
-    border: 1px solid var(--grey-border);
-    border-radius: 6px;
-    font-size: 1em; /* Keep input text standard size or slightly increase if needed */
-    background-color: var(--grey-background);
-    color: var(--text-color);
-    font-family: inherit; /* ADDED: Inherit font from body/parent */
+  width: 100%;
+  padding: 14px 15px; /* Slightly taller inputs */
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  font-size: 1em; /* Keep input text standard size or slightly increase if needed */
+  background-color: var(--grey-background);
+  color: var(--text-color);
+  font-family: inherit; /* ADDED: Inherit font from body/parent */
 }
 
 .login-container input[type="email"]:focus,
 .login-container input[type="password"]:focus {
-    outline: none;
-    border-color: var(--primary-pink);
-    box-shadow: 0 0 0 3px var(--light-pink); /* Slightly larger focus ring */
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px var(--light-pink); /* Slightly larger focus ring */
 }
 
 /* Style for the Forgot Password link */
 .form-options {
-    display: block; /* Change display */
-    text-align: right; /* Align link to the right */
-    margin-bottom: 30px; /* More space before button */
+  display: block; /* Change display */
+  text-align: right; /* Align link to the right */
+  margin-bottom: 30px; /* More space before button */
 }
 
 .forgot-password {
-    color: var(--primary-pink);
-    text-decoration: none;
-    font-size: 0.95em; /* Slightly larger */
+  color: var(--primary-pink);
+  text-decoration: none;
+  font-size: 0.95em; /* Slightly larger */
 }
 
 .forgot-password:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Login Submit Button */
 .btn-login-submit {
-    width: 100%;
-    padding: 14px 20px; /* Match input height */
-    font-size: 1.1em; /* Slightly larger button text */
-    text-transform: uppercase;
-    letter-spacing: 0.8px; /* More spacing */
+  width: 100%;
+  padding: 14px 20px; /* Match input height */
+  font-size: 1.1em; /* Slightly larger button text */
+  text-transform: uppercase;
+  letter-spacing: 0.8px; /* More spacing */
 }
 
 /* Links below the form */
 .login-links {
-    text-align: center; /* Ensure centered */
-    margin-top: 30px; /* More space above */
-    font-size: 1em; /* INCREASED size */
-    color: var(--light-text);
+  text-align: center; /* Ensure centered */
+  margin-top: 30px; /* More space above */
+  font-size: 1em; /* INCREASED size */
+  color: var(--light-text);
 }
 
 .login-links a {
-    color: var(--primary-pink);
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--primary-pink);
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .login-links a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-
 
 /* --- Dark Mode Login Styles (Check for consistency) --- */
 .dark-mode .login-container {
-    background-color: #1e1e1e;
-    border-color: var(--grey-border);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); /* Adjust dark shadow */
+  background-color: #1e1e1e;
+  border-color: var(--grey-border);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); /* Adjust dark shadow */
 }
 
 /* Ensure labels, inputs, links use dark mode text color */
@@ -603,33 +621,369 @@ button {
 .dark-mode .login-container input[type="email"],
 .dark-mode .login-container input[type="password"],
 .dark-mode .login-links {
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .dark-mode .login-container input[type="email"],
 .dark-mode .login-container input[type="password"] {
-    background-color: var(--grey-background);
-    border-color: var(--grey-border);
+  background-color: var(--grey-background);
+  border-color: var(--grey-border);
 }
 
 .dark-mode .login-container input::placeholder {
-    color: var(--light-text);
+  color: var(--light-text);
 }
 
 .dark-mode .login-container input[type="email"]:focus,
 .dark-mode .login-container input[type="password"]:focus {
-    box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5); /* Dark mode focus */
+  box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5); /* Dark mode focus */
 }
 
 /* Ensure link colors are correct */
 .dark-mode .forgot-password,
 .dark-mode .login-links a {
-    color: var(--primary-pink);
+  color: var(--primary-pink);
 }
 .dark-mode .login-links {
-     color: var(--light-text); /* Base text color for the links para */
+  color: var(--light-text); /* Base text color for the links para */
 }
 /* Ensure button text remains white */
 .dark-mode .btn-login-submit {
-    color: white;
+  color: white;
+}
+
+/* --- Register Page Specific Styles --- */
+/* (Many styles are reused from login, but we define the container specifically) */
+
+/* Wrapper - Can reuse login style or define separately */
+.register-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align to top */
+  padding-top: 40px; /* Adjust top padding */
+  padding-bottom: 60px;
+  min-height: calc(100vh - 71px - 40px); /* Adjust padding in calculation */
+}
+
+.register-container {
+  background-color: #fff; /* Match login */
+  padding: 30px 40px;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  max-width: 450px; /* Slightly wider potentially for more fields */
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin: 20px;
+}
+
+/* Reuse heading style from login, but target register container */
+.register-container h2 {
+  text-align: center;
+  color: var(--primary-pink);
+  margin-bottom: 25px;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+/* Reuse form group style */
+.register-container .form-group {
+  margin-bottom: 20px;
+}
+
+/* Reuse label style */
+.register-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.95em;
+}
+
+/* Reuse input style */
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="text"] {
+  /* Added text input */
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  font-size: 1em;
+  background-color: var(--grey-background);
+  color: var(--text-color);
+}
+
+/* Reuse focus style */
+.register-container input[type="email"]:focus,
+.register-container input[type="password"]:focus,
+.register-container input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 2px var(--light-pink);
+}
+
+/* Specific style for Terms Agreement Checkbox Area */
+.terms-group {
+  display: flex;
+  align-items: center; /* Vertically align checkbox and label */
+  margin-bottom: 25px; /* Space before button */
+}
+
+.terms-group input[type="checkbox"] {
+  margin-right: 10px;
+  /* Optional: Adjust vertical alignment if needed */
+  /* vertical-align: middle; */
+  /* Use custom checkbox style from main CSS if desired */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grey-border);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  flex-shrink: 0; /* Prevent checkbox from shrinking */
+}
+.terms-group input[type="checkbox"]:checked {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+
+.terms-group input[type="checkbox"]:checked::after {
+  content: "\2713"; /* Checkmark character */
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 0px;
+  left: 2px;
+  font-weight: bold;
+}
+
+.terms-group label {
+  margin-bottom: 0; /* Reset margin-bottom for label in this group */
+  font-size: 0.9em;
+  color: var(--light-text);
+  line-height: 1.4; /* Improve readability if label wraps */
+}
+
+.terms-group label a {
+  color: var(--primary-pink);
+  text-decoration: none;
+}
+.terms-group label a:hover {
+  text-decoration: underline;
+}
+
+/* Register Submit Button */
+.btn-register-submit {
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Reuse login links style */
+.register-container .login-links {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.95em;
+  color: var(--light-text);
+}
+
+.register-container .login-links a {
+  color: var(--primary-pink);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.register-container .login-links a:hover {
+  text-decoration: underline;
+}
+
+/* --- Dark Mode Register Styles --- */
+.dark-mode .register-container {
+  background-color: #1e1e1e; /* Match login */
+  border-color: var(--grey-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .register-container label {
+  color: var(--text-color);
+}
+
+.dark-mode .register-container input[type="email"],
+.dark-mode .register-container input[type="password"],
+.dark-mode .register-container input[type="text"] {
+  background-color: var(--grey-background);
+  border-color: var(--grey-border);
+  color: var(--text-color);
+}
+
+.dark-mode .register-container input::placeholder {
+  color: var(--light-text);
+}
+
+.dark-mode .register-container input[type="email"]:focus,
+.dark-mode .register-container input[type="password"]:focus,
+.dark-mode .register-container input[type="text"]:focus {
+  box-shadow: 0 0 0 2px rgba(255, 0, 127, 0.5); /* Match login */
+}
+
+/* Dark mode for terms group */
+.dark-mode .terms-group label {
+  color: var(--light-text);
+}
+.dark-mode .terms-group input[type="checkbox"] {
+  border-color: var(--grey-border);
+}
+.dark-mode .terms-group input[type="checkbox"]:checked {
+  background-color: var(--primary-pink); /* Keep checkmark background */
+  border-color: var(--primary-pink);
+}
+/* Ensure checkmark itself is still visible */
+.dark-mode .terms-group input[type="checkbox"]:checked::after {
+  color: white;
+}
+
+.dark-mode .register-container .login-links {
+  color: var(--light-text);
+}
+
+.dark-mode .btn-register-submit {
+  color: white; /* Ensure button text is white */
+}
+
+/* Basic Chat Widget Styling - Customize as needed */
+#chat-widget-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-width: 90%;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  background-color: #fff; /* Light mode background */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack elements vertically */
+  overflow: hidden; /* Clip content to rounded corners */
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Dark Mode Specific Container Background */
+.dark-mode #chat-widget-container {
+  background-color: #1e1e1e; /* Dark mode background */
+  border-color: var(--grey-border); /* Use dark mode border */
+}
+
+#chat-header {
+  background-color: var(--primary-pink);
+  color: white;
+  padding: 10px 15px;
+  font-weight: bold;
+  border-bottom: 1px solid var(--grey-border);
+  border-top-left-radius: 8px; /* Match container rounding */
+  border-top-right-radius: 8px;
+}
+
+#chatbox {
+  flex-grow: 1; /* Allow chatbox to take available space */
+  height: 300px; /* Fixed height, adjust as needed */
+  overflow-y: auto; /* Enable scrolling for messages */
+  padding: 15px;
+  background-color: var(--grey-background); /* Light grey background */
+  border-bottom: 1px solid var(--grey-border);
+}
+
+/* Dark Mode Chatbox Background */
+.dark-mode #chatbox {
+  background-color: var(--grey-background); /* Use dark mode grey */
+  border-color: var(--grey-border);
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 15px; /* Bubble style */
+  line-height: 1.4;
+  max-width: 80%; /* Prevent messages from taking full width */
+  word-wrap: break-word; /* Break long words */
+}
+
+.user-message {
+  background-color: var(--primary-pink); /* User message color */
+  color: white;
+  margin-left: auto; /* Align user messages to the right */
+  border-bottom-right-radius: 5px; /* Adjust rounding */
+}
+
+.ai-message {
+  background-color: #e0e0e0; /* AI message color */
+  color: #333; /* AI text color */
+  margin-right: auto; /* Align AI messages to the left */
+  border-bottom-left-radius: 5px; /* Adjust rounding */
+}
+
+/* Dark Mode AI message */
+.dark-mode .ai-message {
+  background-color: #444; /* Darker grey */
+  color: #eee; /* Lighter text */
+}
+
+.loading {
+  color: #888;
+  font-style: italic;
+}
+.dark-mode .loading {
+  color: #aaa;
+}
+
+#chat-input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--grey-border); /* Separator line */
+  background-color: #fff; /* Match container */
+}
+
+/* Dark Mode Input Area */
+.dark-mode #chat-input-area {
+  background-color: #1e1e1e;
+  border-color: var(--grey-border);
+}
+
+#userInput {
+  flex-grow: 1; /* Input takes most space */
+  padding: 8px 10px;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px; /* Rounded input */
+  margin-right: 8px;
+  background-color: var(--grey-background); /* Input background */
+  color: var(--text-color); /* Input text color */
+}
+.dark-mode #userInput {
+  background-color: var(--grey-background); /* Dark input bg */
+  border-color: var(--grey-border);
+  color: var(--text-color); /* Dark input text */
+}
+.dark-mode #userInput::placeholder {
+  color: var(--light-text);
+}
+
+#sendButton {
+  padding: 8px 15px;
+  border: none;
+  background-color: var(--primary-pink);
+  color: white;
+  border-radius: 20px; /* Rounded button */
+  cursor: pointer;
+  font-weight: bold;
+}
+#sendButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.dark-mode #sendButton:disabled {
+  background-color: #555;
 }
