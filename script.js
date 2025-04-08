@@ -26,7 +26,6 @@ if (themeToggleButton) {
 // --- Sample Housing Data ---
 // IMPORTANT: Replace placeholder lat/lng coordinates with real data!
 const allHousingData = [
-    // Placeholder coordinates roughly around Paris
     { id: 10, name: "Campus Tower Studio", price: 850, size: 25, type: "Studio", image: null, rating: 4.2, lat: 48.858, lng: 2.294 },
     { id: 9, name: "Downtown Apartment", price: 1200, size: 60, type: "Apartment", image: null, rating: 4.5, lat: 48.860, lng: 2.337 },
     { id: 8, name: "Riverside Shared Room", price: 600, size: 18, type: "Shared Room", image: null, rating: 3.8, lat: 48.853, lng: 2.349 },
@@ -37,8 +36,16 @@ const allHousingData = [
     { id: 3, name: "Modern Apartment", price: 1350, size: 70, type: "Apartment", image: null, rating: 4.6, lat: 48.845, lng: 2.372 },
     { id: 2, name: "Large Family House", price: 3200, size: 200, type: "House", image: null, rating: 4.8, lat: 48.838, lng: 2.270 },
     { id: 1, name: "City Center Studio", price: 950, size: 30, type: "Studio", image: null, rating: 4.3, lat: 48.865, lng: 2.320 },
-    { id: 11, name: "Quiet House Room", price: 700, size: 20, type: "Shared Room", image: null, rating: 3.9, lat: 48.820, lng: 2.355 }
+    { id: 11, name: "Quiet House Room", price: 700, size: 20, type: "Shared Room", image: null, rating: 3.9, lat: 48.820, lng: 2.355 },
+
+    // Fake housing-style entries for KFC locations
+    { id: 12, name: "Colonel's Loft", price: 999, size: 28, type: "Studio", image: null, rating: 4.1, lat: 48.8625, lng: 2.3491 },
+    { id: 13, name: "Fried View Apartment", price: 1450, size: 65, type: "Apartment", image: null, rating: 4.4, lat: 48.8837, lng: 2.3266 },
+    { id: 14, name: "Bucket Room in Ménilmontant", price: 580, size: 17, type: "Shared Room", image: null, rating: 3.7, lat: 48.8650, lng: 2.3890 },
+    { id: 15, name: "Zinger's Terrace House", price: 2100, size: 140, type: "House", image: null, rating: 4.6, lat: 48.8322, lng: 2.3250 },
+    { id: 16, name: "Spicy Studio Gare de l'Est", price: 890, size: 24, type: "Studio", image: null, rating: 4.0, lat: 48.8765, lng: 2.3574 }
 ];
+
 
 // --- DOM Element Selection ---
 const resultsGrid = document.getElementById('results-grid');
