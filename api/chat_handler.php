@@ -83,7 +83,7 @@ $payload = json_encode([
         ]
         // Optionally: Additional conversation history can be appended here
     ],
-    'max_tokens' => 150,
+    'max_tokens' => 200,
     'temperature' => 0.7,
 ]);
 

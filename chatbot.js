@@ -19,19 +19,24 @@ document.addEventListener("DOMContentLoaded", () => {
   function addMessage(text, sender) {
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message");
+    // Use different CSS classes depending on sender
     messageDiv.classList.add(sender === "user" ? "user-message" : "ai-message");
-
-    // Simple text sanitation (replace potential HTML tags - basic protection)
-    // For more robust sanitation, use a library like DOMPurify if needed.
-    messageDiv.textContent = text; // Use textContent to prevent HTML injection
-
+  
+    if (sender === "ai") {
+      // Convert Markdown to HTML using Marked for AI messages
+      messageDiv.innerHTML = marked.parse(text);
+    } else {
+      // For user messages, continue to use textContent to prevent accidental HTML injection
+      messageDiv.textContent = text;
+    }
+  
     chatbox.appendChild(messageDiv);
-    // Scroll to the bottom of the chatbox smoothly
     chatbox.scrollTo({
       top: chatbox.scrollHeight,
       behavior: "smooth",
     });
   }
+  
 
   function showLoading() {
     // Check if loading indicator already exists
@@ -167,13 +172,20 @@ function addChatMessage(message, sender = "bot") {
   if (!chatMessages) return;
 
   const messageElement = document.createElement("div");
-  messageElement.classList.add("message", sender); // 'user' or 'bot'
-  messageElement.textContent = message;
-  chatMessages.appendChild(messageElement);
+  messageElement.classList.add("message", sender);
 
+  if (sender === "bot") {
+    // Convert markdown text for bot messages
+    messageElement.innerHTML = marked.parse(message);
+  } else {
+    messageElement.textContent = message;
+  }
+  
+  chatMessages.appendChild(messageElement);
   // Auto-scroll to the bottom
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
 
 // --- Function to show/hide loading indicator ---
 function showLoading(isLoading) {
