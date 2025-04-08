@@ -613,15 +613,3 @@
   // Run initialization when the DOM is fully loaded
   document.addEventListener("DOMContentLoaded", initialize);
 })(); // End IIFE
-// HAMBURGER MENU TOGGLE
-const hamburgerBtn = document.querySelector('.hamburger');
-const mainNav = document.querySelector('.main-nav');
-
-hamburgerBtn.addEventListener('click', () => {
-  // Toggle the nav-open class
-  mainNav.classList.toggle('nav-open');
-
-  // For accessibility: update the aria-expanded attribute
-  const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true' || false;
-  hamburgerBtn.setAttribute('aria-expanded', !expanded);
-});
