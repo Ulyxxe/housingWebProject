@@ -37,7 +37,12 @@ const allHousingData = [
     { id: 3, name: "Modern Apartment", price: 1350, size: 70, type: "Apartment", image: null, rating: 4.6, lat: 48.845, lng: 2.372 },
     { id: 2, name: "Large Family House", price: 3200, size: 200, type: "House", image: null, rating: 4.8, lat: 48.838, lng: 2.270 },
     { id: 1, name: "City Center Studio", price: 950, size: 30, type: "Studio", image: null, rating: 4.3, lat: 48.865, lng: 2.320 },
-    { id: 11, name: "Quiet House Room", price: 700, size: 20, type: "Shared Room", image: null, rating: 3.9, lat: 48.820, lng: 2.355 }
+    { id: 11, name: "Quiet House Room", price: 700, size: 20, type: "Shared Room", image: null, rating: 3.9, lat: 48.820, lng: 2.355 },
+    { id: 1, name: "KFC Gare de l'Est", address: "31-35 boulevard de Sébastopol, 75001 Paris, France", lat: 48.8625, lng: 2.3491 },
+    { id: 2, name: "KFC Place de Clichy", address: "10 bis place de Clichy, 75018 Paris, France", lat: 48.8837, lng: 2.3266 },
+    { id: 3, name: "KFC Ménilmontant", address: "150 boulevard de Ménilmontant, 75020 Paris, France", lat: 48.8650, lng: 2.3890 },
+    { id: 4, name: "KFC Montparnasse", address: "4 avenue Jean Moulin, 75014 Paris, France", lat: 48.8322, lng: 2.3250 },
+    { id: 5, name: "KFC Gare de l'Est", address: "Proche de la station de métro Gare de l'Est, Paris, France", lat: 48.8765, lng: 2.3574 }
 ];
 
 // --- DOM Element Selection ---
