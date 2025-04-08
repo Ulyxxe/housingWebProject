@@ -468,3 +468,168 @@ button {
     /* Example: Keep text white even in dark mode */
     color: #fff;
 }
+
+
+
+
+
+
+
+
+
+
+
+/* --- Login Page Specific Styles (Updated) --- */
+
+/* Wrapper to center the login box vertically and horizontally */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;
+     /* Align items in the center vertically */
+    align-items: center;
+    padding-top: 40px; /* Can reduce top padding now */
+    padding-bottom: 60px;
+    /* Adjusted min-height calculation slightly */
+    min-height: calc(100vh - 71px - 100px); /* Full height minus header height minus padding */
+}
+
+.login-container {
+    background-color: #fff; /* Use white background for contrast in light mode */
+    padding: 40px 45px; /* Slightly increase padding */
+    border: 1px solid var(--grey-border);
+    border-radius: 10px; /* Slightly more rounded */
+    max-width: 450px;  /* Slightly wider */
+    width: 100%;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    margin: 20px;
+    text-align: center; /* Center align text within the container by default */
+}
+
+.login-container h2 {
+    text-align: center; /* Explicitly center */
+    color: var(--primary-pink);
+    margin-bottom: 35px; /* More space below heading */
+    font-size: 2.3em; /* INCREASED heading size */
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 22px;
+    text-align: left; /* Keep form groups aligned left for readability */
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 10px; /* More space below label */
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1.05em; /* INCREASED label size */
+    text-align: left; /* Ensure labels align left */
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 14px 15px; /* Slightly taller inputs */
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    font-size: 1em; /* Keep input text standard size or slightly increase if needed */
+    background-color: var(--grey-background);
+    color: var(--text-color);
+    font-family: inherit; /* ADDED: Inherit font from body/parent */
+}
+
+.login-container input[type="email"]:focus,
+.login-container input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px var(--light-pink); /* Slightly larger focus ring */
+}
+
+/* Style for the Forgot Password link */
+.form-options {
+    display: block; /* Change display */
+    text-align: right; /* Align link to the right */
+    margin-bottom: 30px; /* More space before button */
+}
+
+.forgot-password {
+    color: var(--primary-pink);
+    text-decoration: none;
+    font-size: 0.95em; /* Slightly larger */
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Login Submit Button */
+.btn-login-submit {
+    width: 100%;
+    padding: 14px 20px; /* Match input height */
+    font-size: 1.1em; /* Slightly larger button text */
+    text-transform: uppercase;
+    letter-spacing: 0.8px; /* More spacing */
+}
+
+/* Links below the form */
+.login-links {
+    text-align: center; /* Ensure centered */
+    margin-top: 30px; /* More space above */
+    font-size: 1em; /* INCREASED size */
+    color: var(--light-text);
+}
+
+.login-links a {
+    color: var(--primary-pink);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+
+/* --- Dark Mode Login Styles (Check for consistency) --- */
+.dark-mode .login-container {
+    background-color: #1e1e1e;
+    border-color: var(--grey-border);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); /* Adjust dark shadow */
+}
+
+/* Ensure labels, inputs, links use dark mode text color */
+.dark-mode .login-container label,
+.dark-mode .login-container input[type="email"],
+.dark-mode .login-container input[type="password"],
+.dark-mode .login-links {
+    color: var(--text-color);
+}
+
+.dark-mode .login-container input[type="email"],
+.dark-mode .login-container input[type="password"] {
+    background-color: var(--grey-background);
+    border-color: var(--grey-border);
+}
+
+.dark-mode .login-container input::placeholder {
+    color: var(--light-text);
+}
+
+.dark-mode .login-container input[type="email"]:focus,
+.dark-mode .login-container input[type="password"]:focus {
+    box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5); /* Dark mode focus */
+}
+
+/* Ensure link colors are correct */
+.dark-mode .forgot-password,
+.dark-mode .login-links a {
+    color: var(--primary-pink);
+}
+.dark-mode .login-links {
+     color: var(--light-text); /* Base text color for the links para */
+}
+/* Ensure button text remains white */
+.dark-mode .btn-login-submit {
+    color: white;
+}
