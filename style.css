@@ -1179,7 +1179,1268 @@ body.map-resizing {
       animation: spin 1.5s linear infinite;
     }
 
-<<<<<<< HEAD
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
+
+/* ========================
+     End of Main Styles
+     ======================== */
+
+/* ========================================
+   Base Styles & CSS Variables
+   ======================================== */
+:root {
+  --primary-pink: #ff007f; /* Hot pink */
+  --light-pink: #ffe3f2; /* Light pink for tags/highlights */
+  --keywords-txt-color: var(--primary-pink);
+  --grey-border: #e0e0e0;
+  --grey-background: #f8f8f8;
+  --text-color: #333;
+  --light-text: #666;
+  --placeholder-bg: #eaeaea;
+  --container-bg: #fff; /* Standard container background */
+  --input-bg: var(--grey-background); /* Standard input background */
+  --body-bg: #fff; /* Standard body background */
+  --hover-lift: -2px;
+  --hover-scale: 1.05;
+  --transition-speed: 0.2s;
+  --transition-timing: ease-in-out;
+  /* Add variables for language hover if you want more control */
+  --lang-hover-bg: rgba(255, 0, 127, 0.1); /* Light pink translucent */
+  --lang-hover-text: var(--primary-pink);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--body-bg);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Dark Mode Variables --- */
+.dark-mode {
+  --keywords-txt-color: #ffe3f2;
+  --grey-border: #444;
+  --grey-background: #333;
+  --text-color: #fff;
+  --light-text: #bbb;
+  --placeholder-bg: #555;
+  --container-bg: #1e1e1e; /* Dark container background */
+  --input-bg: #3a3a3c; /* Dark input background */
+  --body-bg: #121212; /* Dark body background */
+  /* Dark mode language hover */
+  --lang-hover-bg: rgba(
+    255,
+    0,
+    127,
+    0.2
+  ); /* Slightly stronger pink translucent */
+  --lang-hover-text: #ffe3f2; /* Light pink text */
+}
+
+/* --- Basic Element Styling --- */
+a {
+  text-decoration: none;
+  color: var(--text-color);
+  transition: color var(--transition-speed) var(--transition-timing);
+}
+a:hover {
+  color: var(--primary-pink);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) var(--transition-timing),
+    border-color var(--transition-speed) var(--transition-timing),
+    transform var(--transition-speed) var(--transition-timing),
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+/* Common container style for discrete sections */
+.content-box {
+  background-color: var(--container-bg);
+  padding: 30px 40px;
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  margin-bottom: 20px; /* Add default spacing */
+}
+.dark-mode .content-box {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+       Header & Navigation
+       ======================================== */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  border-bottom: 1px solid var(--grey-border);
+  background-color: var(--body-bg);
+  position: sticky; /* Make header sticky */
+  top: 0;
+  z-index: 900; /* Ensure header is above most content */
+}
+
+.logo {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: var(--primary-pink);
+  letter-spacing: -1px;
+  transition: transform var(--transition-speed) var(--transition-timing);
+}
+.logo:hover {
+  transform: scale(1.03);
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 0; /* Ensure no default padding */
+  margin: 0; /* Ensure no default margin */
+}
+
+.main-nav a {
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 2px;
+}
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-pink);
+  transition: width var(--transition-speed) var(--transition-timing);
+}
+.main-nav a:hover::after {
+  width: 100%;
+}
+
+/* Hamburger Menu Button - Hidden by default */
+.hamburger {
+  display: none; /* Shown via media query */
+  flex-direction: column;
+  justify-content: space-around; /* Evenly space bars */
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 950; /* Above nav links if they overlay */
+}
+.hamburger .bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+}
+/* No need for separate dark mode bar color if var(--text-color) is used */
+
+/* Hamburger Animation (Add class 'active' via JS) */
+.hamburger.active .bar:nth-child(1) {
+  transform: translateY(10.5px) rotate(45deg); /* Adjusted translate for 3px height */
+}
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active .bar:nth-child(3) {
+  transform: translateY(-10.5px) rotate(-45deg); /* Adjusted translate */
+}
+
+/* ========================================
+       Buttons
+       ======================================== */
+/* (Keep existing .btn, .btn-signin, .btn-register, icon button styles) */
+.btn {
+  padding: 8px 18px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9em;
+  /* transition inherited from button base */
+}
+.btn:hover {
+  transform: translateY(var(--hover-lift));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+.btn:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.dark-mode .btn:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+.dark-mode .btn:active {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.btn-signin {
+  /* Also used for secondary actions like logout */
+  background-color: var(--grey-background);
+  border-color: var(--grey-border);
+  color: var(--text-color);
+}
+.btn-signin:hover {
+  background-color: var(--grey-border);
+  /* transform inherited */
+}
+
+.btn-register {
+  /* Also used for primary actions */
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: white;
+}
+.btn-register:hover {
+  background-color: #d6006a;
+  border-color: #d6006a;
+  /* transform inherited */
+}
+
+/* Icon/Utility Buttons */
+#theme-toggle,
+.search-btn,
+#chat-toggle-button,
+#chat-send-button,
+#chat-close-button,
+.btn-view-toggle {
+  /* If you add a map view toggle button */
+  background: none;
+  border: none;
+  padding: 5px;
+  color: inherit; /* Inherit text color */
+  font-size: 1.2em; /* Adjust size as needed */
+  line-height: 1;
+  /* specific styles defined later, inherit base transitions */
+}
+#theme-toggle:hover,
+  .search-btn:hover,
+  #chat-toggle-button:hover, /* Exclude main chat bubble */
+  #chat-send-button:hover,
+  #chat-close-button:hover,
+  .btn-view-toggle:hover {
+  color: var(--primary-pink); /* Add color change on hover */
+  transform: scale(1.1) translateY(var(--hover-lift)); /* Combine effects */
+}
+#theme-toggle:active,
+  .search-btn:active,
+  /* #chat-toggle-button:active, */ /* Exclude main chat bubble */
+  #chat-send-button:active,
+  #chat-close-button:active,
+  .btn-view-toggle:active {
+  transform: scale(1) translateY(0); /* Reset on active */
+}
+/* Special styles for main chat toggle button are below in chat section */
+
+/* ========================================
+       Main Layout & Index Page Components
+       ======================================== */
+/* (Keep existing .main-content-wrapper, .filters-sidebar, .filter-group, .keyword-tags, .checkbox-item, .range-header, .slider styles) */
+.main-content-wrapper {
+  display: flex;
+  gap: 30px;
+  padding: 30px 40px;
+}
+
+/* --- Sidebar --- */
+.filters-sidebar {
+  flex: 0 0 250px; /* Fixed width */
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  padding: 20px;
+  align-self: flex-start; /* Stick to top */
+  height: fit-content;
+  background-color: var(--container-bg);
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* Theme transition */
+}
+
+.filter-group {
+  margin-bottom: 25px;
+}
+.filter-group:last-child {
+  margin-bottom: 0;
+}
+.filter-group h3 {
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+/* --- Keywords --- (If used) */
+.keyword-tags .tag {
+  display: inline-block;
+  background-color: var(--light-pink);
+  color: var(--keywords-txt-color);
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 0 5px 8px 0;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: transform var(--transition-speed) var(--transition-timing),
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+.keyword-tags .tag:hover {
+  transform: translateY(var(--hover-lift));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.keyword-tags .tag button {
+  background: none;
+  border: none;
+  color: var(--primary-pink);
+  margin-left: 5px;
+  padding: 0;
+  font-size: 1.1em;
+  line-height: 1;
+  vertical-align: middle;
+  transition: transform var(--transition-speed) var(--transition-timing);
+}
+.keyword-tags .tag button:hover {
+  transform: scale(1.2);
+}
+
+/* --- Unified Checkbox Styling --- */
+.checkbox-item,
+.terms-group {
+  /* Common parent styles */
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 3px 0; /* Padding for hover effect */
+  border-radius: 4px;
+  transition: background-color var(--transition-speed) var(--transition-timing);
+  cursor: pointer; /* Indicate the whole item is clickable */
+}
+.checkbox-item:hover,
+.terms-group:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+.dark-mode .checkbox-item:hover,
+.dark-mode .terms-group:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.checkbox-item input[type="checkbox"],
+.terms-group input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grey-border);
+  border-radius: 3px;
+  position: relative;
+  vertical-align: middle;
+  margin-top: -1px; /* Fine-tune alignment */
+  margin-right: 8px; /* Space between box and label */
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-timing);
+}
+.checkbox-item input[type="checkbox"]:hover,
+.terms-group input[type="checkbox"]:hover {
+  transform: scale(1.1);
+  border-color: var(--primary-pink);
+}
+.checkbox-item input[type="checkbox"]:checked,
+.terms-group input[type="checkbox"]:checked {
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+}
+.checkbox-item input[type="checkbox"]:checked::after,
+.terms-group input[type="checkbox"]:checked::after {
+  content: "\2713";
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 0px;
+  left: 2px;
+  font-weight: bold;
+}
+
+.checkbox-item label, /* Filter label */
+    .terms-group label {
+  /* Terms label */
+  color: var(--light-text);
+  line-height: 1.4;
+  cursor: pointer;
+}
+.terms-group label {
+  font-size: 0.9em;
+} /* Specific size for terms */
+.terms-group label a {
+  color: var(--primary-pink);
+}
+.terms-group label a:hover {
+  text-decoration: underline;
+}
+
+/* --- Range Slider --- */
+.range-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+.range-header label {
+  color: var(--primary-pink);
+}
+.range-header span {
+  color: var(--light-text);
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--grey-border);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-timing);
+}
+.slider:hover {
+  background-color: color-mix(in srgb, var(--grey-border) 80%, black);
+}
+/* Thumb */
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--primary-pink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-timing);
+}
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 5px var(--primary-pink);
+}
+.slider::-moz-range-thumb {
+  /* Firefox */
+  width: 16px;
+  height: 16px;
+  background: var(--primary-pink);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-speed) var(--transition-timing);
+}
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 5px var(--primary-pink);
+}
+
+/* --- Results Area --- */
+/* (Keep existing .results-area, .search-and-sort, .search-container, .sort-options, .sort-btn styles) */
+.results-area {
+  flex: 1;
+  min-width: 0; /* Allow shrinking */
+}
+
+/* --- Search and Sort --- */
+.search-and-sort {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.search-container {
+  display: flex;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px;
+  overflow: hidden;
+  max-width: 300px;
+  background-color: var(--input-bg);
+  transition: all var(--transition-speed) var(--transition-timing);
+  flex-grow: 1; /* Allow search to grow if space allows */
+}
+.search-container:hover,
+.search-container:focus-within {
+  /* Add focus-within for highlight */
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 5px var(--light-pink);
+}
+.dark-mode .search-container:hover,
+.dark-mode .search-container:focus-within {
+  box-shadow: 0 0 5px rgba(255, 0, 127, 0.5);
+}
+
+.search-container input[type="search"] {
+  border: none;
+  background-color: transparent;
+  padding: 8px 15px;
+  outline: none;
+  flex-grow: 1;
+  color: var(--text-color);
+  font-size: 0.95em;
+  min-width: 100px; /* Prevent it becoming too small */
+}
+.dark-mode .search-container input[type="search"]::placeholder {
+  color: var(--light-text);
+}
+.search-container .search-btn {
+  border: none;
+  background: none;
+  padding: 0 15px;
+  color: var(--primary-pink);
+  font-size: 1.1em;
+}
+
+.sort-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sort-btn {
+  padding: 8px 15px;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px;
+  background-color: var(--grey-background);
+  color: var(--light-text);
+  font-size: 0.9em;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sort-btn:not(.active):hover {
+  border-color: color-mix(in srgb, var(--grey-border) 70%, black);
+  color: var(--text-color);
+  transform: translateY(var(--hover-lift));
+}
+.sort-btn.active {
+  background-color: var(--primary-pink);
+  color: white;
+  border-color: var(--primary-pink);
+}
+.sort-btn.active:hover {
+  /* Allow hover effect even when active */
+  background-color: #d6006a;
+  border-color: #d6006a;
+  transform: translateY(var(--hover-lift));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+.dark-mode .sort-btn.active:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+.sort-btn i {
+  font-size: 0.8em;
+}
+
+/* --- Results Grid & Cards --- */
+/* (Keep existing .results-layout, grid/map containers, .results-grid, .result-card styles) */
+.results-layout {
+  display: flex;
+  gap: 20px;
+}
+.results-grid-container {
+  flex: 1 1 65%;
+  min-width: 0;
+} /* Allow shrinking */
+.map-container {
+  flex: 0 0 35%; /* Start with flex-basis for map */
+  min-width: 200px; /* Min width for map */
+  position: relative; /* Needed for sticky and resize handle */
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+.result-card {
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--container-bg); /* Use container bg for cards */
+  transition: all var(--transition-speed) var(--transition-timing);
+  cursor: pointer;
+  display: flex; /* Use flex for better internal layout control */
+  flex-direction: column;
+}
+.result-card:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+.dark-mode .result-card:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+.card-image-placeholder {
+  height: 180px;
+  background-color: var(--placeholder-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--grey-border); /* Lighter color for icon */
+  font-size: 3em;
+  overflow: hidden; /* Ensure image doesn't overflow */
+  flex-shrink: 0; /* Prevent image area from shrinking */
+}
+.card-image-placeholder img {
+  /* Style actual image */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dark-mode .card-image-placeholder {
+  color: var(--grey-border);
+}
+.card-content {
+  padding: 15px;
+  flex-grow: 1; /* Allow content to take remaining space */
+  display: flex;
+  flex-direction: column;
+}
+.card-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--primary-pink);
+  margin-bottom: 5px;
+}
+.card-price {
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: auto; /* Push subsequent elements down */
+}
+.card-size,
+.card-rating {
+  /* Shared style for bottom details */
+  font-size: 0.9em;
+  color: var(--light-text);
+  margin-top: 4px;
+}
+
+/* --- Map --- */
+/* (Keep existing .map-container, #map, #map-resize-handle styles, but ensure map-container is setup for sticky) */
+.map-container {
+  /* ... existing flex properties */
+  position: sticky; /* Make map sticky */
+  top: calc(71px + 30px); /* Header height (adjust if needed) + desired gap */
+  align-self: flex-start; /* Align to the top of the flex container */
+  height: calc(
+    100vh - 71px - 60px
+  ); /* Approx viewport height minus header and padding */
+  max-height: 600px; /* Optional: Limit max height */
+}
+#map {
+  height: 100%; /* Fill map-container height */
+  width: 100%;
+  border: 5px solid var(--primary-pink);
+  border-radius: 15px;
+  z-index: 1;
+  overflow: hidden;
+  clip-path: inset(0 round 10px); /* Adjusted radius to match border */
+  position: relative; /* For resize handle */
+}
+#map-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0; /* Position bottom-right for horizontal resize */
+  width: 20px; /* Make handle slightly larger */
+  height: 100%; /* Full height handle */
+  /* background-color: var(--primary-pink); */
+  background: linear-gradient(
+    to left,
+    rgba(255, 0, 127, 0.4),
+    rgba(255, 0, 127, 0)
+  ); /* Gradient handle */
+  /* opacity: 0.7; */
+  /* border: 1px solid white; */
+  border-left: 3px dotted rgba(255, 255, 255, 0.5);
+  /* border-top-left-radius: 5px; */
+  cursor: col-resize; /* Use column resize cursor */
+  z-index: 401;
+  transition: background-color 0.2s ease;
+}
+#map-resize-handle:hover {
+  /* opacity: 1; */
+  background-color: rgba(255, 0, 127, 0.6); /* Highlight on hover */
+  border-left-style: solid;
+}
+/* Change cursor for the entire body during resize */
+body.map-resizing {
+  cursor: col-resize !important; /* Force cursor override */
+  user-select: none; /* Prevent text selection */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE */
+}
+
+/* Leaflet Overrides */
+/* (Keep existing Leaflet Overrides, .custom-div-icon, Marker Clusters) */
+.dark-mode .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
+    brightness(0.7);
+}
+.dark-mode .leaflet-popup-content-wrapper,
+.dark-mode .leaflet-popup-tip {
+  background: #333;
+  color: #fff;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+.custom-div-icon {
+  background-color: var(--primary-pink);
+  border: 2px solid #ecf0f1;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  width: 24px; /* Match JS */
+  height: 24px; /* Match JS */
+  transition: transform var(--transition-speed) var(--transition-timing),
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+.leaflet-marker-icon:hover .custom-div-icon {
+  transform: scale(1.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+/* Marker Clusters */
+.marker-cluster {
+  transition: filter 0.2s ease;
+  color: #fff !important; /* Ensure text is white */
+}
+.marker-cluster div {
+  color: #fff !important; /* Ensure text is white */
+  font-weight: bold;
+}
+
+.marker-cluster:hover {
+  filter: brightness(1.1);
+}
+.marker-cluster-small div {
+  background-color: hsla(145, 63%, 42%, 0.7); /* Greenish */
+}
+.marker-cluster-small {
+  background-color: hsla(145, 63%, 52%, 0.6);
+}
+.marker-cluster-medium div {
+  background-color: hsla(40, 88%, 50%, 0.7); /* Orangey */
+}
+.marker-cluster-medium {
+  background-color: hsla(40, 88%, 60%, 0.6);
+}
+.marker-cluster-large div {
+  background-color: hsla(330, 70%, 50%, 0.7); /* Pinkish/Reddish */
+}
+.marker-cluster-large {
+  background-color: hsla(330, 70%, 60%, 0.6);
+}
+/* Dark mode clusters already use white text, looks okay */
+
+/* --- View Controls (Map Toggle) --- */
+/* (Keep existing .view-controls, .btn-view-toggle, map hidden state styles) */
+.view-controls {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.btn-view-toggle {
+  background-color: var(--grey-background);
+  border: 1px solid var(--grey-border);
+  color: var(--text-color);
+  padding: 6px 12px;
+  font-size: 0.85em;
+  border-radius: 6px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  /* Inherits button hover/active */
+}
+.btn-view-toggle i {
+  font-size: 1.1em;
+}
+/* Map Hidden State */
+#results-layout.map-hidden .map-container {
+  display: none;
+}
+#results-layout.map-hidden .results-grid-container {
+  flex-basis: 100%;
+}
+.results-grid-container,
+.map-container {
+  transition: flex-basis 0.4s var(--transition-timing),
+    opacity 0.4s var(--transition-timing);
+}
+#results-layout .map-container {
+  opacity: 1;
+}
+#results-layout.map-hidden .map-container {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ========================================
+       Login, Register, Dashboard Pages (Shared Styles)
+       ======================================== */
+/* (Keep existing login, register, dashboard styles) */
+/* Common Wrapper */
+.login-page-wrapper,
+.register-page-wrapper,
+.dashboard-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align top */
+  padding: 40px 20px 60px 20px; /* Top/Horiz/Bottom */
+  min-height: calc(
+    100vh - 71px - 100px
+  ); /* Approx Full height minus header minus padding */
+}
+
+/* Common Container */
+.login-container,
+.register-container,
+.dashboard-container {
+  background-color: var(--container-bg);
+  padding: 35px 45px;
+  border: 1px solid var(--grey-border);
+  border-radius: 10px;
+  max-width: 450px; /* Default max-width */
+  width: 100%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.dashboard-container {
+  max-width: 800px;
+} /* Override for dashboard */
+.dark-mode .login-container,
+.dark-mode .register-container,
+.dark-mode .dashboard-container {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Common Heading */
+.login-container h2,
+.register-container h2,
+.dashboard-container h1 {
+  /* Use h1 for dashboard primary heading */
+  text-align: center;
+  color: var(--primary-pink);
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 600;
+}
+.dashboard-container h2 {
+  /* Secondary headings in dashboard */
+  color: var(--text-color);
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+  border-bottom: 1px solid var(--grey-border);
+  padding-bottom: 8px;
+  text-align: left;
+}
+.dark-mode .dashboard-container h2 {
+  border-bottom-color: var(--grey-border);
+}
+
+/* Common Form Group */
+.form-group {
+  margin-bottom: 22px;
+  text-align: left;
+}
+
+/* Common Label */
+.login-container label,
+.register-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 1em;
+  cursor: pointer;
+  transition: color var(--transition-speed) var(--transition-timing);
+}
+.login-container label:hover,
+.register-container label:hover {
+  color: var(--primary-pink);
+}
+
+/* Common Input Fields */
+.login-container input[type="email"],
+.login-container input[type="password"],
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="text"] {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  font-size: 1em;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-family: inherit;
+  transition: border-color var(--transition-speed) var(--transition-timing),
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+.dark-mode input::placeholder {
+  color: var(--light-text);
+}
+input:focus {
+  /* Covers all inputs */
+  outline: none;
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px var(--light-pink);
+}
+.dark-mode input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
+}
+
+/* Login Specific */
+.login-container .form-options {
+  display: block;
+  text-align: right;
+  margin-bottom: 30px;
+}
+.forgot-password {
+  color: var(--primary-pink);
+  font-size: 0.95em;
+}
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Common Submit Button */
+.btn-login-submit,
+.btn-register-submit {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  /* Inherit .btn-register styles by default */
+  background-color: var(--primary-pink);
+  border-color: var(--primary-pink);
+  color: white;
+}
+.btn-login-submit:hover,
+.btn-register-submit:hover {
+  background-color: #d6006a;
+  border-color: #d6006a;
+}
+
+/* Common Links Below Form */
+.login-container .login-links,
+.register-container .login-links {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 1em;
+  color: var(--light-text);
+}
+.login-container .login-links a,
+.register-container .login-links a {
+  color: var(--primary-pink);
+  font-weight: 500;
+}
+.login-container .login-links a:hover,
+.register-container .login-links a:hover {
+  text-decoration: underline;
+}
+
+/* Dashboard Specific */
+.dashboard-container .user-info {
+  text-align: center;
+  color: var(--light-text);
+  font-size: 1.1em;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+.dashboard-container .user-info strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+.dashboard-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px dashed var(--grey-border);
+  flex-wrap: wrap;
+}
+.dark-mode .dashboard-actions {
+  border-bottom-color: var(--grey-border);
+}
+.dark-mode .dashboard-actions .btn-signin {
+  /* Logout button in dark mode */
+  color: var(--text-color);
+  border-color: var(--grey-border);
+  background-color: var(--grey-background);
+}
+.dashboard-content p {
+  color: var(--text-color);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.placeholder-section {
+  /* Dashboard placeholder */
+  background-color: var(--grey-background);
+  border: 1px dashed var(--grey-border);
+  border-radius: 6px;
+  padding: 25px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--light-text);
+}
+.placeholder-section i {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: var(--primary-pink);
+  opacity: 0.7;
+}
+.placeholder-section p {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+.dark-mode .placeholder-section {
+  background-color: var(--grey-background);
+  border-color: var(--grey-border);
+  color: var(--light-text);
+}
+
+/* ========================================
+       Chat Widget
+       ======================================== */
+/* (Keep existing chat widget styles) */
+#chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+#chat-toggle-button {
+  /* The main bubble */
+  background-color: var(--primary-pink);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px; /* Space when window is open */
+  transition: background-color var(--transition-speed) var(--transition-timing),
+    transform var(--transition-speed) var(--transition-timing);
+}
+#chat-toggle-button:hover {
+  background-color: #d6006a;
+  transform: scale(1.05); /* Slight grow on hover */
+}
+#chat-toggle-button:active {
+  transform: scale(0.95); /* Shrink on click */
+}
+
+#chat-container {
+  width: 350px;
+  max-height: 500px;
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
+    margin-bottom 0.3s ease, visibility 0.3s ease;
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+.dark-mode #chat-container {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+#chat-container.chat-hidden {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  height: 0;
+  border: none;
+  margin-bottom: -10px; /* Overlap toggle button slightly */
+  visibility: hidden;
+}
+
+#chat-header {
+  background-color: var(--primary-pink);
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+#chat-header span {
+  font-size: 1.1em;
+}
+#chat-close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0 5px;
+  line-height: 1;
+  /* Inherits icon button hover/active */
+}
+#chat-close-button:hover {
+  transform: scale(1.2);
+  color: #ffdddd;
+}
+
+#chat-messages {
+  flex-grow: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: var(--grey-background);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dark-mode #chat-messages {
+  background-color: var(--container-bg);
+} /* Match container */
+
+.message {
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+.message.user {
+  background-color: var(--light-pink);
+  color: var(--keywords-txt-color);
+  border-bottom-right-radius: 5px;
+  align-self: flex-end;
+}
+.dark-mode .message.user {
+  background-color: #580030;
+  color: #f0f0f0;
+}
+.message.bot {
+  background-color: #e5e5ea;
+  color: #333;
+  border-bottom-left-radius: 5px;
+  align-self: flex-start;
+}
+.dark-mode .message.bot {
+  background-color: #3a3a3c;
+  color: #e5e5e5;
+}
+
+#chat-input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--grey-border);
+  background-color: var(--container-bg);
+  flex-shrink: 0;
+}
+#chat-input {
+  flex-grow: 1;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px;
+  padding: 8px 15px;
+  margin-right: 8px;
+  outline: none;
+  font-size: 0.95em;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color var(--transition-speed) var(--transition-timing),
+    box-shadow var(--transition-speed) var(--transition-timing);
+}
+/* Inherits general input focus */
+
+#chat-send-button {
+  background-color: var(--primary-pink);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#chat-send-button:hover {
+  background-color: #d6006a;
+}
+#chat-send-button:disabled {
+  /* Style for when sending */
+  background-color: var(--light-text);
+  cursor: not-allowed;
+}
+
+#chat-loading {
+  padding: 10px 15px;
+  text-align: center;
+  color: var(--light-text);
+  background-color: var(--grey-background); /* Match message area */
+  border-top: 1px solid var(--grey-border);
+  font-style: italic;
+  flex-shrink: 0;
+  display: none; /* Hidden by default */
+  align-items: center; /* Align icon and text */
+  justify-content: center; /* Center content */
+}
+#chat-loading.active {
+  /* JS should add/remove .active class */
+  display: flex;
+}
+.dark-mode #chat-loading {
+  background-color: var(--container-bg);
+}
+#chat-loading i {
+  margin-right: 8px;
+  animation: spin 1.5s linear infinite; /* Add spin animation */
+}
+
 <<<<<<< HEAD
 @keyframes spin {
   0% {
@@ -1414,8 +2675,6 @@ body.map-resizing {
     height: 50px;
     font-size: 24px;
 =======
-=======
->>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -1424,15 +2683,11 @@ body.map-resizing {
         transform: rotate(360deg);
       }
     }
-<<<<<<< HEAD
 >>>>>>> 96899be (remove responsive)
-=======
->>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
   }
 }
 
 /* ========================
-<<<<<<< HEAD
      Language Switcher Styles (Integrated and Corrected)
      ======================== */
 <<<<<<< HEAD
@@ -1561,9 +2816,6 @@ body.map-resizing {
 }
 /* ========================
      End of Language Switcher Styles
-=======
-     End of Main Styles
->>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
      ======================== */
 =======
 >>>>>>> 96899be (remove responsive)
