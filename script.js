@@ -82,184 +82,32 @@
 
   // --- Sample Data ---
   // (Replace with your actual data fetching logic if applicable)
-  const allHousingData = [
-    {
-      id: 10,
-      name: "Campus Tower Studio",
-      price: 850,
-      size: 25,
-      type: "Studio",
-      image: null,
-      rating: 4.2,
-      lat: 48.858,
-      lng: 2.294,
-    },
-    {
-      id: 9,
-      name: "Downtown Apartment",
-      price: 1200,
-      size: 60,
-      type: "Apartment",
-      image: null,
-      rating: 4.5,
-      lat: 48.86,
-      lng: 2.337,
-    },
-    {
-      id: 8,
-      name: "Riverside Shared Room",
-      price: 600,
-      size: 18,
-      type: "Shared Room",
-      image: null,
-      rating: 3.8,
-      lat: 48.853,
-      lng: 2.349,
-    },
-    {
-      id: 7,
-      name: "West End House",
-      price: 2500,
-      size: 150,
-      type: "House",
-      image: null,
-      rating: 4.9,
-      lat: 48.869,
-      lng: 2.307,
-    },
-    {
-      id: 6,
-      name: "Compact Studio Near Uni",
-      price: 780,
-      size: 22,
-      type: "Studio",
-      image: null,
-      rating: 4.0,
-      lat: 48.846,
-      lng: 2.344,
-    },
-    {
-      id: 5,
-      name: "Spacious 2BR Apartment",
-      price: 1600,
-      size: 85,
-      type: "Apartment",
-      image: null,
-      rating: 4.7,
-      lat: 48.873,
-      lng: 2.359,
-    },
-    {
-      id: 4,
-      name: "Budget Share House",
-      price: 550,
-      size: 15,
-      type: "Shared Room",
-      image: null,
-      rating: 3.5,
-      lat: 48.886,
-      lng: 2.343,
-    },
-    {
-      id: 3,
-      name: "Modern Apartment",
-      price: 1350,
-      size: 70,
-      type: "Apartment",
-      image: null,
-      rating: 4.6,
-      lat: 48.845,
-      lng: 2.372,
-    },
-    {
-      id: 2,
-      name: "Large Family House",
-      price: 3200,
-      size: 200,
-      type: "House",
-      image: null,
-      rating: 4.8,
-      lat: 48.838,
-      lng: 2.27,
-    },
-    {
-      id: 1,
-      name: "City Center Studio",
-      price: 950,
-      size: 30,
-      type: "Studio",
-      image: null,
-      rating: 4.3,
-      lat: 48.865,
-      lng: 2.32,
-    },
-    {
-      id: 11,
-      name: "Quiet House Room",
-      price: 700,
-      size: 20,
-      type: "Shared Room",
-      image: null,
-      rating: 3.9,
-      lat: 48.82,
-      lng: 2.355,
-    },
-    {
-      id: 12,
-      name: "Colonel's Loft",
-      price: 999,
-      size: 28,
-      type: "Studio",
-      image: "./images/kfc.png",
-      rating: 4.1,
-      lat: 48.8625,
-      lng: 2.3491,
-    },
-    {
-      id: 13,
-      name: "Fried View Apartment",
-      price: 1450,
-      size: 65,
-      type: "Apartment",
-      image: null,
-      rating: 4.4,
-      lat: 48.8837,
-      lng: 2.3266,
-    },
-    {
-      id: 14,
-      name: "Bucket Room in Ménilmontant",
-      price: 580,
-      size: 17,
-      type: "Shared Room",
-      image: null,
-      rating: 3.7,
-      lat: 48.865,
-      lng: 2.389,
-    },
-    {
-      id: 15,
-      name: "Zinger's Terrace House",
-      price: 2100,
-      size: 140,
-      type: "House",
-      image: null,
-      rating: 4.6,
-      lat: 48.8322,
-      lng: 2.325,
-    },
-    {
-      id: 16,
-      name: "Spicy Studio Gare de l'Est",
-      price: 890,
-      size: 24,
-      type: "Studio",
-      image: "./images/icon.png",
-      rating: 4.0,
-      lat: 48.8765,
-      lng: 2.3574,
-    }, // Ensure image path is correct
-  ];
+  function fetchHousingData() {
+    fetch('/api/housing')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not OK');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Set the global housing data variable to the fetched data
+        window.allHousingData = data;
+        // Call your display function to update the page (existing function in your script)
+        updateDisplay();
+      })
+      .catch(error => {
+        console.error('Error fetching housing data:', error);
+      });
+  }
+  
+  // Fetch the housing data after the DOM has loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchHousingData();
+  
+    // Also run other initialization code (if needed)
+  });
+  
 
   // ==========================================
   //          Internationalization (i18n) Functions
