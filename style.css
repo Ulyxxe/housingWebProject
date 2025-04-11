@@ -97,20 +97,12 @@ button {
 
 @font-face {
   font-family: "Title font";
-  src: url("fonts/ankh-sanctuary-font.zip") format("woff2");
+  src: url("fonts/AnkhSanctuary-PVK0B.ttf") format("woff2");
 }
 
 /* ========================================
        Header & Navigation
-       ======================================== */
-
-title {
-  font-size: 2.5em;
-  font-weight: bold;
-  color: var(--primary-pink);
-  letter-spacing: -1px;
-  transition: transform var(--transition-speed) var(--transition-timing);
-}
+   ======================================== */
 .site-header {
   display: flex;
   justify-content: space-between;
