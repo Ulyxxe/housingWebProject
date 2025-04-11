@@ -11,7 +11,7 @@ $id = intval($_GET['id']);
 
 try {
     // Assume $pdo is already set up in config.php
-    $stmt = $pdo->prepare("SELECT * FROM housing WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM Housing WHERE id = ?");
     $stmt->execute([$id]);
     $housing = $stmt->fetch(PDO::FETCH_ASSOC);
 
