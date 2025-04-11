@@ -5,8 +5,8 @@ header("Content-Type: application/json");
 // Database connection parameters
 $host   = getenv('MYSQL_HOST');
 $dbname = getenv('MYSQL_DATABASE');
-$dbUser = getenv('MYSQL_USER');
-$dbPass = getenv('MYSQL_PASSWORD');   // Replace with your MySQL password
+$username = getenv('MYSQL_USER');
+$password = getenv('MYSQL_PASSWORD');   // Replace with your MySQL password
 
 try {
     // Establish a new PDO connection with error handling and correct charset

@@ -83,7 +83,7 @@
   // --- Sample Data ---
   // (Replace with your actual data fetching logic if applicable)
   function fetchHousingData() {
-    fetch('./getHousing.php')
+    fetch('/api/getHousing.php')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not OK');
