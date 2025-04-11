@@ -1547,7 +1547,65 @@ body.map-resizing {
       }
     }
   }
-  /* ========================
+}
+
+/* ========================
+     End of Main Styles
+     ======================== */
+
+/* ========================
+     Language Switcher Styles
+     ======================== */
+.language-switcher {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+#language-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+/* Inherits base button transition */
+#language-toggle:hover,
+#language-toggle:focus {
+  color: var(--primary-pink); /* Consistent hover */
+  opacity: 0.9; /* Slight fade */
+}
+
+#language-toggle .current-lang {
+  font-weight: bold;
+}
+
+.language-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px); /* Position below button with small gap */
+  right: 0;
+  background-color: var(--container-bg); /* Use container background */
+  border: 1px solid var(--grey-border); /* Use grey border */
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 5px 0;
+  margin: 0; /* Reset margin */
+  min-width: 120px;
+  z-index: 1001;
+}
+.dark-mode .language-dropdown {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.language-dropdown.show {
+  display: block;
+}
+/* ========================
      End of Language Switcher Styles
      ======================== */
-}
