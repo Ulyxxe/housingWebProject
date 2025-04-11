@@ -210,7 +210,7 @@
       price: 999,
       size: 28,
       type: "Studio",
-      image: "./image/kfc.jpg",
+      image: "./images/kfc.png",
       rating: 4.1,
       lat: 48.8625,
       lng: 2.3491,
