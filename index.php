@@ -1,3 +1,13 @@
+<?php
+// index.php
+// Start a session if you plan to use user sessions later
+session_start();
+
+// Optionally, include your configuration file for database or global settings
+// require_once 'config.php';
+
+// You can also set dynamic variables here if you wish to use them in your HTML later.
+?>
 <!DOCTYPE html>
 <html lang="en">
   <!-- JS will update this lang attribute -->
@@ -81,7 +91,7 @@
           </li>
           <li>
             <a
-              href="login.html"
+              href="login.php"
               class="btn btn-signin"
               data-i18n-key="nav_signin"
               >Sign in</a
@@ -89,7 +99,7 @@
           </li>
           <li>
             <a
-              href="register.html"
+              href="register.php"
               class="btn btn-register"
               data-i18n-key="nav_register"
               >Register</a
