@@ -103,8 +103,6 @@ button {
 /* ========================================
        Header & Navigation
        ======================================== */
-   Header & Navigation
-   ======================================== */
 
 title {
   font-size: 2.5em;
@@ -802,827 +800,830 @@ body.map-resizing {
   display: inline-flex;
   align-items: center;
   /* Inherits button hover/active */
-.marker-cluster div {
-  background-color: rgba(255, 0, 127, 0.6); /* Default cluster color */
-  color: #fff; /* Ensure text visibility */
-}
-.btn-view-toggle i {
-  font-size: 1.1em;
-}
-/* Map Hidden State */
-#results-layout.map-hidden .map-container {
-  display: none;
-}
-#results-layout.map-hidden .results-grid-container {
-  flex-basis: 100%;
-}
-.results-grid-container,
-.map-container {
-  transition: flex-basis 0.4s var(--transition-timing),
-    opacity 0.4s var(--transition-timing);
-}
-#results-layout .map-container {
-  opacity: 1;
-}
-#results-layout.map-hidden .map-container {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* ========================================
-       Login, Register, Dashboard Pages (Shared Styles)
-       ======================================== */
-/* (Keep existing login, register, dashboard styles) */
-/* Common Wrapper */
-.login-page-wrapper,
-.register-page-wrapper,
-.dashboard-page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align top */
-  padding: 40px 20px 60px 20px; /* Top/Horiz/Bottom */
-  min-height: calc(
-    100vh - 71px - 100px
-  ); /* Approx Full height minus header minus padding */
-}
-
-/* Common Container */
-.login-container,
-.register-container,
-.dashboard-container {
-  background-color: var(--container-bg);
-  padding: 35px 45px;
-  border: 1px solid var(--grey-border);
-  border-radius: 10px;
-  max-width: 450px; /* Default max-width */
-  width: 100%;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-.dashboard-container {
-  max-width: 800px;
-} /* Override for dashboard */
-.dark-mode .login-container,
-.dark-mode .register-container,
-.dark-mode .dashboard-container {
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-}
-
-/* Common Heading */
-.login-container h2,
-.register-container h2,
-.dashboard-container h1 {
-  /* Use h1 for dashboard primary heading */
-  text-align: center;
-  color: var(--primary-pink);
-  margin-bottom: 30px;
-  font-size: 2em;
-  font-weight: 600;
-}
-.dashboard-container h2 {
-  /* Secondary headings in dashboard */
-  color: var(--text-color);
-  margin-top: 30px;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  border-bottom: 1px solid var(--grey-border);
-  padding-bottom: 8px;
-  text-align: left;
-}
-.dark-mode .dashboard-container h2 {
-  border-bottom-color: var(--grey-border);
-}
-
-/* Common Form Group */
-.form-group {
-  margin-bottom: 22px;
-  text-align: left;
-}
-
-/* Common Label */
-.login-container label,
-.register-container label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--text-color);
-  font-size: 1em;
-  cursor: pointer;
-  transition: color var(--transition-speed) var(--transition-timing);
-}
-.login-container label:hover,
-.register-container label:hover {
-  color: var(--primary-pink);
-}
-
-/* Common Input Fields */
-.login-container input[type="email"],
-.login-container input[type="password"],
-.register-container input[type="email"],
-.register-container input[type="password"],
-.register-container input[type="text"] {
-  width: 100%;
-  padding: 13px 15px;
-  border: 1px solid var(--grey-border);
-  border-radius: 6px;
-  font-size: 1em;
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  font-family: inherit;
-  transition: border-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
-}
-.dark-mode input::placeholder {
-  color: var(--light-text);
-}
-input:focus {
-  /* Covers all inputs */
-  outline: none;
-  border-color: var(--primary-pink);
-  box-shadow: 0 0 0 3px var(--light-pink);
-}
-.dark-mode input:focus {
-  box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
-}
-
-/* Login Specific */
-.login-container .form-options {
-  display: block;
-  text-align: right;
-  margin-bottom: 30px;
-}
-.forgot-password {
-  color: var(--primary-pink);
-  font-size: 0.95em;
-}
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
-/* Common Submit Button */
-.btn-login-submit,
-.btn-register-submit {
-  width: 100%;
-  padding: 14px 20px;
-  font-size: 1.1em;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  /* Inherit .btn-register styles by default */
-  background-color: var(--primary-pink);
-  border-color: var(--primary-pink);
-  color: white;
-}
-.btn-login-submit:hover,
-.btn-register-submit:hover {
-  background-color: #d6006a;
-  border-color: #d6006a;
-}
-
-/* Common Links Below Form */
-.login-container .login-links,
-.register-container .login-links {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 1em;
-  color: var(--light-text);
-}
-.login-container .login-links a,
-.register-container .login-links a {
-  color: var(--primary-pink);
-  font-weight: 500;
-}
-.login-container .login-links a:hover,
-.register-container .login-links a:hover {
-  text-decoration: underline;
-}
-
-/* Dashboard Specific */
-.dashboard-container .user-info {
-  text-align: center;
-  color: var(--light-text);
-  font-size: 1.1em;
-  margin-bottom: 30px;
-  line-height: 1.6;
-}
-.dashboard-container .user-info strong {
-  color: var(--text-color);
-  font-weight: 600;
-}
-.dashboard-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px dashed var(--grey-border);
-  flex-wrap: wrap;
-}
-.dark-mode .dashboard-actions {
-  border-bottom-color: var(--grey-border);
-}
-.dark-mode .dashboard-actions .btn-signin {
-  /* Logout button in dark mode */
-  color: var(--text-color);
-  border-color: var(--grey-border);
-  background-color: var(--grey-background);
-}
-.dashboard-content p {
-  color: var(--text-color);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-.placeholder-section {
-  /* Dashboard placeholder */
-  background-color: var(--grey-background);
-  border: 1px dashed var(--grey-border);
-  border-radius: 6px;
-  padding: 25px;
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--light-text);
-}
-.placeholder-section i {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: var(--primary-pink);
-  opacity: 0.7;
-}
-.placeholder-section p {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin-bottom: 0;
-}
-.dark-mode .placeholder-section {
-  background-color: var(--grey-background);
-  border-color: var(--grey-border);
-  color: var(--light-text);
-}
-
-/* ========================================
-       Chat Widget
-       ======================================== */
-/* (Keep existing chat widget styles) */
-#chat-widget {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-#chat-toggle-button {
-  /* The main bubble */
-  background-color: var(--primary-pink);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 28px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px; /* Space when window is open */
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing);
-}
-#chat-toggle-button:hover {
-  background-color: #d6006a;
-  transform: scale(1.05); /* Slight grow on hover */
-}
-#chat-toggle-button:active {
-  transform: scale(0.95); /* Shrink on click */
-}
-
-#chat-container {
-  width: 350px;
-  max-height: 500px;
-  background-color: var(--container-bg);
-  border: 1px solid var(--grey-border);
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
-    margin-bottom 0.3s ease, visibility 0.3s ease;
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-}
-.dark-mode #chat-container {
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-}
-
-#chat-container.chat-hidden {
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  pointer-events: none;
-  height: 0;
-  border: none;
-  margin-bottom: -10px; /* Overlap toggle button slightly */
-  visibility: hidden;
-}
-
-#chat-header {
-  background-color: var(--primary-pink);
-  color: white;
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-#chat-header span {
-  font-size: 1.1em;
-}
-#chat-close-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 5px;
-  line-height: 1;
-  /* Inherits icon button hover/active */
-}
-#chat-close-button:hover {
-  transform: scale(1.2);
-  color: #ffdddd;
-}
-
-#chat-messages {
-  flex-grow: 1;
-  padding: 15px;
-  overflow-y: auto;
-  background-color: var(--grey-background);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.dark-mode #chat-messages {
-  background-color: var(--container-bg);
-} /* Match container */
-
-.message {
-  padding: 8px 12px;
-  border-radius: 15px;
-  max-width: 80%;
-  line-height: 1.4;
-  word-wrap: break-word;
-}
-.message.user {
-  background-color: var(--light-pink);
-  color: var(--keywords-txt-color);
-  border-bottom-right-radius: 5px;
-  align-self: flex-end;
-}
-.dark-mode .message.user {
-  background-color: #580030;
-  color: #f0f0f0;
-}
-.message.bot {
-  background-color: #e5e5ea;
-  color: #333;
-  border-bottom-left-radius: 5px;
-  align-self: flex-start;
-}
-.dark-mode .message.bot {
-  background-color: #3a3a3c;
-  color: #e5e5e5;
-}
-
-#chat-input-area {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid var(--grey-border);
-  background-color: var(--container-bg);
-  flex-shrink: 0;
-}
-#chat-input {
-  flex-grow: 1;
-  border: 1px solid var(--grey-border);
-  border-radius: 20px;
-  padding: 8px 15px;
-  margin-right: 8px;
-  outline: none;
-  font-size: 0.95em;
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  transition: border-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
-}
-/* Inherits general input focus */
-
-#chat-send-button {
-  background-color: var(--primary-pink);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#chat-send-button:hover {
-  background-color: #d6006a;
-}
-#chat-send-button:disabled {
-  /* Style for when sending */
-  background-color: var(--light-text);
-  cursor: not-allowed;
-}
-
-#chat-loading {
-  padding: 10px 15px;
-  text-align: center;
-  color: var(--light-text);
-  background-color: var(--grey-background); /* Match message area */
-  border-top: 1px solid var(--grey-border);
-  font-style: italic;
-  flex-shrink: 0;
-  display: none; /* Hidden by default */
-  align-items: center; /* Align icon and text */
-  justify-content: center; /* Center content */
-}
-#chat-loading.active {
-  /* JS should add/remove .active class */
-  display: flex;
-}
-.dark-mode #chat-loading {
-  background-color: var(--container-bg);
-}
-#chat-loading i {
-  margin-right: 8px;
-  animation: spin 1.5s linear infinite; /* Add spin animation */
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  .marker-cluster div {
+    background-color: rgba(255, 0, 127, 0.6); /* Default cluster color */
+    color: #fff; /* Ensure text visibility */
   }
-  100% {
-    transform: rotate(360deg);
+  .btn-view-toggle i {
+    font-size: 1.1em;
   }
-}
-
-/* ========================================
-       Responsiveness
-       ======================================== */
-
-/* --- Tablet & Smaller Desktop (<= 1024px) --- */
-@media screen and (max-width: 1024px) {
-  .main-content-wrapper {
-    gap: 20px;
-    padding: 20px 30px;
-  }
-  .results-layout {
-    gap: 15px;
-  }
-  .results-grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 15px;
-  }
-  .map-container {
-    /* Adjust sticky top if header height changes */
-    top: calc(71px + 20px); /* Adjust if header height different */
-    max-height: 500px; /* Reduce max height slightly */
-    flex-basis: 30%; /* Slightly smaller map basis */
-  }
-}
-
-/* --- Tablet & Mobile (<= 768px) --- */
-@media screen and (max-width: 768px) {
-  /* Header & Navigation */
-  .site-header {
-    padding: 10px 20px;
-    position: relative; /* Keep relative for absolute nav */
-  }
-
-  /* >>> HAMBURGER NAV ACTIVATION <<< */
-  .main-nav {
-    display: none; /* Hide the nav container by default */
-    position: absolute;
-    top: 100%; /* Position below header */
-    left: 0;
-    width: 100%;
-    background-color: var(--body-bg);
-    border-top: 1px solid var(--grey-border);
-    border-bottom: 1px solid var(--grey-border);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 899; /* Below header */
-    max-height: calc(100vh - 60px); /* Prevent full screen overlap */
-    overflow-y: auto; /* Allow scrolling if content overflows */
-  }
-  .main-nav.active {
-    /* Show the nav container when it has .active class */
-    display: block;
-  }
-  /* <<< END HAMBURGER NAV ACTIVATION >>> */
-
-  .main-nav ul {
-    display: flex; /* Reset display to flex for the UL *inside* the nav */
-    flex-direction: column;
-    align-items: flex-start; /* Align items left */
-    padding: 10px 0; /* Add vertical padding, remove horizontal */
-    gap: 0; /* Reset gap for vertical */
-    width: 100%; /* Ensure UL takes full width of parent */
-  }
-
-  .main-nav li {
-    width: 100%;
-    margin-bottom: 0;
-  }
-  .main-nav a,
-    .main-nav #language-toggle, /* Style language toggle like links */
-    .main-nav #theme-toggle {
-    /* Style theme toggle like links */
-    display: block;
-    padding: 12px 20px; /* Consistent padding */
-    width: 100%;
-    border-bottom: 1px solid var(--grey-border);
-    font-weight: 500;
-  }
-  .main-nav li:last-child > a, /* Target direct child link/button */
-    .main-nav li:last-child > button {
-    border-bottom: none;
-  }
-
-  .main-nav a::after {
-    /* Disable underline */
+  /* Map Hidden State */
+  #results-layout.map-hidden .map-container {
     display: none;
   }
-
-  .main-nav .btn {
-    /* Buttons like Sign In / Register */
-    width: calc(100% - 40px); /* Full width minus padding */
-    text-align: center;
-    margin: 10px 20px; /* Add margin */
+  #results-layout.map-hidden .results-grid-container {
+    flex-basis: 100%;
   }
-
-  .hamburger {
-    display: flex;
-    /* margin-left: auto; Keep default positioning */
-  }
-
-  /* Main Layout Adjustments */
-  .main-content-wrapper {
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-  }
-  .filters-sidebar {
-    flex: 1 1 auto; /* Let it size naturally */
-    margin-bottom: 20px;
-    width: 100%;
-    position: static;
-    height: auto; /* Reset height */
-  }
-  .results-layout {
-    flex-direction: column;
-    gap: 25px; /* Increase gap when stacked */
-  }
+  .results-grid-container,
   .map-container {
-    position: relative;
-    top: 0;
-    width: 100%;
-    height: 350px; /* Fixed map height for mobile */
-    margin-top: 0; /* Remove potential top margin */
-    flex-basis: auto;
-    order: -1; /* Show map *before* results grid on mobile */
-    max-height: none; /* Remove max-height */
+    transition: flex-basis 0.4s var(--transition-timing),
+      opacity 0.4s var(--transition-timing);
   }
-  #map-resize-handle {
-    display: none; /* Hide resize handle on mobile */
+  #results-layout .map-container {
+    opacity: 1;
+  }
+  #results-layout.map-hidden .map-container {
+    opacity: 0;
+    pointer-events: none;
   }
 
-  /* Adjust grid columns */
-  .results-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  }
-
-  /* Search/Sort adjustments */
-  .search-and-sort {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .search-container {
-    max-width: 100%;
-  }
-  .sort-options {
+  /* ========================================
+       Login, Register, Dashboard Pages (Shared Styles)
+       ======================================== */
+  /* (Keep existing login, register, dashboard styles) */
+  /* Common Wrapper */
+  .login-page-wrapper,
+  .register-page-wrapper,
+  .dashboard-page-wrapper {
+    display: flex;
     justify-content: center;
+    align-items: flex-start; /* Align top */
+    padding: 40px 20px 60px 20px; /* Top/Horiz/Bottom */
+    min-height: calc(
+      100vh - 71px - 100px
+    ); /* Approx Full height minus header minus padding */
   }
 
-  /* Form Containers */
+  /* Common Container */
   .login-container,
   .register-container,
   .dashboard-container {
-    padding: 25px 20px;
-    max-width: 100%; /* Allow full width */
+    background-color: var(--container-bg);
+    padding: 35px 45px;
+    border: 1px solid var(--grey-border);
+    border-radius: 10px;
+    max-width: 450px; /* Default max-width */
+    width: 100%;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
   }
-
-  /* Chat Widget */
-  #chat-widget {
-    bottom: 10px;
-    right: 10px;
-  }
-  #chat-container {
-    width: calc(100vw - 40px);
-    max-width: 350px;
-    max-height: calc(100vh - 90px);
-  }
-}
-
-/* --- Small Mobile (< 480px) --- */
-@media screen and (max-width: 480px) {
-  body {
-    font-size: 13px;
-  }
-
-  .site-header {
-    padding: 10px 15px;
-  }
-  .main-content-wrapper {
-    padding: 15px;
-  }
-
-  .logo {
-    font-size: 2em;
-  }
-
-  .login-container,
-  .register-container,
   .dashboard-container {
-    padding: 20px 15px;
+    max-width: 800px;
+  } /* Override for dashboard */
+  .dark-mode .login-container,
+  .dark-mode .register-container,
+  .dark-mode .dashboard-container {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
   }
+
+  /* Common Heading */
   .login-container h2,
   .register-container h2,
   .dashboard-container h1 {
-    font-size: 1.8em;
+    /* Use h1 for dashboard primary heading */
+    text-align: center;
+    color: var(--primary-pink);
+    margin-bottom: 30px;
+    font-size: 2em;
+    font-weight: 600;
+  }
+  .dashboard-container h2 {
+    /* Secondary headings in dashboard */
+    color: var(--text-color);
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    border-bottom: 1px solid var(--grey-border);
+    padding-bottom: 8px;
+    text-align: left;
+  }
+  .dark-mode .dashboard-container h2 {
+    border-bottom-color: var(--grey-border);
   }
 
-  .results-grid {
-    grid-template-columns: 1fr; /* Single column grid */
-    gap: 15px;
+  /* Common Form Group */
+  .form-group {
+    margin-bottom: 22px;
+    text-align: left;
   }
-  .result-card {
-    flex-direction: row; /* Horizontal card layout */
+
+  /* Common Label */
+  .login-container label,
+  .register-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1em;
+    cursor: pointer;
+    transition: color var(--transition-speed) var(--transition-timing);
+  }
+  .login-container label:hover,
+  .register-container label:hover {
+    color: var(--primary-pink);
+  }
+
+  /* Common Input Fields */
+  .login-container input[type="email"],
+  .login-container input[type="password"],
+  .register-container input[type="email"],
+  .register-container input[type="password"],
+  .register-container input[type="text"] {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    transition: border-color var(--transition-speed) var(--transition-timing),
+      box-shadow var(--transition-speed) var(--transition-timing);
+  }
+  .dark-mode input::placeholder {
+    color: var(--light-text);
+  }
+  input:focus {
+    /* Covers all inputs */
+    outline: none;
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px var(--light-pink);
+  }
+  .dark-mode input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
+  }
+
+  /* Login Specific */
+  .login-container .form-options {
+    display: block;
+    text-align: right;
+    margin-bottom: 30px;
+  }
+  .forgot-password {
+    color: var(--primary-pink);
+    font-size: 0.95em;
+  }
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+
+  /* Common Submit Button */
+  .btn-login-submit,
+  .btn-register-submit {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    /* Inherit .btn-register styles by default */
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+    color: white;
+  }
+  .btn-login-submit:hover,
+  .btn-register-submit:hover {
+    background-color: #d6006a;
+    border-color: #d6006a;
+  }
+
+  /* Common Links Below Form */
+  .login-container .login-links,
+  .register-container .login-links {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 1em;
+    color: var(--light-text);
+  }
+  .login-container .login-links a,
+  .register-container .login-links a {
+    color: var(--primary-pink);
+    font-weight: 500;
+  }
+  .login-container .login-links a:hover,
+  .register-container .login-links a:hover {
+    text-decoration: underline;
+  }
+
+  /* Dashboard Specific */
+  .dashboard-container .user-info {
+    text-align: center;
+    color: var(--light-text);
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  .dashboard-container .user-info strong {
+    color: var(--text-color);
+    font-weight: 600;
+  }
+  .dashboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px dashed var(--grey-border);
+    flex-wrap: wrap;
+  }
+  .dark-mode .dashboard-actions {
+    border-bottom-color: var(--grey-border);
+  }
+  .dark-mode .dashboard-actions .btn-signin {
+    /* Logout button in dark mode */
+    color: var(--text-color);
+    border-color: var(--grey-border);
+    background-color: var(--grey-background);
+  }
+  .dashboard-content p {
+    color: var(--text-color);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .placeholder-section {
+    /* Dashboard placeholder */
+    background-color: var(--grey-background);
+    border: 1px dashed var(--grey-border);
+    border-radius: 6px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--light-text);
+  }
+  .placeholder-section i {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: var(--primary-pink);
+    opacity: 0.7;
+  }
+  .placeholder-section p {
+    font-size: 1.1em;
+    font-weight: 500;
+    margin-bottom: 0;
+  }
+  .dark-mode .placeholder-section {
+    background-color: var(--grey-background);
+    border-color: var(--grey-border);
+    color: var(--light-text);
+  }
+
+  /* ========================================
+       Chat Widget
+       ======================================== */
+  /* (Keep existing chat widget styles) */
+  #chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  #chat-toggle-button {
+    /* The main bubble */
+    background-color: var(--primary-pink);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px; /* Space when window is open */
+    transition: background-color var(--transition-speed)
+        var(--transition-timing),
+      transform var(--transition-speed) var(--transition-timing);
+  }
+  #chat-toggle-button:hover {
+    background-color: #d6006a;
+    transform: scale(1.05); /* Slight grow on hover */
+  }
+  #chat-toggle-button:active {
+    transform: scale(0.95); /* Shrink on click */
+  }
+
+  #chat-container {
+    width: 350px;
+    max-height: 500px;
+    background-color: var(--container-bg);
+    border: 1px solid var(--grey-border);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
+      margin-bottom 0.3s ease, visibility 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+  .dark-mode #chat-container {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  #chat-container.chat-hidden {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    height: 0;
+    border: none;
+    margin-bottom: -10px; /* Overlap toggle button slightly */
+    visibility: hidden;
+  }
+
+  #chat-header {
+    background-color: var(--primary-pink);
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  #chat-header span {
+    font-size: 1.1em;
+  }
+  #chat-close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 5px;
+    line-height: 1;
+    /* Inherits icon button hover/active */
+  }
+  #chat-close-button:hover {
+    transform: scale(1.2);
+    color: #ffdddd;
+  }
+
+  #chat-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: var(--grey-background);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dark-mode #chat-messages {
+    background-color: var(--container-bg);
+  } /* Match container */
+
+  .message {
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 80%;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  .message.user {
+    background-color: var(--light-pink);
+    color: var(--keywords-txt-color);
+    border-bottom-right-radius: 5px;
+    align-self: flex-end;
+  }
+  .dark-mode .message.user {
+    background-color: #580030;
+    color: #f0f0f0;
+  }
+  .message.bot {
+    background-color: #e5e5ea;
+    color: #333;
+    border-bottom-left-radius: 5px;
+    align-self: flex-start;
+  }
+  .dark-mode .message.bot {
+    background-color: #3a3a3c;
+    color: #e5e5e5;
+  }
+
+  #chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid var(--grey-border);
+    background-color: var(--container-bg);
+    flex-shrink: 0;
+  }
+  #chat-input {
+    flex-grow: 1;
+    border: 1px solid var(--grey-border);
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin-right: 8px;
+    outline: none;
+    font-size: 0.95em;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color var(--transition-speed) var(--transition-timing),
+      box-shadow var(--transition-speed) var(--transition-timing);
+  }
+  /* Inherits general input focus */
+
+  #chat-send-button {
+    background-color: var(--primary-pink);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
     align-items: center;
   }
-  .card-image-placeholder {
-    height: 80px; /* Smaller fixed height */
-    width: 80px; /* Fixed width */
-    font-size: 2em;
+  #chat-send-button:hover {
+    background-color: #d6006a;
   }
-  .card-content {
+  #chat-send-button:disabled {
+    /* Style for when sending */
+    background-color: var(--light-text);
+    cursor: not-allowed;
+  }
+
+  #chat-loading {
     padding: 10px 15px;
+    text-align: center;
+    color: var(--light-text);
+    background-color: var(--grey-background); /* Match message area */
+    border-top: 1px solid var(--grey-border);
+    font-style: italic;
+    flex-shrink: 0;
+    display: none; /* Hidden by default */
+    align-items: center; /* Align icon and text */
+    justify-content: center; /* Center content */
   }
-  .card-price {
-    margin-bottom: 5px; /* Reduce bottom margin */
+  #chat-loading.active {
+    /* JS should add/remove .active class */
+    display: flex;
+  }
+  .dark-mode #chat-loading {
+    background-color: var(--container-bg);
+  }
+  #chat-loading i {
+    margin-right: 8px;
+    animation: spin 1.5s linear infinite; /* Add spin animation */
   }
 
-  #chat-widget {
-    bottom: 5px;
-    right: 5px;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
-  #chat-toggle-button {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
-}
 
-/* ========================
+  /* ========================================
+       Responsiveness
+       ======================================== */
+
+  /* --- Tablet & Smaller Desktop (<= 1024px) --- */
+  @media screen and (max-width: 1024px) {
+    .main-content-wrapper {
+      gap: 20px;
+      padding: 20px 30px;
+    }
+    .results-layout {
+      gap: 15px;
+    }
+    .results-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .map-container {
+      /* Adjust sticky top if header height changes */
+      top: calc(71px + 20px); /* Adjust if header height different */
+      max-height: 500px; /* Reduce max height slightly */
+      flex-basis: 30%; /* Slightly smaller map basis */
+    }
+  }
+
+  /* --- Tablet & Mobile (<= 768px) --- */
+  @media screen and (max-width: 768px) {
+    /* Header & Navigation */
+    .site-header {
+      padding: 10px 20px;
+      position: relative; /* Keep relative for absolute nav */
+    }
+
+    /* >>> HAMBURGER NAV ACTIVATION <<< */
+    .main-nav {
+      display: none; /* Hide the nav container by default */
+      position: absolute;
+      top: 100%; /* Position below header */
+      left: 0;
+      width: 100%;
+      background-color: var(--body-bg);
+      border-top: 1px solid var(--grey-border);
+      border-bottom: 1px solid var(--grey-border);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 899; /* Below header */
+      max-height: calc(100vh - 60px); /* Prevent full screen overlap */
+      overflow-y: auto; /* Allow scrolling if content overflows */
+    }
+    .main-nav.active {
+      /* Show the nav container when it has .active class */
+      display: block;
+    }
+    /* <<< END HAMBURGER NAV ACTIVATION >>> */
+
+    .main-nav ul {
+      display: flex; /* Reset display to flex for the UL *inside* the nav */
+      flex-direction: column;
+      align-items: flex-start; /* Align items left */
+      padding: 10px 0; /* Add vertical padding, remove horizontal */
+      gap: 0; /* Reset gap for vertical */
+      width: 100%; /* Ensure UL takes full width of parent */
+    }
+
+    .main-nav li {
+      width: 100%;
+      margin-bottom: 0;
+    }
+    .main-nav a,
+    .main-nav #language-toggle, /* Style language toggle like links */
+    .main-nav #theme-toggle {
+      /* Style theme toggle like links */
+      display: block;
+      padding: 12px 20px; /* Consistent padding */
+      width: 100%;
+      border-bottom: 1px solid var(--grey-border);
+      font-weight: 500;
+    }
+    .main-nav li:last-child > a, /* Target direct child link/button */
+    .main-nav li:last-child > button {
+      border-bottom: none;
+    }
+
+    .main-nav a::after {
+      /* Disable underline */
+      display: none;
+    }
+
+    .main-nav .btn {
+      /* Buttons like Sign In / Register */
+      width: calc(100% - 40px); /* Full width minus padding */
+      text-align: center;
+      margin: 10px 20px; /* Add margin */
+    }
+
+    .hamburger {
+      display: flex;
+      /* margin-left: auto; Keep default positioning */
+    }
+
+    /* Main Layout Adjustments */
+    .main-content-wrapper {
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+    }
+    .filters-sidebar {
+      flex: 1 1 auto; /* Let it size naturally */
+      margin-bottom: 20px;
+      width: 100%;
+      position: static;
+      height: auto; /* Reset height */
+    }
+    .results-layout {
+      flex-direction: column;
+      gap: 25px; /* Increase gap when stacked */
+    }
+    .map-container {
+      position: relative;
+      top: 0;
+      width: 100%;
+      height: 350px; /* Fixed map height for mobile */
+      margin-top: 0; /* Remove potential top margin */
+      flex-basis: auto;
+      order: -1; /* Show map *before* results grid on mobile */
+      max-height: none; /* Remove max-height */
+    }
+    #map-resize-handle {
+      display: none; /* Hide resize handle on mobile */
+    }
+
+    /* Adjust grid columns */
+    .results-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+
+    /* Search/Sort adjustments */
+    .search-and-sort {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .search-container {
+      max-width: 100%;
+    }
+    .sort-options {
+      justify-content: center;
+    }
+
+    /* Form Containers */
+    .login-container,
+    .register-container,
+    .dashboard-container {
+      padding: 25px 20px;
+      max-width: 100%; /* Allow full width */
+    }
+
+    /* Chat Widget */
+    #chat-widget {
+      bottom: 10px;
+      right: 10px;
+    }
+    #chat-container {
+      width: calc(100vw - 40px);
+      max-width: 350px;
+      max-height: calc(100vh - 90px);
+    }
+  }
+
+  /* --- Small Mobile (< 480px) --- */
+  @media screen and (max-width: 480px) {
+    body {
+      font-size: 13px;
+    }
+
+    .site-header {
+      padding: 10px 15px;
+    }
+    .main-content-wrapper {
+      padding: 15px;
+    }
+
+    .logo {
+      font-size: 2em;
+    }
+
+    .login-container,
+    .register-container,
+    .dashboard-container {
+      padding: 20px 15px;
+    }
+    .login-container h2,
+    .register-container h2,
+    .dashboard-container h1 {
+      font-size: 1.8em;
+    }
+
+    .results-grid {
+      grid-template-columns: 1fr; /* Single column grid */
+      gap: 15px;
+    }
+    .result-card {
+      flex-direction: row; /* Horizontal card layout */
+      align-items: center;
+    }
+    .card-image-placeholder {
+      height: 80px; /* Smaller fixed height */
+      width: 80px; /* Fixed width */
+      font-size: 2em;
+    }
+    .card-content {
+      padding: 10px 15px;
+    }
+    .card-price {
+      margin-bottom: 5px; /* Reduce bottom margin */
+    }
+
+    #chat-widget {
+      bottom: 5px;
+      right: 5px;
+    }
+    #chat-toggle-button {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+    }
+  }
+
+  /* ========================
      Language Switcher Styles (Integrated and Corrected)
      ======================== */
 
-.language-switcher {
-  position: relative;
-  display: inline-block;
-  margin-right: 10px;
-}
-
-#language-toggle {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 8px 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-/* Inherits base button transition */
-#language-toggle:hover,
-#language-toggle:focus {
-  color: var(--primary-pink); /* Consistent hover */
-  opacity: 0.9; /* Slight fade */
-}
-
-#language-toggle .current-lang {
-  font-weight: bold;
-}
-
-.language-dropdown {
-  display: none;
-  position: absolute;
-  top: calc(100% + 5px); /* Position below button with small gap */
-  right: 0;
-  background-color: var(--container-bg); /* Use container background */
-  border: 1px solid var(--grey-border); /* Use grey border */
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  list-style: none;
-  padding: 5px 0;
-  margin: 0; /* Reset margin */
-  min-width: 120px;
-  z-index: 1001;
-}
-.dark-mode .language-dropdown {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.language-dropdown.show {
-  display: block;
-}
-
-.language-dropdown li {
-  margin: 0;
-}
-
-.language-dropdown li a {
-  display: block;
-  padding: 8px 15px;
-  color: var(--text-color);
-  text-decoration: none;
-  white-space: nowrap;
-  font-size: 0.9em;
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    color var(--transition-speed) var(--transition-timing);
-}
-
-/* CORRECTED HOVER STYLES using defined variables */
-.language-dropdown li a:hover,
-.language-dropdown li a:focus {
-  background-color: var(--lang-hover-bg); /* Use defined variable */
-  color: var(--lang-hover-text); /* Use defined variable */
-}
-
-/* Language Switcher within Mobile Nav */
-@media (max-width: 768px) {
   .language-switcher {
-    margin-right: 0;
-    width: 100%;
-    /* border-bottom: 1px solid var(--grey-border); */ /* Optional separator if needed */
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
   }
 
   #language-toggle {
-    /* Inherit padding/width from .main-nav a in mobile */
-    justify-content: flex-start; /* Align left like other nav items */
-    border-bottom: none; /* Remove bottom border if applied above */
-    /* Ensure it takes full width from parent li */
-    width: 100%;
-    box-sizing: border-box; /* Include padding in width */
-    padding: 12px 20px; /* Match link padding */
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
-  #language-toggle[aria-expanded="true"] {
-    /* Optional: Style when dropdown is open */
-    background-color: rgba(0, 0, 0, 0.05);
+  /* Inherits base button transition */
+  #language-toggle:hover,
+  #language-toggle:focus {
+    color: var(--primary-pink); /* Consistent hover */
+    opacity: 0.9; /* Slight fade */
   }
-  .dark-mode #language-toggle[aria-expanded="true"] {
-    background-color: rgba(255, 255, 255, 0.05);
+
+  #language-toggle .current-lang {
+    font-weight: bold;
   }
 
   .language-dropdown {
-    position: static; /* Flow naturally */
-    width: 100%;
-    box-shadow: none;
-    border: none;
-    /* border-top: 1px solid var(--grey-border); Optional separator */
-    background-color: rgba(0, 0, 0, 0.02); /* Slightly different background */
-    padding: 0;
-    margin-top: 0;
-    border-radius: 0; /* No radius inside nav */
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px); /* Position below button with small gap */
+    right: 0;
+    background-color: var(--container-bg); /* Use container background */
+    border: 1px solid var(--grey-border); /* Use grey border */
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 5px 0;
+    margin: 0; /* Reset margin */
+    min-width: 120px;
+    z-index: 1001;
   }
   .dark-mode .language-dropdown {
-    background-color: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .language-dropdown.show {
+    display: block;
+  }
+
+  .language-dropdown li {
+    margin: 0;
   }
 
   .language-dropdown li a {
-    padding: 10px 20px 10px 40px; /* Indent dropdown items */
+    display: block;
+    padding: 8px 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 0.9em;
+    transition: background-color var(--transition-speed)
+        var(--transition-timing),
+      color var(--transition-speed) var(--transition-timing);
   }
 
-  /* Remove border from last item if dropdown is last */
-  .main-nav li.language-switcher:last-child #language-toggle {
-    border-bottom: none;
+  /* CORRECTED HOVER STYLES using defined variables */
+  .language-dropdown li a:hover,
+  .language-dropdown li a:focus {
+    background-color: var(--lang-hover-bg); /* Use defined variable */
+    color: var(--lang-hover-text); /* Use defined variable */
+  }
+
+  /* Language Switcher within Mobile Nav */
+  @media (max-width: 768px) {
+    .language-switcher {
+      margin-right: 0;
+      width: 100%;
+      /* border-bottom: 1px solid var(--grey-border); */ /* Optional separator if needed */
+    }
+
+    #language-toggle {
+      /* Inherit padding/width from .main-nav a in mobile */
+      justify-content: flex-start; /* Align left like other nav items */
+      border-bottom: none; /* Remove bottom border if applied above */
+      /* Ensure it takes full width from parent li */
+      width: 100%;
+      box-sizing: border-box; /* Include padding in width */
+      padding: 12px 20px; /* Match link padding */
+    }
+    #language-toggle[aria-expanded="true"] {
+      /* Optional: Style when dropdown is open */
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .dark-mode #language-toggle[aria-expanded="true"] {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .language-dropdown {
+      position: static; /* Flow naturally */
+      width: 100%;
+      box-shadow: none;
+      border: none;
+      /* border-top: 1px solid var(--grey-border); Optional separator */
+      background-color: rgba(0, 0, 0, 0.02); /* Slightly different background */
+      padding: 0;
+      margin-top: 0;
+      border-radius: 0; /* No radius inside nav */
+    }
+    .dark-mode .language-dropdown {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .language-dropdown li a {
+      padding: 10px 20px 10px 40px; /* Indent dropdown items */
+    }
+
+    /* Remove border from last item if dropdown is last */
+    .main-nav li.language-switcher:last-child #language-toggle {
+      border-bottom: none;
+    }
   }
 }
 /* ========================
