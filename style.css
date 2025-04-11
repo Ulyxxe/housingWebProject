@@ -95,9 +95,14 @@ button {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+@font-face {
+  font-family: "Title font";
+  src: url("fonts/AnkhSanctuary-PVK0B.ttf") format("woff2");
+}
+
 /* ========================================
        Header & Navigation
-       ======================================== */
+   ======================================== */
 .site-header {
   display: flex;
   justify-content: space-between;
@@ -116,6 +121,7 @@ button {
   color: var(--primary-pink);
   letter-spacing: -1px;
   transition: transform var(--transition-speed) var(--transition-timing);
+  font-family: "Title font"; /* Custom font */
 }
 .logo:hover {
   transform: scale(1.03);
@@ -126,8 +132,8 @@ button {
   display: flex;
   align-items: center;
   gap: 25px;
-  padding: 0; /* Ensure no default padding */
-  margin: 0; /* Ensure no default margin */
+  padding: 0;
+  margin: 0;
 }
 
 .main-nav a {
@@ -150,18 +156,18 @@ button {
   width: 100%;
 }
 
-/* Hamburger Menu Button - Hidden by default */
+/* Hamburger menu language settings - Hidden by default */
 .hamburger {
-  display: none; /* Shown via media query */
+  display: none;
   flex-direction: column;
-  justify-content: space-around; /* Evenly space bars */
+  justify-content: space-around;
   width: 30px;
   height: 24px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 950; /* Above nav links if they overlay */
+  z-index: 950;
 }
 .hamburger .bar {
   display: block;
@@ -171,30 +177,27 @@ button {
   border-radius: 3px;
   transition: all 0.3s ease-in-out;
 }
-/* No need for separate dark mode bar color if var(--text-color) is used */
 
-/* Hamburger Animation (Add class 'active' via JS) */
+/* Hamburger Animation */
 .hamburger.active .bar:nth-child(1) {
-  transform: translateY(10.5px) rotate(45deg); /* Adjusted translate for 3px height */
+  transform: translateY(10.5px) rotate(45deg);
 }
 .hamburger.active .bar:nth-child(2) {
   opacity: 0;
 }
 .hamburger.active .bar:nth-child(3) {
-  transform: translateY(-10.5px) rotate(-45deg); /* Adjusted translate */
+  transform: translateY(-10.5px) rotate(-45deg);
 }
 
 /* ========================================
        Buttons
-       ======================================== */
-/* (Keep existing .btn, .btn-signin, .btn-register, icon button styles) */
+  ======================================== */
 .btn {
   padding: 8px 18px;
   border: 1px solid transparent;
   border-radius: 20px;
   font-weight: 500;
   font-size: 0.9em;
-  /* transition inherited from button base */
 }
 .btn:hover {
   transform: translateY(var(--hover-lift));
@@ -212,18 +215,17 @@ button {
 }
 
 .btn-signin {
-  /* Also used for secondary actions like logout */
+  /* and logout*/
   background-color: var(--grey-background);
   border-color: var(--grey-border);
   color: var(--text-color);
 }
 .btn-signin:hover {
   background-color: var(--grey-border);
-  /* transform inherited */
 }
 
 .btn-register {
-  /* Also used for primary actions */
+  /*also for primary buttons*/
   background-color: var(--primary-pink);
   border-color: var(--primary-pink);
   color: white;
@@ -231,7 +233,6 @@ button {
 .btn-register:hover {
   background-color: #d6006a;
   border-color: #d6006a;
-  /* transform inherited */
 }
 
 /* Icon/Utility Buttons */
@@ -241,23 +242,22 @@ button {
 #chat-send-button,
 #chat-close-button,
 .btn-view-toggle {
-  /* If you add a map view toggle button */
+  /* we'll have to add here a toggle map button */
   background: none;
   border: none;
   padding: 5px;
-  color: inherit; /* Inherit text color */
-  font-size: 1.2em; /* Adjust size as needed */
+  color: inherit;
+  font-size: 1.2em;
   line-height: 1;
-  /* specific styles defined later, inherit base transitions */
 }
 #theme-toggle:hover,
-  .search-btn:hover,
-  #chat-toggle-button:hover, /* Exclude main chat bubble */
-  #chat-send-button:hover,
-  #chat-close-button:hover,
-  .btn-view-toggle:hover {
-  color: var(--primary-pink); /* Add color change on hover */
-  transform: scale(1.1) translateY(var(--hover-lift)); /* Combine effects */
+.search-btn:hover,
+#chat-toggle-button:hover,
+#chat-send-button:hover,
+#chat-close-button:hover,
+.btn-view-toggle:hover {
+  color: var(--primary-pink);
+  transform: scale(1.1) translateY(var(--hover-lift));
 }
 #theme-toggle:active,
   .search-btn:active,
@@ -265,30 +265,27 @@ button {
   #chat-send-button:active,
   #chat-close-button:active,
   .btn-view-toggle:active {
-  transform: scale(1) translateY(0); /* Reset on active */
+  transform: scale(1) translateY(0);
 }
-/* Special styles for main chat toggle button are below in chat section */
 
 /* ========================================
        Main Layout & Index Page Components
-       ======================================== */
-/* (Keep existing .main-content-wrapper, .filters-sidebar, .filter-group, .keyword-tags, .checkbox-item, .range-header, .slider styles) */
+  ======================================== */
 .main-content-wrapper {
   display: flex;
   gap: 30px;
   padding: 30px 40px;
 }
 
-/* --- Sidebar --- */
 .filters-sidebar {
-  flex: 0 0 250px; /* Fixed width */
+  flex: 0 0 250px;
   border: 1px solid var(--grey-border);
   border-radius: 8px;
   padding: 20px;
-  align-self: flex-start; /* Stick to top */
+  align-self: flex-start;
   height: fit-content;
   background-color: var(--container-bg);
-  transition: background-color 0.3s ease, border-color 0.3s ease; /* Theme transition */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .filter-group {
@@ -303,49 +300,16 @@ button {
   color: var(--text-color);
 }
 
-/* --- Keywords --- (If used) */
-.keyword-tags .tag {
-  display: inline-block;
-  background-color: var(--light-pink);
-  color: var(--keywords-txt-color);
-  padding: 5px 10px;
-  border-radius: 15px;
-  margin: 0 5px 8px 0;
-  font-size: 0.9em;
-  font-weight: 500;
-  transition: transform var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
-}
-.keyword-tags .tag:hover {
-  transform: translateY(var(--hover-lift));
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.keyword-tags .tag button {
-  background: none;
-  border: none;
-  color: var(--primary-pink);
-  margin-left: 5px;
-  padding: 0;
-  font-size: 1.1em;
-  line-height: 1;
-  vertical-align: middle;
-  transition: transform var(--transition-speed) var(--transition-timing);
-}
-.keyword-tags .tag button:hover {
-  transform: scale(1.2);
-}
-
 /* --- Unified Checkbox Styling --- */
 .checkbox-item,
 .terms-group {
-  /* Common parent styles */
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  padding: 3px 0; /* Padding for hover effect */
+  padding: 3px 0;
   border-radius: 4px;
   transition: background-color var(--transition-speed) var(--transition-timing);
-  cursor: pointer; /* Indicate the whole item is clickable */
+  cursor: pointer;
 }
 .checkbox-item:hover,
 .terms-group:hover {
@@ -366,8 +330,8 @@ button {
   border-radius: 3px;
   position: relative;
   vertical-align: middle;
-  margin-top: -1px; /* Fine-tune alignment */
-  margin-right: 8px; /* Space between box and label */
+  margin-top: -1px;
+  margin-right: 8px;
   flex-shrink: 0;
   cursor: pointer;
   transition: all var(--transition-speed) var(--transition-timing);
@@ -393,16 +357,15 @@ button {
   font-weight: bold;
 }
 
-.checkbox-item label, /* Filter label */
-    .terms-group label {
-  /* Terms label */
+.checkbox-item label,
+.terms-group label {
   color: var(--light-text);
   line-height: 1.4;
   cursor: pointer;
 }
 .terms-group label {
   font-size: 0.9em;
-} /* Specific size for terms */
+}
 .terms-group label a {
   color: var(--primary-pink);
 }
@@ -470,10 +433,9 @@ button {
 }
 
 /* --- Results Area --- */
-/* (Keep existing .results-area, .search-and-sort, .search-container, .sort-options, .sort-btn styles) */
 .results-area {
   flex: 1;
-  min-width: 0; /* Allow shrinking */
+  min-width: 0;
 }
 
 /* --- Search and Sort --- */
@@ -494,11 +456,10 @@ button {
   max-width: 300px;
   background-color: var(--input-bg);
   transition: all var(--transition-speed) var(--transition-timing);
-  flex-grow: 1; /* Allow search to grow if space allows */
+  flex-grow: 1;
 }
 .search-container:hover,
 .search-container:focus-within {
-  /* Add focus-within for highlight */
   border-color: var(--primary-pink);
   box-shadow: 0 0 5px var(--light-pink);
 }
@@ -515,7 +476,7 @@ button {
   flex-grow: 1;
   color: var(--text-color);
   font-size: 0.95em;
-  min-width: 100px; /* Prevent it becoming too small */
+  min-width: 100px;
 }
 .dark-mode .search-container input[type="search"]::placeholder {
   color: var(--light-text);
@@ -556,7 +517,6 @@ button {
   border-color: var(--primary-pink);
 }
 .sort-btn.active:hover {
-  /* Allow hover effect even when active */
   background-color: #d6006a;
   border-color: #d6006a;
   transform: translateY(var(--hover-lift));
@@ -570,7 +530,6 @@ button {
 }
 
 /* --- Results Grid & Cards --- */
-/* (Keep existing .results-layout, grid/map containers, .results-grid, .result-card styles) */
 .results-layout {
   display: flex;
   gap: 20px;
@@ -578,11 +537,11 @@ button {
 .results-grid-container {
   flex: 1 1 65%;
   min-width: 0;
-} /* Allow shrinking */
+}
 .map-container {
-  flex: 0 0 35%; /* Start with flex-basis for map */
-  min-width: 200px; /* Min width for map */
-  position: relative; /* Needed for sticky and resize handle */
+  flex: 0 0 35%;
+  min-width: 200px;
+  position: relative;
 }
 
 .results-grid {
@@ -594,10 +553,10 @@ button {
   border: 1px solid var(--grey-border);
   border-radius: 8px;
   overflow: hidden;
-  background-color: var(--container-bg); /* Use container bg for cards */
+  background-color: var(--container-bg);
   transition: all var(--transition-speed) var(--transition-timing);
   cursor: pointer;
-  display: flex; /* Use flex for better internal layout control */
+  display: flex;
   flex-direction: column;
 }
 .result-card:hover {
@@ -613,13 +572,12 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--grey-border); /* Lighter color for icon */
+  color: var(--grey-border);
   font-size: 3em;
-  overflow: hidden; /* Ensure image doesn't overflow */
-  flex-shrink: 0; /* Prevent image area from shrinking */
+  overflow: hidden;
+  flex-shrink: 0;
 }
 .card-image-placeholder img {
-  /* Style actual image */
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -630,7 +588,7 @@ button {
 }
 .card-content {
   padding: 15px;
-  flex-grow: 1; /* Allow content to take remaining space */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
@@ -644,74 +602,63 @@ button {
   font-size: 1em;
   font-weight: bold;
   color: var(--text-color);
-  margin-bottom: auto; /* Push subsequent elements down */
+  margin-bottom: auto;
 }
 .card-size,
 .card-rating {
-  /* Shared style for bottom details */
   font-size: 0.9em;
   color: var(--light-text);
   margin-top: 4px;
 }
 
 /* --- Map --- */
-/* (Keep existing .map-container, #map, #map-resize-handle styles, but ensure map-container is setup for sticky) */
 .map-container {
-  /* ... existing flex properties */
-  position: sticky; /* Make map sticky */
-  top: calc(71px + 30px); /* Header height (adjust if needed) + desired gap */
-  align-self: flex-start; /* Align to the top of the flex container */
-  height: calc(
-    100vh - 71px - 60px
-  ); /* Approx viewport height minus header and padding */
-  max-height: 600px; /* Optional: Limit max height */
+  position: sticky;
+  top: calc(71px + 30px);
+  align-self: flex-start;
+  height: calc(100vh - 71px - 60px);
+  max-height: 600px;
 }
 #map {
-  height: 100%; /* Fill map-container height */
+  height: 100%;
   width: 100%;
   border: 5px solid var(--primary-pink);
   border-radius: 15px;
   z-index: 1;
   overflow: hidden;
-  clip-path: inset(0 round 10px); /* Adjusted radius to match border */
-  position: relative; /* For resize handle */
+  clip-path: inset(0 round 10px);
+  position: relative;
 }
 #map-resize-handle {
   position: absolute;
   bottom: 0;
-  right: 0; /* Position bottom-right for horizontal resize */
-  width: 20px; /* Make handle slightly larger */
-  height: 100%; /* Full height handle */
-  /* background-color: var(--primary-pink); */
+  right: 0;
+  width: 20px;
+  height: 100%;
   background: linear-gradient(
     to left,
     rgba(255, 0, 127, 0.4),
     rgba(255, 0, 127, 0)
-  ); /* Gradient handle */
-  /* opacity: 0.7; */
-  /* border: 1px solid white; */
+  );
   border-left: 3px dotted rgba(255, 255, 255, 0.5);
-  /* border-top-left-radius: 5px; */
-  cursor: col-resize; /* Use column resize cursor */
+  cursor: col-resize;
   z-index: 401;
   transition: background-color 0.2s ease;
 }
 #map-resize-handle:hover {
-  /* opacity: 1; */
-  background-color: rgba(255, 0, 127, 0.6); /* Highlight on hover */
+  background-color: rgba(255, 0, 127, 0.6);
   border-left-style: solid;
 }
-/* Change cursor for the entire body during resize */
+
 body.map-resizing {
-  cursor: col-resize !important; /* Force cursor override */
-  user-select: none; /* Prevent text selection */
+  cursor: col-resize !important;
+  user-select: none;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE */
 }
 
 /* Leaflet Overrides */
-/* (Keep existing Leaflet Overrides, .custom-div-icon, Marker Clusters) */
 .dark-mode .leaflet-tile-pane {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
     brightness(0.7);
@@ -739,10 +686,10 @@ body.map-resizing {
 /* Marker Clusters */
 .marker-cluster {
   transition: filter 0.2s ease;
-  color: #fff !important; /* Ensure text is white */
+  color: #fff !important;
 }
 .marker-cluster div {
-  color: #fff !important; /* Ensure text is white */
+  color: #fff !important;
   font-weight: bold;
 }
 
@@ -750,501 +697,489 @@ body.map-resizing {
   filter: brightness(1.1);
 }
 .marker-cluster-small div {
-  background-color: hsla(145, 63%, 42%, 0.7); /* Greenish */
-}
-.marker-cluster-small {
-  background-color: hsla(145, 63%, 52%, 0.6);
-}
-.marker-cluster-medium div {
-  background-color: hsla(40, 88%, 50%, 0.7); /* Orangey */
-}
-.marker-cluster-medium {
-  background-color: hsla(40, 88%, 60%, 0.6);
-}
-.marker-cluster-large div {
-  background-color: hsla(330, 70%, 50%, 0.7); /* Pinkish/Reddish */
-}
-.marker-cluster-large {
-  background-color: hsla(330, 70%, 60%, 0.6);
-}
-/* Dark mode clusters already use white text, looks okay */
+  background-color: hsla(145, 63%, 42%, 0.7);
+  .marker-cluster-small {
+    background-color: hsla(145, 63%, 52%, 0.6);
+  }
+  .marker-cluster-medium div {
+    background-color: hsla(40, 88%, 50%, 0.7);
+  }
+  .marker-cluster-medium {
+    background-color: hsla(40, 88%, 60%, 0.6);
+  }
+  .marker-cluster-large div {
+    background-color: hsla(330, 70%, 50%, 0.7);
+  }
+  .marker-cluster-large {
+    background-color: hsla(330, 70%, 60%, 0.6);
+  }
 
-/* --- View Controls (Map Toggle) --- */
-/* (Keep existing .view-controls, .btn-view-toggle, map hidden state styles) */
-.view-controls {
-  margin-bottom: 15px;
-  text-align: right;
-}
-.btn-view-toggle {
-  background-color: var(--grey-background);
-  border: 1px solid var(--grey-border);
-  color: var(--text-color);
-  padding: 6px 12px;
-  font-size: 0.85em;
-  border-radius: 6px;
-  gap: 6px;
-  display: inline-flex;
-  align-items: center;
-  /* Inherits button hover/active */
-}
-.btn-view-toggle i {
-  font-size: 1.1em;
-}
-/* Map Hidden State */
-#results-layout.map-hidden .map-container {
-  display: none;
-}
-#results-layout.map-hidden .results-grid-container {
-  flex-basis: 100%;
-}
-.results-grid-container,
-.map-container {
-  transition: flex-basis 0.4s var(--transition-timing),
-    opacity 0.4s var(--transition-timing);
-}
-#results-layout .map-container {
-  opacity: 1;
-}
-#results-layout.map-hidden .map-container {
-  opacity: 0;
-  pointer-events: none;
-}
+  /* --- View Controls (Map Toggle)  WORK IN PROGRESS--- */
+  .view-controls {
+    margin-bottom: 15px;
+    text-align: right;
+  }
+  .btn-view-toggle {
+    background-color: var(--grey-background);
+    border: 1px solid var(--grey-border);
+    color: var(--text-color);
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 6px;
+    gap: 6px;
+    display: inline-flex;
+    align-items: center;
+    .marker-cluster div {
+      background-color: rgba(255, 0, 127, 0.6);
+      color: #fff;
+    }
+    .btn-view-toggle i {
+      font-size: 1.1em;
+    }
+    /* Map Hidden State */
+    #results-layout.map-hidden .map-container {
+      display: none;
+    }
+    #results-layout.map-hidden .results-grid-container {
+      flex-basis: 100%;
+    }
+    .results-grid-container,
+    .map-container {
+      transition: flex-basis 0.4s var(--transition-timing),
+        opacity 0.4s var(--transition-timing);
+    }
+    #results-layout .map-container {
+      opacity: 1;
+    }
+    #results-layout.map-hidden .map-container {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-/* ========================================
+    /* ========================================
        Login, Register, Dashboard Pages (Shared Styles)
-       ======================================== */
-/* (Keep existing login, register, dashboard styles) */
-/* Common Wrapper */
-.login-page-wrapper,
-.register-page-wrapper,
-.dashboard-page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* Align top */
-  padding: 40px 20px 60px 20px; /* Top/Horiz/Bottom */
-  min-height: calc(
-    100vh - 71px - 100px
-  ); /* Approx Full height minus header minus padding */
-}
+     ======================================== */
+    /* Common Wrapper */
+    .login-page-wrapper,
+    .register-page-wrapper,
+    .dashboard-page-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px 60px 20px;
+      min-height: calc(100vh - 71px - 100px);
+    }
 
-/* Common Container */
-.login-container,
-.register-container,
-.dashboard-container {
-  background-color: var(--container-bg);
-  padding: 35px 45px;
-  border: 1px solid var(--grey-border);
-  border-radius: 10px;
-  max-width: 450px; /* Default max-width */
-  width: 100%;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-.dashboard-container {
-  max-width: 800px;
-} /* Override for dashboard */
-.dark-mode .login-container,
-.dark-mode .register-container,
-.dark-mode .dashboard-container {
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-}
+    /* Common Container */
+    .login-container,
+    .register-container,
+    .dashboard-container {
+      background-color: var(--container-bg);
+      padding: 35px 45px;
+      border: 1px solid var(--grey-border);
+      border-radius: 10px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .dashboard-container {
+      max-width: 800px;
+    }
+    .dark-mode .login-container,
+    .dark-mode .register-container,
+    .dark-mode .dashboard-container {
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    }
 
-/* Common Heading */
-.login-container h2,
-.register-container h2,
-.dashboard-container h1 {
-  /* Use h1 for dashboard primary heading */
-  text-align: center;
-  color: var(--primary-pink);
-  margin-bottom: 30px;
-  font-size: 2em;
-  font-weight: 600;
-}
-.dashboard-container h2 {
-  /* Secondary headings in dashboard */
-  color: var(--text-color);
-  margin-top: 30px;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  border-bottom: 1px solid var(--grey-border);
-  padding-bottom: 8px;
-  text-align: left;
-}
-.dark-mode .dashboard-container h2 {
-  border-bottom-color: var(--grey-border);
-}
+    /* Common Heading */
+    .login-container h2,
+    .register-container h2,
+    .dashboard-container h1 {
+      text-align: center;
+      color: var(--primary-pink);
+      margin-bottom: 30px;
+      font-size: 2em;
+      font-weight: 600;
+    }
+    .dashboard-container h2 {
+      color: var(--text-color);
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      border-bottom: 1px solid var(--grey-border);
+      padding-bottom: 8px;
+      text-align: left;
+    }
+    .dark-mode .dashboard-container h2 {
+      border-bottom-color: var(--grey-border);
+    }
 
-/* Common Form Group */
-.form-group {
-  margin-bottom: 22px;
-  text-align: left;
-}
+    /* Common Form Group */
+    .form-group {
+      margin-bottom: 22px;
+      text-align: left;
+    }
 
-/* Common Label */
-.login-container label,
-.register-container label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--text-color);
-  font-size: 1em;
-  cursor: pointer;
-  transition: color var(--transition-speed) var(--transition-timing);
-}
-.login-container label:hover,
-.register-container label:hover {
-  color: var(--primary-pink);
-}
+    /* Common Label */
+    .login-container label,
+    .register-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+      font-size: 1em;
+      cursor: pointer;
+      transition: color var(--transition-speed) var(--transition-timing);
+    }
+    .login-container label:hover,
+    .register-container label:hover {
+      color: var(--primary-pink);
+    }
 
-/* Common Input Fields */
-.login-container input[type="email"],
-.login-container input[type="password"],
-.register-container input[type="email"],
-.register-container input[type="password"],
-.register-container input[type="text"] {
-  width: 100%;
-  padding: 13px 15px;
-  border: 1px solid var(--grey-border);
-  border-radius: 6px;
-  font-size: 1em;
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  font-family: inherit;
-  transition: border-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
-}
-.dark-mode input::placeholder {
-  color: var(--light-text);
-}
-input:focus {
-  /* Covers all inputs */
-  outline: none;
-  border-color: var(--primary-pink);
-  box-shadow: 0 0 0 3px var(--light-pink);
-}
-.dark-mode input:focus {
-  box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
-}
+    /* Common Input Fields */
+    .login-container input[type="email"],
+    .login-container input[type="password"],
+    .register-container input[type="email"],
+    .register-container input[type="password"],
+    .register-container input[type="text"] {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1px solid var(--grey-border);
+      border-radius: 6px;
+      font-size: 1em;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-family: inherit;
+      transition: border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
+    }
+    .dark-mode input::placeholder {
+      color: var(--light-text);
+    }
+    input:focus {
+      /* Covers all inputs */
+      outline: none;
+      border-color: var(--primary-pink);
+      box-shadow: 0 0 0 3px var(--light-pink);
+    }
+    .dark-mode input:focus {
+      box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
+    }
 
-/* Login Specific */
-.login-container .form-options {
-  display: block;
-  text-align: right;
-  margin-bottom: 30px;
-}
-.forgot-password {
-  color: var(--primary-pink);
-  font-size: 0.95em;
-}
-.forgot-password:hover {
-  text-decoration: underline;
-}
+    /* Login Specific */
+    .login-container .form-options {
+      display: block;
+      text-align: right;
+      margin-bottom: 30px;
+    }
+    .forgot-password {
+      color: var(--primary-pink);
+      font-size: 0.95em;
+    }
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
 
-/* Common Submit Button */
-.btn-login-submit,
-.btn-register-submit {
-  width: 100%;
-  padding: 14px 20px;
-  font-size: 1.1em;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  /* Inherit .btn-register styles by default */
-  background-color: var(--primary-pink);
-  border-color: var(--primary-pink);
-  color: white;
-}
-.btn-login-submit:hover,
-.btn-register-submit:hover {
-  background-color: #d6006a;
-  border-color: #d6006a;
-}
+    /* Common Submit Button */
+    .btn-login-submit,
+    .btn-register-submit {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 1.1em;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background-color: var(--primary-pink);
+      border-color: var(--primary-pink);
+      color: white;
+    }
+    .btn-login-submit:hover,
+    .btn-register-submit:hover {
+      background-color: #d6006a;
+      border-color: #d6006a;
+    }
 
-/* Common Links Below Form */
-.login-container .login-links,
-.register-container .login-links {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 1em;
-  color: var(--light-text);
-}
-.login-container .login-links a,
-.register-container .login-links a {
-  color: var(--primary-pink);
-  font-weight: 500;
-}
-.login-container .login-links a:hover,
-.register-container .login-links a:hover {
-  text-decoration: underline;
-}
+    /* Common Links Below Form */
+    .login-container .login-links,
+    .register-container .login-links {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1em;
+      color: var(--light-text);
+    }
+    .login-container .login-links a,
+    .register-container .login-links a {
+      color: var(--primary-pink);
+      font-weight: 500;
+    }
+    .login-container .login-links a:hover,
+    .register-container .login-links a:hover {
+      text-decoration: underline;
+    }
 
-/* Dashboard Specific */
-.dashboard-container .user-info {
-  text-align: center;
-  color: var(--light-text);
-  font-size: 1.1em;
-  margin-bottom: 30px;
-  line-height: 1.6;
-}
-.dashboard-container .user-info strong {
-  color: var(--text-color);
-  font-weight: 600;
-}
-.dashboard-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px dashed var(--grey-border);
-  flex-wrap: wrap;
-}
-.dark-mode .dashboard-actions {
-  border-bottom-color: var(--grey-border);
-}
-.dark-mode .dashboard-actions .btn-signin {
-  /* Logout button in dark mode */
-  color: var(--text-color);
-  border-color: var(--grey-border);
-  background-color: var(--grey-background);
-}
-.dashboard-content p {
-  color: var(--text-color);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-.placeholder-section {
-  /* Dashboard placeholder */
-  background-color: var(--grey-background);
-  border: 1px dashed var(--grey-border);
-  border-radius: 6px;
-  padding: 25px;
-  text-align: center;
-  margin-bottom: 20px;
-  color: var(--light-text);
-}
-.placeholder-section i {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: var(--primary-pink);
-  opacity: 0.7;
-}
-.placeholder-section p {
-  font-size: 1.1em;
-  font-weight: 500;
-  margin-bottom: 0;
-}
-.dark-mode .placeholder-section {
-  background-color: var(--grey-background);
-  border-color: var(--grey-border);
-  color: var(--light-text);
-}
+    /* Dashboard Specific */
+    .dashboard-container .user-info {
+      text-align: center;
+      color: var(--light-text);
+      font-size: 1.1em;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .dashboard-container .user-info strong {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+    .dashboard-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 1px dashed var(--grey-border);
+      flex-wrap: wrap;
+    }
+    .dark-mode .dashboard-actions {
+      border-bottom-color: var(--grey-border);
+    }
+    .dark-mode .dashboard-actions .btn-signin {
+      color: var(--text-color);
+      border-color: var(--grey-border);
+      background-color: var(--grey-background);
+    }
+    .dashboard-content p {
+      color: var(--text-color);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .placeholder-section {
+      background-color: var(--grey-background);
+      border: 1px dashed var(--grey-border);
+      border-radius: 6px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--light-text);
+    }
+    .placeholder-section i {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: var(--primary-pink);
+      opacity: 0.7;
+    }
+    .placeholder-section p {
+      font-size: 1.1em;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    .dark-mode .placeholder-section {
+      background-color: var(--grey-background);
+      border-color: var(--grey-border);
+      color: var(--light-text);
+    }
 
-/* ========================================
+    /* ========================================
        Chat Widget
        ======================================== */
-/* (Keep existing chat widget styles) */
-#chat-widget {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
+    #chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
 
-#chat-toggle-button {
-  /* The main bubble */
-  background-color: var(--primary-pink);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 28px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px; /* Space when window is open */
-  transition: background-color var(--transition-speed) var(--transition-timing),
-    transform var(--transition-speed) var(--transition-timing);
-}
-#chat-toggle-button:hover {
-  background-color: #d6006a;
-  transform: scale(1.05); /* Slight grow on hover */
-}
-#chat-toggle-button:active {
-  transform: scale(0.95); /* Shrink on click */
-}
+    #chat-toggle-button {
+      /* The main bubble */
+      background-color: var(--primary-pink);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      transition: background-color var(--transition-speed)
+          var(--transition-timing),
+        transform var(--transition-speed) var(--transition-timing);
+    }
+    #chat-toggle-button:hover {
+      background-color: #d6006a;
+      transform: scale(1.05);
+    }
+    #chat-toggle-button:active {
+      transform: scale(0.95);
+    }
 
-#chat-container {
-  width: 350px;
-  max-height: 500px;
-  background-color: var(--container-bg);
-  border: 1px solid var(--grey-border);
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
-    margin-bottom 0.3s ease, visibility 0.3s ease;
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-}
-.dark-mode #chat-container {
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-}
+    #chat-container {
+      width: 350px;
+      max-height: 500px;
+      background-color: var(--container-bg);
+      border: 1px solid var(--grey-border);
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
+        margin-bottom 0.3s ease, visibility 0.3s ease;
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+    .dark-mode #chat-container {
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
 
-#chat-container.chat-hidden {
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  pointer-events: none;
-  height: 0;
-  border: none;
-  margin-bottom: -10px; /* Overlap toggle button slightly */
-  visibility: hidden;
-}
+    #chat-container.chat-hidden {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      pointer-events: none;
+      height: 0;
+      border: none;
+      margin-bottom: -10px;
+      visibility: hidden;
+    }
 
-#chat-header {
-  background-color: var(--primary-pink);
-  color: white;
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-#chat-header span {
-  font-size: 1.1em;
-}
-#chat-close-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 5px;
-  line-height: 1;
-  /* Inherits icon button hover/active */
-}
-#chat-close-button:hover {
-  transform: scale(1.2);
-  color: #ffdddd;
-}
+    #chat-header {
+      background-color: var(--primary-pink);
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    #chat-header span {
+      font-size: 1.1em;
+    }
+    #chat-close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 0 5px;
+      line-height: 1;
+    }
+    #chat-close-button:hover {
+      transform: scale(1.2);
+      color: #ffdddd;
+    }
 
-#chat-messages {
-  flex-grow: 1;
-  padding: 15px;
-  overflow-y: auto;
-  background-color: var(--grey-background);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.dark-mode #chat-messages {
-  background-color: var(--container-bg);
-} /* Match container */
+    #chat-messages {
+      flex-grow: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: var(--grey-background);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .dark-mode #chat-messages {
+      background-color: var(--container-bg);
+    }
 
-.message {
-  padding: 8px 12px;
-  border-radius: 15px;
-  max-width: 80%;
-  line-height: 1.4;
-  word-wrap: break-word;
-}
-.message.user {
-  background-color: var(--light-pink);
-  color: var(--keywords-txt-color);
-  border-bottom-right-radius: 5px;
-  align-self: flex-end;
-}
-.dark-mode .message.user {
-  background-color: #580030;
-  color: #f0f0f0;
-}
-.message.bot {
-  background-color: #e5e5ea;
-  color: #333;
-  border-bottom-left-radius: 5px;
-  align-self: flex-start;
-}
-.dark-mode .message.bot {
-  background-color: #3a3a3c;
-  color: #e5e5e5;
-}
+    .message {
+      padding: 8px 12px;
+      border-radius: 15px;
+      max-width: 80%;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .message.user {
+      background-color: var(--light-pink);
+      color: var(--keywords-txt-color);
+      border-bottom-right-radius: 5px;
+      align-self: flex-end;
+    }
+    .dark-mode .message.user {
+      background-color: #580030;
+      color: #f0f0f0;
+    }
+    .message.bot {
+      background-color: #e5e5ea;
+      color: #333;
+      border-bottom-left-radius: 5px;
+      align-self: flex-start;
+    }
+    .dark-mode .message.bot {
+      background-color: #3a3a3c;
+      color: #e5e5e5;
+    }
 
-#chat-input-area {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid var(--grey-border);
-  background-color: var(--container-bg);
-  flex-shrink: 0;
-}
-#chat-input {
-  flex-grow: 1;
-  border: 1px solid var(--grey-border);
-  border-radius: 20px;
-  padding: 8px 15px;
-  margin-right: 8px;
-  outline: none;
-  font-size: 0.95em;
-  background-color: var(--input-bg);
-  color: var(--text-color);
-  transition: border-color var(--transition-speed) var(--transition-timing),
-    box-shadow var(--transition-speed) var(--transition-timing);
-}
-/* Inherits general input focus */
+    #chat-input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid var(--grey-border);
+      background-color: var(--container-bg);
+      flex-shrink: 0;
+    }
+    #chat-input {
+      flex-grow: 1;
+      border: 1px solid var(--grey-border);
+      border-radius: 20px;
+      padding: 8px 15px;
+      margin-right: 8px;
+      outline: none;
+      font-size: 0.95em;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      transition: border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
+    }
 
-#chat-send-button {
-  background-color: var(--primary-pink);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#chat-send-button:hover {
-  background-color: #d6006a;
-}
-#chat-send-button:disabled {
-  /* Style for when sending */
-  background-color: var(--light-text);
-  cursor: not-allowed;
-}
+    #chat-send-button {
+      background-color: var(--primary-pink);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      font-size: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #chat-send-button:hover {
+      background-color: #d6006a;
+    }
+    #chat-send-button:disabled {
+      background-color: var(--light-text);
+      cursor: not-allowed;
+    }
 
-#chat-loading {
-  padding: 10px 15px;
-  text-align: center;
-  color: var(--light-text);
-  background-color: var(--grey-background); /* Match message area */
-  border-top: 1px solid var(--grey-border);
-  font-style: italic;
-  flex-shrink: 0;
-  display: none; /* Hidden by default */
-  align-items: center; /* Align icon and text */
-  justify-content: center; /* Center content */
-}
-#chat-loading.active {
-  /* JS should add/remove .active class */
-  display: flex;
-}
-.dark-mode #chat-loading {
-  background-color: var(--container-bg);
-}
-#chat-loading i {
-  margin-right: 8px;
-  animation: spin 1.5s linear infinite; /* Add spin animation */
-}
+    #chat-loading {
+      padding: 10px 15px;
+      text-align: center;
+      color: var(--light-text);
+      background-color: var(--grey-background);
+      border-top: 1px solid var(--grey-border);
+      font-style: italic;
+      flex-shrink: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #chat-loading.active {
+      display: flex;
+    }
+    .dark-mode #chat-loading {
+      background-color: var(--container-bg);
+    }
+    #chat-loading i {
+      margin-right: 8px;
+      animation: spin 1.5s linear infinite;
+    }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 @keyframes spin {
   0% {
@@ -1479,6 +1414,8 @@ input:focus {
     height: 50px;
     font-size: 24px;
 =======
+=======
+>>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -1487,11 +1424,15 @@ input:focus {
         transform: rotate(360deg);
       }
     }
+<<<<<<< HEAD
 >>>>>>> 96899be (remove responsive)
+=======
+>>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
   }
 }
 
 /* ========================
+<<<<<<< HEAD
      Language Switcher Styles (Integrated and Corrected)
      ======================== */
 <<<<<<< HEAD
@@ -1620,6 +1561,9 @@ input:focus {
 }
 /* ========================
      End of Language Switcher Styles
+=======
+     End of Main Styles
+>>>>>>> 96899befb8fc28b0866db795e88a35238b6825b3
      ======================== */
 =======
 >>>>>>> 96899be (remove responsive)
