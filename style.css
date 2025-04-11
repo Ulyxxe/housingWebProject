@@ -63,9 +63,22 @@ button {
     box-shadow var(--transition-speed) var(--transition-timing); /* Base transition for buttons */
 }
 
+@font-face {
+  font-family: "Title font";
+  src: url("fonts/ankh-sanctuary-font.zip") format("woff2");
+}
+
 /* ========================================
    Header & Navigation
    ======================================== */
+
+title {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: var(--primary-pink);
+  letter-spacing: -1px;
+  transition: transform var(--transition-speed) var(--transition-timing);
+}
 .site-header {
   display: flex;
   justify-content: space-between;
@@ -81,6 +94,7 @@ button {
   color: var(--primary-pink);
   letter-spacing: -1px;
   transition: transform var(--transition-speed) var(--transition-timing);
+  font-family: "Title font"; /* Custom font */
 }
 .logo:hover {
   transform: scale(1.03); /* Slight scale on logo hover */
@@ -642,7 +656,8 @@ button {
   background-color: rgba(180, 100, 200, 0.6);
 }
 .marker-cluster div {
-  /* Common cluster text styles if needed */
+  background-color: rgba(255, 0, 127, 0.6); /* Default cluster color */
+  color: #fff; /* Ensure text visibility */
 }
 .dark-mode .marker-cluster div {
   color: #fff; /* Ensure text visibility */
