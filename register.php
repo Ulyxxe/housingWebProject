@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if email already exists
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt = $pdo->prepare("SELECT id FROM Users WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->fetch(PDO::FETCH_ASSOC)) {
                 $errors[] = "Email is already registered.";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO Users (username, email, password) VALUES (?, ?, ?)");
             $stmt->execute([$username, $email, $hashedPassword]);
             $success = "Registration successful! You can now log in.";
         } catch (PDOException $e) {
