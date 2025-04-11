@@ -1245,6 +1245,7 @@ input:focus {
   animation: spin 1.5s linear infinite; /* Add spin animation */
 }
 
+<<<<<<< HEAD
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -1477,12 +1478,23 @@ input:focus {
     width: 50px;
     height: 50px;
     font-size: 24px;
+=======
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+>>>>>>> 96899be (remove responsive)
   }
 }
 
 /* ========================
      Language Switcher Styles (Integrated and Corrected)
      ======================== */
+<<<<<<< HEAD
 
 .language-switcher {
   position: relative;
@@ -1609,3 +1621,5 @@ input:focus {
 /* ========================
      End of Language Switcher Styles
      ======================== */
+=======
+>>>>>>> 96899be (remove responsive)
