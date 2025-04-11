@@ -80,8 +80,7 @@
   let isResizingMap = false;
   let mapResizeStartX, mapResizeInitialWidth; // Only need width for horizontal resize
 
-  // --- Sample Data ---
-  // (Replace with your actual data fetching logic if applicable)
+ 
   function fetchHousingData() {
     fetch('/api/getHousing.php')
       .then(response => {
