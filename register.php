@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if email already exists
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("SELECT id FROM Users WHERE email = ?");
+            $stmt = $pdo->prepare("SELECT userID FROM Users WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->fetch(PDO::FETCH_ASSOC)) {
                 $errors[] = "Email is already registered.";
