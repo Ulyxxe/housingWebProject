@@ -2694,10 +2694,14 @@ input:focus {
 
 .language-switcher {
   position: relative;
-  display: inline-block;
+  display: none;
   margin-right: 10px;
 }
-
+.language-switcher.active {
+  display: block; /* Show when active */
+  margin-left: auto; /* Align to the right in header */
+  margin-right: 20px; /* Space from other elements */
+}
 #language-toggle {
   background: none;
   border: none;
