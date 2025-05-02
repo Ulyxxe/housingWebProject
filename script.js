@@ -1,7 +1,7 @@
 // ==========================================
 //          CROUS-X Script
 // ==========================================
-// Includes: Dark Mode, Filtering, Sorting, Map,
+// Includes: Dark Mode, Filtering, Sorting, Map (Toggleable, Resizable),
 // Hamburger Menu, Language Switcher (i18n), Chatbot support
 // ==========================================
 
@@ -16,7 +16,7 @@
   const MAP_MAX_ZOOM = 19;
   const MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const MAP_ATTRIBUTION = "© OpenStreetMap contributors";
-  const MAP_INVALIDATE_DELAY = 50; // ms delay before invalidating map size
+  const MAP_INVALIDATE_DELAY = 100; // ms delay before invalidating map size (increased slightly)
   const MIN_MAP_WIDTH = 200; // Minimum dimensions for resize
   const MIN_GRID_WIDTH = 200; // Minimum width for results grid during resize
   // Define custom map marker icon once (ensure Leaflet 'L' is available)
@@ -60,10 +60,10 @@
 
   // Map specific
   const mapElement = document.getElementById("map");
-  const mapToggleButton = document.getElementById("map-toggle-button"); // If you add one
-  const resultsLayout = document.querySelector(".results-layout");
+  const resultsLayout = document.getElementById("results-layout"); // *** Use ID for layout ***
   const mapContainer = document.querySelector(".map-container"); // Map container for resize
   const mapResizeHandle = document.getElementById("map-resize-handle");
+  const mapToggleButton = document.getElementById("map-toggle-button"); // *** ADDED ***
 
   // --- State Management ---
   let currentLanguageData = {}; // To hold the loaded language JSON
@@ -79,34 +79,60 @@
   let markersLayer = null;
   let isResizingMap = false;
   let mapResizeStartX, mapResizeInitialWidth; // Only need width for horizontal resize
+  let allHousingData = []; // Initialize as empty array
 
- 
   function fetchHousingData() {
-    fetch('/api/getHousing.php')
-      .then(response => {
+    fetch("/api/getHousing.php") // Assuming your API endpoint
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not OK');
+          // Check if response is JSON before parsing
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then((errorData) => {
+              throw new Error(
+                `Network response was not OK: ${
+                  response.statusText
+                }. Server response: ${JSON.stringify(errorData)}`
+              );
+            });
+          } else {
+            return response.text().then((textData) => {
+              throw new Error(
+                `Network response was not OK: ${response.statusText}. Server response (non-JSON): ${textData}`
+              );
+            });
+          }
         }
         return response.json();
       })
-      .then(data => {
-        // Set the global housing data variable to the fetched data
-        window.allHousingData = data;
-        // Call your display function to update the page (existing function in your script)
-        updateDisplay();
+      .then((data) => {
+        // Add basic validation if possible
+        if (!Array.isArray(data)) {
+          console.warn("Received non-array data from API:", data);
+          // Handle this case - maybe set to empty array or show user error
+          window.allHousingData = [];
+        } else {
+          // Set the global housing data variable to the fetched data
+          window.allHousingData = data;
+          console.log(
+            "Housing data fetched successfully:",
+            window.allHousingData.length,
+            "items"
+          );
+          // Call your display function to update the page
+          updateDisplay();
+        }
       })
-      .catch(error => {
-        console.error('Error fetching housing data:', error);
+      .catch((error) => {
+        console.error("Error fetching or processing housing data:", error);
+        window.allHousingData = []; // Ensure it's an empty array on error
+        updateDisplay(); // Update display to show "no results" or error message
+        // Optionally: Display a user-friendly error message on the page
+        if (resultsGrid) {
+          resultsGrid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 20px; color: red;">Could not load housing data. Please try again later.</p>`;
+        }
       });
   }
-  
-  // Fetch the housing data after the DOM has loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    fetchHousingData();
-  
-    // Also run other initialization code (if needed)
-  });
-  
 
   // ==========================================
   //          Internationalization (i18n) Functions
@@ -166,7 +192,6 @@
     document.querySelectorAll("[data-i18n-key]").forEach((element) => {
       const key = element.getAttribute("data-i18n-key");
       if (currentLanguageData[key] !== undefined) {
-        // Check if key exists
         // Use textContent for safety unless HTML is explicitly needed
         element.textContent = currentLanguageData[key];
       } else {
@@ -310,6 +335,8 @@
             icon: customMarkerIcon,
           });
           // Basic popup content - does not use i18n keys from JSON
+          // You could fetch translated strings here if needed:
+          // const typeLabel = currentLanguageData['popup_type_label'] || 'Type';
           const popupContent = `
                         <b>${item.name}</b><br>
                         Type: ${item.type}<br>
@@ -321,8 +348,12 @@
         } catch (error) {
           console.error(`Error creating marker for item ${item.id}:`, error);
         }
+      } else {
+        // Optional: Log items missing coordinates
+        // console.warn(`Item ${item.id} (${item.name}) missing valid coordinates.`);
       }
     });
+    console.log(`Rendered ${markersLayer.getLayers().length} markers on map.`);
   }
 
   // --- Function to Handle Map Invalidation ---
@@ -331,8 +362,17 @@
       // Delay slightly to ensure the container is visible and has dimensions after CSS transition/render.
       setTimeout(() => {
         try {
-          map.invalidateSize({ animate: true }); // Animate the resize
-          console.log("Map size invalidated.");
+          // Check if the map container is actually visible before invalidating
+          const mapContainerElement = map.getContainer();
+          if (mapContainerElement.offsetParent !== null) {
+            // Check if visible
+            map.invalidateSize({ animate: true }); // Animate the resize
+            console.log("Map size invalidated.");
+          } else {
+            console.log(
+              "Map size invalidation skipped: Map container not visible."
+            );
+          }
         } catch (error) {
           console.error("Error during map.invalidateSize():", error);
         }
@@ -361,14 +401,31 @@
       noResultsMessage.style.gridColumn = "1 / -1"; // Span across all grid columns
       noResultsMessage.style.textAlign = "center";
       noResultsMessage.style.padding = "20px";
-      noResultsMessage.setAttribute("data-i18n-key", "no_results_found"); // Add a key for translation
-      noResultsMessage.textContent = "No housing found matching your criteria."; // Default text
-      resultsGrid.appendChild(noResultsMessage);
 
-      // Apply translation if data is loaded
-      if (currentLanguageData?.no_results_found) {
-        noResultsMessage.textContent = currentLanguageData.no_results_found;
+      // Check if data fetch failed or if it's just no results from filters
+      if (
+        !window.allHousingData ||
+        (window.allHousingData.length === 0 &&
+          activeFilters.searchTerm === "" &&
+          activeFilters.types.length === 0)
+      ) {
+        // Likely API fetch failed or returned empty initially
+        noResultsMessage.setAttribute("data-i18n-key", "error_loading_data");
+        noResultsMessage.textContent = "Could not load housing data."; // Default error text
+        noResultsMessage.style.color = "red";
+        if (currentLanguageData?.error_loading_data) {
+          noResultsMessage.textContent = currentLanguageData.error_loading_data;
+        }
+      } else {
+        // Filters resulted in no matches
+        noResultsMessage.setAttribute("data-i18n-key", "no_results_found");
+        noResultsMessage.textContent =
+          "No housing found matching your criteria."; // Default text
+        if (currentLanguageData?.no_results_found) {
+          noResultsMessage.textContent = currentLanguageData.no_results_found;
+        }
       }
+      resultsGrid.appendChild(noResultsMessage);
       return;
     }
 
@@ -398,6 +455,7 @@
             `;
       resultsGrid.appendChild(card);
     });
+    console.log(`Rendered ${housingToDisplay.length} housing cards.`);
   }
 
   function updateSliderValueDisplay(slider, span, prefix = "", suffix = "") {
@@ -414,18 +472,20 @@
     const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
 
     // Ensure data exists before filtering
-    if (!Array.isArray(allHousingData)) {
+    if (!Array.isArray(window.allHousingData)) {
+      // Use window.allHousingData
       console.error("Housing data is not available or not an array.");
       return [];
     }
 
-    return allHousingData.filter((item) => {
+    return window.allHousingData.filter((item) => {
+      // Use window.allHousingData
       const priceMatch = maxPrice === null || item.price <= maxPrice;
       const sizeMatch = maxSize === null || item.size <= maxSize;
       const typeMatch = types.length === 0 || types.includes(item.type);
       const searchMatch =
         !lowerCaseSearchTerm ||
-        item.name.toLowerCase().includes(lowerCaseSearchTerm);
+        (item.name && item.name.toLowerCase().includes(lowerCaseSearchTerm)); // Check if item.name exists
       return priceMatch && sizeMatch && typeMatch && searchMatch;
     });
   }
@@ -459,8 +519,17 @@
     // Only run if the necessary elements exist (e.g., on index.html)
     if (!resultsGrid && !mapElement) {
       // If neither the grid nor the map element exists, likely not on the main page.
+      console.log(
+        "updateDisplay skipped: Neither results grid nor map element found."
+      );
       return;
     }
+    console.log(
+      "Updating display with filters:",
+      activeFilters,
+      "and sort:",
+      activeSort
+    );
 
     try {
       const filteredResults = filterHousing();
@@ -471,12 +540,26 @@
         renderHousing(sortedAndFilteredResults);
       }
 
-      // Update map markers only if map and layer exist
-      if (map && markersLayer) {
-        renderMapMarkers(filteredResults); // Often better to show all filtered markers regardless of sort
+      // Update map markers only if map and layer exist and map isn't hidden
+      if (
+        map &&
+        markersLayer &&
+        resultsLayout &&
+        !resultsLayout.classList.contains("map-hidden")
+      ) {
+        renderMapMarkers(filteredResults); // Show all filtered markers regardless of sort
+      } else if (
+        map &&
+        resultsLayout &&
+        resultsLayout.classList.contains("map-hidden")
+      ) {
+        console.log("Map marker rendering skipped: Map is hidden.");
       }
     } catch (error) {
       console.error("Error during updateDisplay:", error);
+      if (resultsGrid) {
+        resultsGrid.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 20px; color: orange;">An error occurred while updating results.</p>`;
+      }
     }
   }
 
@@ -495,7 +578,11 @@
       icon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon";
     }
     // Invalidate map size after theme change if map exists, as tile filter changes
-    if (map) {
+    if (
+      map &&
+      resultsLayout &&
+      !resultsLayout.classList.contains("map-hidden")
+    ) {
       invalidateMapSize();
       // Optional: Force reload tiles if filter is aggressive
       // map.eachLayer(layer => { if (layer instanceof L.TileLayer) layer.redraw(); });
@@ -586,7 +673,7 @@
     console.log("Filters, Sort, Search Cleared");
   }
 
-  // --- Map Toggle --- (If button exists)
+  // --- Map Toggle --- *** ADDED ***
   function handleMapToggle() {
     if (!resultsLayout || !mapToggleButton) {
       console.error("Map layout or toggle button not found for toggle action.");
@@ -594,17 +681,44 @@
     }
 
     const isHidden = resultsLayout.classList.toggle("map-hidden");
-    const icon = mapToggleButton.querySelector("i");
-    const text = mapToggleButton.querySelector("span"); // Assuming span holds text
+    const isPressed = !isHidden; // Map is visible when NOT hidden
 
-    mapToggleButton.setAttribute("aria-expanded", isHidden ? "false" : "true");
-    if (icon)
-      icon.className = isHidden ? "fas fa-map-location-dot" : "fas fa-compress"; // Example icons
-    if (text) text.textContent = isHidden ? "Show Map" : "Hide Map"; // Example text
+    const icon = mapToggleButton.querySelector("i");
+    const textSpan = mapToggleButton.querySelector("span");
+
+    mapToggleButton.setAttribute("aria-pressed", isPressed); // Use aria-pressed for toggle state
+
+    // Update Icon and Text based on visibility
+    if (icon) {
+      icon.className = isPressed ? "fas fa-compress" : "fas fa-expand"; // Compress when visible, Expand when hidden
+    }
+    if (textSpan) {
+      const textKey = isPressed ? "toggle_map_hide" : "toggle_map_show";
+      const defaultText = isPressed ? "Hide Map" : "Show Map";
+      textSpan.setAttribute("data-i18n-key", textKey); // Update key for translation
+      textSpan.textContent = currentLanguageData[textKey] || defaultText; // Update text immediately
+    }
+    // Update Title Attribute
+    const titleKey = isPressed
+      ? "toggle_map_hide_title"
+      : "toggle_map_show_title";
+    const defaultTitle = isPressed ? "Hide the map view" : "Show the map view";
+    mapToggleButton.setAttribute("data-i18n-key-title", titleKey);
+    mapToggleButton.title = currentLanguageData[titleKey] || defaultTitle;
 
     // Invalidate map size ONLY when it becomes visible
-    if (!isHidden) {
+    if (isPressed) {
+      // If map is now visible (isHidden is false)
+      console.log("Map toggled to visible, invalidating size...");
       invalidateMapSize();
+      // Re-render markers if they weren't rendered while hidden
+      if (map && markersLayer) {
+        renderMapMarkers(filterHousing());
+      }
+    } else {
+      console.log("Map toggled to hidden.");
+      // Optional: Clear markers when hidden if performance is an issue
+      // if (markersLayer) markersLayer.clearLayers();
     }
   }
 
@@ -615,7 +729,8 @@
       !mapResizeHandle ||
       !mapContainer ||
       !resultsLayout ||
-      !mapResizeHandle.contains(event.target)
+      !mapResizeHandle.contains(event.target) ||
+      resultsLayout.classList.contains("map-hidden") // Don't resize if map is hidden
     )
       return;
 
@@ -651,8 +766,10 @@
 
     // Apply constraints
     const gridContainer = document.querySelector(".results-grid-container");
-    const availableWidth =
-      resultsLayout.offsetWidth - mapResizeHandle.offsetWidth; // Total space minus handle width
+    // Ensure resultsLayout is defined and get its offsetWidth
+    const availableWidth = resultsLayout
+      ? resultsLayout.offsetWidth - mapResizeHandle.offsetWidth
+      : window.innerWidth; // Fallback to window width
     const minGridAllowedWidth = gridContainer ? MIN_GRID_WIDTH : 0; // Use defined constant
 
     newWidth = Math.max(MIN_MAP_WIDTH, newWidth); // Min map width
@@ -693,11 +810,42 @@
   // --- Language Switcher Click Handler ---
   function handleLanguageChange(event) {
     event.preventDefault(); // Prevent page jump from href="#"
-    const selectedLang = event.target.getAttribute("data-lang");
+    const anchor = event.target.closest("a[data-lang]"); // Find the anchor tag clicked
+    if (!anchor) return; // Exit if click wasn't on a language link
+
+    const selectedLang = anchor.getAttribute("data-lang");
 
     if (selectedLang && selectedLang !== currentLangCode) {
       console.log(`Attempting to load language: ${selectedLang}`);
-      loadLanguage(selectedLang); // Load and apply the new language
+      loadLanguage(selectedLang).then(() => {
+        // Re-apply translations to dynamically added text, like map toggle button
+        if (mapToggleButton && resultsLayout) {
+          const isPressed =
+            mapToggleButton.getAttribute("aria-pressed") === "true";
+          const textSpan = mapToggleButton.querySelector("span");
+          const textKey = isPressed ? "toggle_map_hide" : "toggle_map_show";
+          const defaultText = isPressed ? "Hide Map" : "Show Map";
+          if (textSpan) {
+            textSpan.textContent = currentLanguageData[textKey] || defaultText;
+          }
+          const titleKey = isPressed
+            ? "toggle_map_hide_title"
+            : "toggle_map_show_title";
+          const defaultTitle = isPressed
+            ? "Hide the map view"
+            : "Show the map view";
+          mapToggleButton.title = currentLanguageData[titleKey] || defaultTitle;
+        }
+        // Also potentially re-render map popups if their content uses translations
+        if (
+          map &&
+          markersLayer &&
+          resultsLayout &&
+          !resultsLayout.classList.contains("map-hidden")
+        ) {
+          renderMapMarkers(filterHousing()); // Re-render markers with new language potentially affecting popups
+        }
+      }); // Load and apply the new language
 
       // Close dropdowns after selection
       if (languageOptions) languageOptions.classList.remove("show");
@@ -726,13 +874,13 @@
     // --- Hamburger Menu ---
     if (hamburgerButton && mainNav) {
       hamburgerButton.setAttribute("aria-expanded", "false");
-      mainNav.setAttribute("aria-hidden", "true");
+      // mainNav.setAttribute("aria-hidden", "true"); // Managed by .active class now
 
       hamburgerButton.addEventListener("click", () => {
         const isActive = hamburgerButton.classList.toggle("active");
         mainNav.classList.toggle("active"); // Use .active class
         hamburgerButton.setAttribute("aria-expanded", isActive);
-        mainNav.setAttribute("aria-hidden", !isActive);
+        // mainNav.setAttribute("aria-hidden", !isActive); // Optional, CSS handles visibility
         document.body.classList.toggle("nav-open", isActive); // Optional: for body scroll lock
       });
 
@@ -740,8 +888,13 @@
       mainNav
         .querySelectorAll("a, button:not(#language-toggle)")
         .forEach((item) => {
-          item.addEventListener("click", () => {
-            if (hamburgerButton.classList.contains("active")) {
+          item.addEventListener("click", (event) => {
+            // Make sure not to close if it's just opening language dropdown
+            const langToggleClicked = event.target.closest("#language-toggle");
+            if (
+              hamburgerButton.classList.contains("active") &&
+              !langToggleClicked
+            ) {
               hamburgerButton.click(); // Simulate click to close
             }
           });
@@ -764,7 +917,7 @@
     // --- Language Switcher ---
     if (languageToggle && languageOptions) {
       languageToggle.addEventListener("click", (event) => {
-        event.stopPropagation();
+        event.stopPropagation(); // Prevent document listener from closing it immediately
         const isExpanded =
           languageToggle.getAttribute("aria-expanded") === "true";
         languageOptions.classList.toggle("show");
@@ -772,21 +925,14 @@
       });
 
       // Use event delegation on the UL for language option clicks
-      languageOptions.addEventListener("click", (event) => {
-        if (
-          event.target.tagName === "A" &&
-          event.target.hasAttribute("data-lang")
-        ) {
-          handleLanguageChange(event);
-        }
-      });
+      languageOptions.addEventListener("click", handleLanguageChange);
 
       // Close dropdown if clicking outside
       document.addEventListener("click", (event) => {
         if (
           languageOptions.classList.contains("show") &&
-          !languageToggle.contains(event.target) &&
-          !languageOptions.contains(event.target)
+          !languageToggle.contains(event.target) && // Click wasn't the toggle itself
+          !languageOptions.contains(event.target) // Click wasn't inside the dropdown
         ) {
           languageOptions.classList.remove("show");
           languageToggle.setAttribute("aria-expanded", "false");
@@ -835,14 +981,20 @@
 
     // --- Search ---
     if (searchInput) {
+      // Use 'input' for immediate feedback, 'change' for after blur
       searchInput.addEventListener("input", handleSearchInput);
+      // Also handle 'search' event (when user clears via 'x' button)
+      searchInput.addEventListener("search", handleSearchInput);
     } else if (document.getElementById("search-input")) {
       console.warn("Search input element not found.");
     }
 
-    // --- Map Toggle Button --- (Keep if you add the button)
+    // --- Map Toggle Button --- *** ADDED ***
     if (mapToggleButton) {
       mapToggleButton.addEventListener("click", handleMapToggle);
+    } else if (document.getElementById("map")) {
+      // Only warn if map exists but button doesn't
+      console.warn("Map Toggle Button (#map-toggle-button) not found.");
     }
 
     // --- Map Resize Handle ---
@@ -852,7 +1004,10 @@
         passive: false,
       });
     } else if (mapElement && resultsLayout) {
-      console.warn("Map resize handle element (#map-resize-handle) not found.");
+      // Don't warn if map doesn't exist anyway
+      console.log(
+        "Map resize handle element (#map-resize-handle) not found (resize disabled)."
+      );
     }
 
     console.log("Event listeners setup complete.");
@@ -914,26 +1069,35 @@
     // Attach all event listeners AFTER initial setup like language/theme
     setupEventListeners();
 
-    // Initial display render (grid/map) AFTER setup and language load
+    // Fetch initial housing data AFTER map/DOM might be ready
     if (resultsGrid || (mapElement && mapInitialized)) {
-      console.log("Performing initial display update...");
-      updateDisplay(); // Uses current filters/sort state
-    } else if (document.querySelector(".results-area")) {
-      // Only warn if the results area exists but grid/map aren't ready
-      console.warn(
-        "Results grid/map not ready. Initial display update skipped."
-      );
+      fetchHousingData(); // This will call updateDisplay internally on success/error
+    } else {
+      console.log("Initial data fetch skipped: Results grid/map not ready.");
     }
+
+    // NO longer call updateDisplay here, fetchHousingData will do it.
+    // if (resultsGrid || (mapElement && mapInitialized)) {
+    //   console.log("Performing initial display update...");
+    //   updateDisplay(); // Uses current filters/sort state
+    // } else if (document.querySelector(".results-area")) {
+    //   // Only warn if the results area exists but grid/map aren't ready
+    //   console.warn(
+    //     "Results grid/map not ready. Initial display update skipped."
+    //   );
+    // }
 
     console.log("CROUS-X Script Initialized Successfully.");
   }
 
   // Run initialization when the DOM is fully loaded
   // Use 'interactive' to potentially run slightly earlier than 'complete'
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize);
-  } else {
-    // DOMContentLoaded has already fired
+  if (
+    document.readyState === "complete" ||
+    (document.readyState !== "loading" && !document.documentElement.doScroll)
+  ) {
     initialize();
+  } else {
+    document.addEventListener("DOMContentLoaded", initialize);
   }
 })(); // End IIFE

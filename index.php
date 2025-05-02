@@ -285,15 +285,29 @@ session_start();
               Rating
             </button>
           </div>
+           <!-- *** NEW MAP TOGGLE BUTTON *** -->
+           <button
+               id="map-toggle-button"
+               class="btn btn-view-toggle"
+               aria-pressed="true"
+               data-i18n-key-title="toggle_map_view_title"
+               title="Toggle map visibility"
+             >
+               <i class="fas fa-compress"></i> <!-- Start with compress icon as map is visible -->
+               <span data-i18n-key="toggle_map_hide">Hide Map</span>
+             </button>
+           <!-- *** END NEW MAP TOGGLE BUTTON *** -->
         </div>
 
-        <div class="results-layout">
+        <!-- *** NOTE: results-layout ID is already present in your CSS for map hidden state *** -->
+        <div class="results-layout" id="results-layout">
           <div class="results-grid-container">
             <div class="results-grid" id="results-grid">
               <!-- Dynamic content - translations might need to be applied when rendering cards if names/types are translated -->
             </div>
           </div>
           <div class="map-container">
+             <!-- Rounded corners applied via CSS -->
             <div id="map"></div>
             <div id="map-resize-handle"></div>
           </div>
