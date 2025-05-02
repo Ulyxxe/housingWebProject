@@ -1,3 +1,4 @@
+-- Active: 1744375340212@@herogu.garageisep.com@3306@C0fg5IDZ3Q_app_g7b
 <?php
 // housing-detail.php
 require_once 'config.php'; // Contains PDO/DB connection info

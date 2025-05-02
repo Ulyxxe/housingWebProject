@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Housing - Find Your Perfect Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Student Housing</div>
+            <ul>
+                <li><a href="#search">Search</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>Find Your Perfect Student Home</h1>
+            <p>Easily search for your ideal student accommodation near your university.</p>
+            <button onclick="document.getElementById('search').scrollIntoView({behavior: 'smooth'})">
+                Start Searching
+            </button>
+        </section>
+        <section id="about" class="about">
+            <h2>About Us</h2>
+            <p>We provide the best student housing options with flexible leasing and near college amenities.</p>
+        </section>
+        <section id="search" class="search">
+            <h2>Search Properties</h2>
+            <form>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+
+                <label for="price">Max Price:</label>
+                <input type="number" id="price" name="price" required>
+
+                <button type="submit">Search</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>© 2023 Student Housing. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
