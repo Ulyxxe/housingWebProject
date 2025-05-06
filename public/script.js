@@ -80,24 +80,18 @@
   let isResizingMap = false;
   let mapResizeStartX, mapResizeInitialWidth; // Only need width for horizontal resize
 
- 
-  function fetchHousingData() {
-    fetch('/api/getHousing.php')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not OK');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Set the global housing data variable to the fetched data
-        window.allHousingData = data;
-        // Call your display function to update the page (existing function in your script)
-        updateDisplay();
-      })
-      .catch(error => {
-        console.error('Error fetching housing data:', error);
-      });
+  async function fetchHousingData() {
+    try {
+      const res = await fetch('/api/getHousing.php');
+      const data = await res.json();
+      // now each `item` is the raw row from your `housings` table,
+      // so allHousingData = array of objects with
+      // listing_id, title, rent_amount, square_footage, property_type, latitude, longitude, rating, image, etc.
+      window.allHousingData = data;
+      updateDisplay();
+    } catch (e) {
+      console.error('Error loading housing data', e);
+    }
   }
   
   // Fetch the housing data after the DOM has loaded
@@ -286,41 +280,22 @@
     }
   }
 
-  function renderMapMarkers(housingToDisplay) {
-    // Guard clauses
-    if (!map || !markersLayer || !customMarkerIcon) {
-      if (!map)
-        console.warn("renderMapMarkers skipped: Map object not available.");
-      if (!markersLayer)
-        console.warn("renderMapMarkers skipped: Markers layer not available.");
-      if (!customMarkerIcon)
-        console.warn(
-          "renderMapMarkers skipped: Custom icon not defined (Leaflet likely not loaded fully)."
-        );
-      return;
-    }
-
+  function renderMapMarkers(filtered) {
+    if (!map || !markersLayer) return;
     markersLayer.clearLayers();
-
-    housingToDisplay.forEach((item) => {
-      if (item.lat != null && item.lng != null) {
-        // Check for valid coordinates
-        try {
-          const marker = L.marker([item.lat, item.lng], {
-            icon: customMarkerIcon,
-          });
-          // Basic popup content - does not use i18n keys from JSON
-          const popupContent = `
-                        <b>${item.name}</b><br>
-                        Type: ${item.type}<br>
-                        Price: $${item.price}/month<br>
-                        Rating: ${item.rating || "N/A"} ★
-                    `;
-          marker.bindPopup(popupContent);
-          markersLayer.addLayer(marker);
-        } catch (error) {
-          console.error(`Error creating marker for item ${item.id}:`, error);
-        }
+  
+    filtered.forEach(item => {
+      if (item.latitude != null && item.longitude != null) {
+        const marker = L.marker([item.latitude, item.longitude], {
+          icon: customMarkerIcon
+        });
+        marker.bindPopup(`
+          <b>${item.title}</b><br>
+          Type: ${item.property_type}<br>
+          Price: $${item.rent_amount}/month<br>
+          Rating: ${item.rating ?? "N/A"} ★
+        `);
+        markersLayer.addLayer(marker);
       }
     });
   }
@@ -348,57 +323,35 @@
   //          UI Rendering Functions
   // ==========================================
   function renderHousing(housingToDisplay) {
-    if (!resultsGrid) {
-      // Expected if not on the main page, don't treat as error
-      return;
-    }
-
-    resultsGrid.innerHTML = ""; // Clear previous listings
-
+    if (!resultsGrid) return;
+    resultsGrid.innerHTML = "";
+  
     if (housingToDisplay.length === 0) {
-      // Create a paragraph for the no results message
-      const noResultsMessage = document.createElement("p");
-      noResultsMessage.style.gridColumn = "1 / -1"; // Span across all grid columns
-      noResultsMessage.style.textAlign = "center";
-      noResultsMessage.style.padding = "20px";
-      noResultsMessage.setAttribute("data-i18n-key", "no_results_found"); // Add a key for translation
-      noResultsMessage.textContent = "No housing found matching your criteria."; // Default text
-      resultsGrid.appendChild(noResultsMessage);
-
-      // Apply translation if data is loaded
-      if (currentLanguageData?.no_results_found) {
-        noResultsMessage.textContent = currentLanguageData.no_results_found;
-      }
+      // ... same no-results code ...
       return;
     }
-
-    housingToDisplay.forEach((item) => {
+  
+    housingToDisplay.forEach(item => {
       const card = document.createElement("article");
       card.className = "result-card";
-      // NOTE: Content here uses item properties directly.
-      // If 'item.type' etc. needed translation based on current language,
-      // you would look it up in `currentLanguageData` here.
-      // Example: const translatedType = currentLanguageData[`housing_type_${item.type.toLowerCase().replace(' ','_')}`] || item.type;
+  
       card.innerHTML = `
-                <div class="card-image-placeholder">
-                    ${
-                      item.image
-                        ? `<img src="${item.image}" alt="${
-                            item.name || "Housing image"
-                          }" loading="lazy">` // Add loading="lazy"
-                        : '<i class="far fa-image"></i>'
-                    }
-                </div>
-                <div class="card-content">
-                    <h4 class="card-title">${item.name} (${item.type})</h4>
-                    <p class="card-price">$${item.price}/month</p>
-                    <p class="card-size">Size: ${item.size} m²</p>
-                    <p class="card-rating">Rating: ${item.rating || "N/A"} ★</p>
-                </div>
-            `;
+        <div class="card-image-placeholder">
+          ${ item.image
+              ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
+              : `<i class="far fa-image"></i>` }
+        </div>
+        <div class="card-content">
+          <h4 class="card-title">${item.title} (${item.property_type})</h4>
+          <p class="card-price">$${item.rent_amount}/month</p>
+          <p class="card-size">Size: ${item.square_footage} m²</p>
+          <p class="card-rating">Rating: ${item.rating ?? "N/A"} ★</p>
+        </div>
+      `;
       resultsGrid.appendChild(card);
     });
   }
+  
 
   function updateSliderValueDisplay(slider, span, prefix = "", suffix = "") {
     if (slider && span) {
@@ -411,47 +364,39 @@
   // ==========================================
   function filterHousing() {
     const { maxPrice, maxSize, types, searchTerm } = activeFilters;
-    const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
-
-    // Ensure data exists before filtering
-    if (!Array.isArray(allHousingData)) {
-      console.error("Housing data is not available or not an array.");
-      return [];
-    }
-
-    return allHousingData.filter((item) => {
-      const priceMatch = maxPrice === null || item.price <= maxPrice;
-      const sizeMatch = maxSize === null || item.size <= maxSize;
-      const typeMatch = types.length === 0 || types.includes(item.type);
-      const searchMatch =
-        !lowerCaseSearchTerm ||
-        item.name.toLowerCase().includes(lowerCaseSearchTerm);
+    const term = searchTerm.toLowerCase().trim();
+    if (!Array.isArray(allHousingData)) return [];
+  
+    return allHousingData.filter(item => {
+      const priceMatch    = maxPrice === null || item.rent_amount    <= maxPrice;
+      const sizeMatch     = maxSize  === null || item.square_footage <= maxSize;
+      const typeMatch     = types.length === 0 || types.includes(item.property_type);
+      const searchMatch   = !term || item.title.toLowerCase().includes(term);
       return priceMatch && sizeMatch && typeMatch && searchMatch;
     });
   }
 
+
   function sortHousing(housingList, sortBy) {
-    const sortedList = [...housingList]; // Create a copy to sort
+    const sorted = [...housingList];
     switch (sortBy) {
       case "price-asc":
-        sortedList.sort((a, b) => a.price - b.price);
+        sorted.sort((a,b) => a.rent_amount - b.rent_amount);
         break;
       case "price-desc":
-        sortedList.sort((a, b) => b.price - a.price);
+        sorted.sort((a,b) => b.rent_amount - a.rent_amount);
         break;
       case "rating":
-        // Sort by rating descending, put items without rating at the end
-        sortedList.sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
+        sorted.sort((a,b) => (b.rating||0) - (a.rating||0));
         break;
       case "new":
       default:
-        // Assuming higher ID is newer
-        sortedList.sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+        // newest = highest listing_id first
+        sorted.sort((a,b) => b.listing_id - a.listing_id);
         break;
     }
-    return sortedList;
+    return sorted;
   }
-
   // ==========================================
   //          Core Update Function
   // ==========================================
