@@ -54,7 +54,7 @@ $isLoggedIn = isset($_SESSION['user']);
     <section class="faq-item">
       <h2>Can I cancel or change my booking?</h2>
       <p>
-        Yes—log in to your dashboard, go to “My Bookings,” and select the booking you want to modify or cancel.  
+        Yes, log in to your dashboard, go to “My Bookings,” and select the booking you want to modify or cancel.  
         Note that cancellation policies may vary by property.
       </p>
     </section>
