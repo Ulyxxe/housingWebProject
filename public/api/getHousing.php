@@ -18,7 +18,7 @@ try {
     $sql = <<<SQL
 SELECT
   h.*,
-  hi.image_url
+  hi.image_url AS image
 FROM housings AS h
 LEFT JOIN housing_images AS hi
   ON hi.listing_id = h.listing_id
