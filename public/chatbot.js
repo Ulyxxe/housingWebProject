@@ -210,7 +210,7 @@ async function handleSendMessage() {
 
   // --- API Call ---
   try {
-    const response = await fetch("../api/chat_handler.php", {
+    const response = await fetch("api/chat_handler.php", {
       // Ensure this path is correct
       method: "POST",
       headers: {
