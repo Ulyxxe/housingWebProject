@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         // It's better to redirect back with an error message or display it on the login page
         $_SESSION['login_error'] = "Please fill in all the fields.";
-        header("Location: ../../public/login.php"); // Adjusted path to login.php
+        header("Location: login.php"); // Adjusted path to login.php
         exit;
     }
 
@@ -56,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             } else {
                 $_SESSION['login_error'] = "Your account is inactive. Please contact support.";
-                header("Location: ../../public/login.php"); // Adjusted path
+                header("Location: login.php"); // Adjusted path
                 exit;
             }
         } else {
             $_SESSION['login_error'] = "Invalid email or password.";
-            header("Location: ../../public/login.php"); // Adjusted path
+            header("Location: login.php"); // Adjusted path
             exit;
         }
     } catch (PDOException $e) {
@@ -69,13 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Log the detailed error for developers
         error_log("Database Error in authenticate.php: " . $e->getMessage());
         $_SESSION['login_error'] = "An internal error occurred. Please try again later.";
-        header("Location: ../../public/login.php"); // Adjusted path
+        header("Location: login.php"); // Adjusted path
         exit;
     }
 } else {
     // If the form was not submitted, redirect back to the login page
     // Assuming login.php is in the public directory
-    header("Location: ../../public/login.php"); // Adjusted path
+    header("Location: login.php"); // Adjusted path
     exit;
 }
 ?>
