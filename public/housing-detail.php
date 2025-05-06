@@ -9,7 +9,7 @@
 if (!defined('ROOT_PATH')) {
     define('ROOT_PATH', dirname(__DIR__)); // housingWebProject/
 }
-require_once ROOT_PATH . '/config.php'; // << ADJUST THIS PATH
+require_once ROOT_PATH . '/config/config.php'; // << ADJUST THIS PATH
 
 // If config.php already started the session, you might not need this line here.
 // But it's safe to have if (session_status() === PHP_SESSION_NONE) { session_start(); }
