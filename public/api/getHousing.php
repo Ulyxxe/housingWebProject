@@ -3,23 +3,29 @@
 header("Content-Type: application/json");
 
 // Database connection parameters
-$host   = getenv('MYSQL_HOST');
-$dbname = getenv('MYSQL_DATABASE');
+$host     = getenv('MYSQL_HOST');
+$dbname   = getenv('MYSQL_DATABASE');
 $username = getenv('MYSQL_USER');
-$password = getenv('MYSQL_PASSWORD');   // Replace with your MySQL password
+$password = getenv('MYSQL_PASSWORD');
 
 try {
     // Establish a new PDO connection with error handling and correct charset
     $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
     $pdo = new PDO($dsn, $username, $password);
-    
-    // Set PDO error mode to exception for debugging
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Query all records from the housing table
-    $stmt = $pdo->query("SELECT * FROM housings");
-    
-    // Fetch the results as an associative array
+    // Query all records from housings, plus the primary image_url
+    $sql = <<<SQL
+SELECT
+  h.*,
+  hi.image_url AS image
+FROM housings AS h
+LEFT JOIN housing_images AS hi
+  ON hi.listing_id = h.listing_id
+ AND hi.is_primary = 1
+SQL;
+
+    $stmt = $pdo->query($sql);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Return the result as a JSON response
