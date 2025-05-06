@@ -1,7 +1,7 @@
 <?php
 // register.php
 session_start();
-require_once 'config.php';  // This file should set up your PDO connection in $pdo
+require_once '../config/config.php';  // This file should set up your PDO connection in $pdo
 
 $errors = [];
 $success = "";
