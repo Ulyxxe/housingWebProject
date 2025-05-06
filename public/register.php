@@ -7,18 +7,35 @@ $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve and trim form inputs
-    $username         = trim($_POST['username'] ?? ''); // This is "Full Name" from the form
+    $first_name       = trim($_POST['first_name'] ?? '');
+    $last_name        = trim($_POST['last_name'] ?? '');
+    $username         = trim($_POST['username'] ?? ''); // Dedicated username field
     $email            = trim($_POST['email'] ?? '');
     $password         = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $terms_agreed     = isset($_POST['terms']);
 
     // --- Validations ---
-    if (empty($username)) {
-        $errors[] = "Full Name is required.";
-    } elseif (strlen($username) > 50) {
-        $errors[] = "Full Name cannot exceed 50 characters.";
+    if (empty($first_name)) {
+        $errors[] = "First Name is required.";
+    } elseif (strlen($first_name) > 50) {
+        $errors[] = "First Name cannot exceed 50 characters.";
     }
+
+    if (empty($last_name)) {
+        $errors[] = "Last Name is required.";
+    } elseif (strlen($last_name) > 50) {
+        $errors[] = "Last Name cannot exceed 50 characters.";
+    }
+
+    if (empty($username)) {
+        $errors[] = "Username is required.";
+    } elseif (strlen($username) > 50) {
+        $errors[] = "Username cannot exceed 50 characters.";
+    } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) { // Allow alphanumeric and underscores
+        $errors[] = "Username can only contain letters, numbers, and underscores.";
+    }
+
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "A valid email address is required.";
@@ -46,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':username', $username);
             $stmt->execute();
             if ($stmt->fetch(PDO::FETCH_ASSOC)) {
-                $errors[] = "This Full Name (username) is already taken. Please choose another.";
+                $errors[] = "This username is already taken. Please choose another.";
             }
 
             // Check for existing email (only if username wasn't already an issue)
@@ -70,23 +87,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
             // Insert into 'users' table.
-            // 'first_name', 'last_name' will be NULL as they are not collected.
             // 'user_type' will use its DB default ('student').
             // 'is_active' will use its DB default (1).
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (:username, :email, :password_hash)");
+            $stmt = $pdo->prepare(
+                "INSERT INTO users (username, email, password_hash, first_name, last_name) 
+                 VALUES (:username, :email, :password_hash, :first_name, :last_name)"
+            );
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password_hash', $password_hash);
+            $stmt->bindParam(':first_name', $first_name);
+            $stmt->bindParam(':last_name', $last_name);
             
             if ($stmt->execute()) {
                 $success = "Registration successful! You can now <a href='login.php'>log in</a>.";
-                // Optionally, you could automatically log the user in here by setting session variables
-                // and redirecting them to the dashboard.
-                // For example:
+                // To automatically log in:
                 // $_SESSION['user_id'] = $pdo->lastInsertId();
                 // $_SESSION['username'] = $username;
                 // $_SESSION['email'] = $email;
-                // $_SESSION['user_type'] = 'student'; // Assuming default
+                // $_SESSION['first_name'] = $first_name;
+                // $_SESSION['last_name'] = $last_name;
+                // $_SESSION['user_type'] = 'student'; // Or fetch it if needed
                 // header("Location: dashboard.php");
                 // exit;
             } else {
@@ -105,49 +126,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - CROUS-X</title>
-    <!-- Leaflet CSS (Optional for register, kept for design consistency) -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
-    <!-- Marker Cluster CSS (Optional) -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
-    />
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="style.css" />
-    <!-- Font Awesome for Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link rel="icon" type="image/png" href="assets/images/icon.png" /> <!-- Standardized favicon path -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/png" href="assets/images/icon.png" />
   </head>
   <body>
     <header class="site-header">
-      <a href="index.php" class="logo-link"> <!-- Added class for consistency -->
+      <a href="index.php" class="logo-link">
         <div class="logo">CROUS-X</div>
       </a>
-      <nav class="main-nav"> <!-- Consider making this dynamic based on login status -->
+      <nav class="main-nav">
         <ul>
           <li><a href="index.php">Search Housing</a></li>
-          <li><a href="help.php">Need help ?</a></li> <!-- Corrected link for help page -->
+          <li><a href="help.php">Need help ?</a></li>
           <li>
-            <button
-              id="theme-toggle"
-              class="btn btn-dark-mode"
-              aria-label="Toggle dark mode"
-            >
+            <button id="theme-toggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
               <i class="fas fa-moon"></i>
             </button>
           </li>
@@ -162,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if (!empty($success)): ?>
           <div class="alert alert-success" role="alert" style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
-            <?php echo $success; // Success message allows HTML (for the login link) ?>
+            <?php echo $success; ?>
           </div>
         <?php endif; ?>
 
@@ -176,17 +172,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
         <?php endif; ?>
 
-        <!-- Only show form if registration is not successful -->
         <?php if (empty($success)): ?>
         <form action="register.php" method="post" id="registrationForm">
           <div class="form-group">
-            <label for="fullname">Full Name (this will be your Username)</label>
+            <label for="first_name">First Name</label>
             <input
               type="text"
-              id="fullname"
+              id="first_name"
+              name="first_name" 
+              placeholder="Enter your first name"
+              value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name" 
+              placeholder="Enter your last name"
+              value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
               name="username" 
-              placeholder="Enter your full name"
+              placeholder="Choose a username (letters, numbers, _)"
               value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>"
+              pattern="^[a-zA-Z0-9_]+$"
+              title="Username can only contain letters, numbers, and underscores."
               required
             />
           </div>
@@ -241,12 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </div>
 
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="script.js"></script> <!-- For dark mode and other general interactions -->
+    <script src="script.js"></script>
   </body>
 </html>
