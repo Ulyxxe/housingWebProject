@@ -1,52 +1,100 @@
 <?php
-// register.php
-session_start();
-require_once '../config/config.php';  // This file should set up your PDO connection in $pdo
+session_start(); // Must be at the very top
+require_once '../config/config.php';  // Corrected path to PDO connection ($pdo)
 
 $errors = [];
 $success = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve and sanitize form inputs
-    $username         = trim($_POST['username'] ?? '');
+    // Retrieve and trim form inputs
+    $username         = trim($_POST['username'] ?? ''); // This is "Full Name" from the form
     $email            = trim($_POST['email'] ?? '');
     $password         = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    $terms_agreed     = isset($_POST['terms']);
 
-    // Basic validations
+    // --- Validations ---
     if (empty($username)) {
         $errors[] = "Full Name is required.";
+    } elseif (strlen($username) > 50) {
+        $errors[] = "Full Name cannot exceed 50 characters.";
     }
+
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "A valid email is required.";
+        $errors[] = "A valid email address is required.";
+    } elseif (strlen($email) > 100) {
+        $errors[] = "Email cannot exceed 100 characters.";
     }
+
     if (empty($password)) {
         $errors[] = "Password is required.";
+    } elseif (strlen($password) < 6) { // Example: Minimum password length
+        $errors[] = "Password must be at least 6 characters long.";
     } elseif ($password !== $confirm_password) {
         $errors[] = "Passwords do not match.";
     }
-    
-    // Check if email already exists
+
+    if (!$terms_agreed) {
+        $errors[] = "You must agree to the Terms of Service & Privacy Policy.";
+    }
+
+    // --- Check if username or email already exists (if no prior validation errors) ---
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("SELECT userID FROM Users WHERE email = ?");
-            $stmt->execute([$email]);
+            // Check for existing username
+            $stmt = $pdo->prepare("SELECT user_id FROM users WHERE username = :username");
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
             if ($stmt->fetch(PDO::FETCH_ASSOC)) {
-                $errors[] = "Email is already registered.";
+                $errors[] = "This Full Name (username) is already taken. Please choose another.";
+            }
+
+            // Check for existing email (only if username wasn't already an issue)
+            if (empty($errors)) { // Re-check errors in case username was found
+                $stmt = $pdo->prepare("SELECT user_id FROM users WHERE email = :email");
+                $stmt->bindParam(':email', $email);
+                $stmt->execute();
+                if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $errors[] = "This email address is already registered.";
+                }
             }
         } catch (PDOException $e) {
-            $errors[] = "Database error: " . $e->getMessage();
+            error_log("Registration Check Error: " . $e->getMessage()); // Log detailed error
+            $errors[] = "A database error occurred while checking your details. Please try again.";
         }
     }
-    
-    // If no errors, proceed to insert new user
+
+    // --- If no errors, proceed to insert new user ---
     if (empty($errors)) {
         try {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO Users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$username, $email, $hashedPassword]);
-            $success = "Registration successful! You can now log in.";
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert into 'users' table.
+            // 'first_name', 'last_name' will be NULL as they are not collected.
+            // 'user_type' will use its DB default ('student').
+            // 'is_active' will use its DB default (1).
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password_hash) VALUES (:username, :email, :password_hash)");
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password_hash', $password_hash);
+            
+            if ($stmt->execute()) {
+                $success = "Registration successful! You can now <a href='login.php'>log in</a>.";
+                // Optionally, you could automatically log the user in here by setting session variables
+                // and redirecting them to the dashboard.
+                // For example:
+                // $_SESSION['user_id'] = $pdo->lastInsertId();
+                // $_SESSION['username'] = $username;
+                // $_SESSION['email'] = $email;
+                // $_SESSION['user_type'] = 'student'; // Assuming default
+                // header("Location: dashboard.php");
+                // exit;
+            } else {
+                $errors[] = "Registration failed. Please try again.";
+            }
         } catch (PDOException $e) {
-            $errors[] = "Registration error: " . $e->getMessage();
+            error_log("Registration Insert Error: " . $e->getMessage()); // Log detailed error
+            $errors[] = "An error occurred during registration. Please try again later.";
         }
     }
 }
@@ -83,18 +131,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="icon" type="image/png" href="images/icon.png" />
+    <link rel="icon" type="image/png" href="assets/images/icon.png" /> <!-- Standardized favicon path -->
   </head>
   <body>
     <header class="site-header">
-      <a href="index.php">
+      <a href="index.php" class="logo-link"> <!-- Added class for consistency -->
         <div class="logo">CROUS-X</div>
       </a>
-      <nav class="main-nav">
+      <nav class="main-nav"> <!-- Consider making this dynamic based on login status -->
         <ul>
           <li><a href="index.php">Search Housing</a></li>
-          <!-- Link back to main page -->
-          <li><a href="#">Need help ?</a></li>
+          <li><a href="help.php">Need help ?</a></li> <!-- Corrected link for help page -->
           <li>
             <button
               id="theme-toggle"
@@ -104,40 +151,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <i class="fas fa-moon"></i>
             </button>
           </li>
-          <!-- Changed Sign In link to login.php -->
           <li><a href="login.php" class="btn btn-signin">Sign in</a></li>
         </ul>
       </nav>
     </header>
 
-    <!-- Main Content for Registration -->
     <div class="main-content-wrapper register-page-wrapper">
       <div class="register-container">
         <h2>Create Account</h2>
 
-        <!-- Display success or error messages -->
         <?php if (!empty($success)): ?>
-          <p style="color: green;"><?php echo htmlspecialchars($success); ?></p>
+          <div class="alert alert-success" role="alert" style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+            <?php echo $success; // Success message allows HTML (for the login link) ?>
+          </div>
         <?php endif; ?>
 
         <?php if (!empty($errors)): ?>
-          <ul style="color: red;">
-            <?php foreach ($errors as $error): ?>
-              <li><?php echo htmlspecialchars($error); ?></li>
-            <?php endforeach; ?>
-          </ul>
+          <div class="alert alert-danger" role="alert" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+            <ul style="margin: 0; padding-left: 20px;">
+              <?php foreach ($errors as $error): ?>
+                <li><?php echo htmlspecialchars($error); ?></li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
         <?php endif; ?>
 
-        <!-- Registration Form -->
-        <form action="register.php" method="post">
-          <!-- The "Full Name" field is mapped to the username -->
+        <!-- Only show form if registration is not successful -->
+        <?php if (empty($success)): ?>
+        <form action="register.php" method="post" id="registrationForm">
           <div class="form-group">
-            <label for="fullname">Full Name</label>
+            <label for="fullname">Full Name (this will be your Username)</label>
             <input
               type="text"
               id="fullname"
-              name="username"
+              name="username" 
               placeholder="Enter your full name"
+              value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>"
               required
             />
           </div>
@@ -148,11 +197,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               id="email"
               name="email"
               placeholder="Enter your email"
+              value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
               required
             />
           </div>
           <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Password (min. 6 characters)</label>
             <input
               type="password"
               id="password"
@@ -172,7 +222,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             />
           </div>
           <div class="form-group terms-group">
-            <input type="checkbox" id="terms" name="terms" required />
+            <input type="checkbox" id="terms" name="terms" required 
+                   <?php echo (isset($_POST['terms'])) ? 'checked' : ''; ?> />
             <label for="terms"
               >I agree to the <a href="#">Terms of Service</a> &
               <a href="#">Privacy Policy</a></label
@@ -182,21 +233,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Register
           </button>
         </form>
+        <?php endif; ?>
+
         <div class="login-links">
           <p>Already have an account? <a href="login.php">Sign in here</a></p>
         </div>
       </div>
     </div>
-    <!-- End Main Content -->
 
-    <!-- Leaflet JS (Keep if needed by other scripts or header) -->
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <!-- Your script.js – for dark mode toggle and other interactions -->
-    <script src="script.js"></script>
+    <script src="script.js"></script> <!-- For dark mode and other general interactions -->
   </body>
 </html>
