@@ -17,7 +17,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Query all records from the housing table
-    $stmt = $pdo->query("SELECT * FROM Housing");
+    $stmt = $pdo->query("SELECT * FROM housings");
     
     // Fetch the results as an associative array
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
