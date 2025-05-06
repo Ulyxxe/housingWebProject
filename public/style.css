@@ -2884,4 +2884,16 @@ input:focus {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
 }
 
-/* ... (rest of your card styles: .card-image-placeholder, .card-content, etc.) ... */
+
+/* Carousel styles */
+.carousel { position: relative; max-width: 800px; margin: 20px auto; }
+.carousel-images img { width: 100%; display: none; border-radius:8px; }
+.carousel-images img.active { display: block; }
+.carousel-controls { position: absolute; top:50%; width:100%; display:flex; justify-content: space-between; transform: translateY(-50%); }
+.carousel-controls button { background:rgba(0,0,0,0.5); color:#fff; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
+/* Amenities list */
+.amenities { list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0 0 20px; }
+.amenities li { display:flex; align-items:center; gap:5px; font-size:0.95em; }
+.amenities img { width:24px; height:24px; }
+.detail-section { margin-bottom:20px; }
+   
