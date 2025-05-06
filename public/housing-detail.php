@@ -1,125 +1,163 @@
 <?php
 // public/housing-detail.php
 
-// --- Include your existing config.php ---
-// Make sure the path is correct relative to this file.
-// Example: if config.php is at the project root (housingWebProject/config.php)
-// and you've defined ROOT_PATH in THIS file or it's defined globally first:
+// Bootstrap the application (adjust path as needed)
+define('ROOT_PATH', __DIR__ . '/..');
+require_once ROOT_PATH . '/config/config.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-if (!defined('ROOT_PATH')) {
-    define('ROOT_PATH', dirname(__DIR__)); // housingWebProject/
-}
-require_once ROOT_PATH . '/config/config.php'; // << ADJUST THIS PATH
+// Initialize variables
+$housing = null;\$images = [];\$amenities = [];
+$error = null;
 
-// If config.php already started the session, you might not need this line here.
-// But it's safe to have if (session_status() === PHP_SESSION_NONE) { session_start(); }
-// or ensure config.php handles it.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-
-$housing_item = null;
-$error_message = null;
-// $db should now be available globally if your config.php creates it.
-
-// --- Check if $db connection was successful (if config.php might not die on failure) ---
-if (empty($db)) { // Or if ($db === null) or if (!$db)
-    $error_message = "Database service is currently unavailable. Please try again later.";
+// Validate ID
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+    \$error = 'Invalid housing ID.';
 } else {
+    \$id = (int)\$_GET['id'];
     try {
-        if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-            $housing_id = (int)$_GET['id'];
-
-            $stmt = $db->prepare("SELECT * FROM housings WHERE listing_id = :id");
-            $stmt->bindParam(':id', $housing_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $housing_item = $stmt->fetch();
-
-            if (!$housing_item) {
-                $error_message = "Housing listing not found.";
-            }
-            if ($housing_item && isset($housing_item['title'])) {
-                 $page_title = htmlspecialchars($housing_item['title']);
-            }
-
+        // Fetch housing record
+        \$stmt = \$pdo->prepare("SELECT * FROM housings WHERE listing_id = :id");
+        \$stmt->execute([':id' => \$id]);
+        \$housing = \$stmt->fetch(PDO::FETCH_ASSOC);
+        if (!\$housing) {
+            \$error = 'Housing listing not found.';
         } else {
-            $error_message = "Invalid or missing housing ID provided.";
+            // Fetch all associated images (primary first)
+            \$imgStmt = \$pdo->prepare(
+                "SELECT image_url FROM housing_images WHERE listing_id = :id ORDER BY is_primary DESC, id ASC"
+            );
+            \$imgStmt->execute([':id' => \$id]);
+            \$images = \$imgStmt->fetchAll(PDO::FETCH_COLUMN);
+            // Fetch amenities
+            \$amenStmt = \$pdo->prepare(
+                "SELECT a.name, a.icon_url
+                 FROM housing_amenities ha
+                 JOIN amenities a ON ha.amenity_id = a.amenity_id
+                 WHERE ha.listing_id = :id"
+            );
+            \$amenStmt->execute([':id' => \$id]);
+            \$amenities = \$amenStmt->fetchAll(PDO::FETCH_ASSOC);
         }
-    } catch (PDOException $e) {
-        $error_message = "A database query error occurred.";
-        error_log("PDO Query Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    } catch (PDOException \$e) {
+        error_log('Housing Detail Query Error: ' . \$e->getMessage());
+        \$error = 'A database error occurred.';
     }
 }
-
-// $db = null; // You might close the connection here or at the very end of the script if config.php doesn't.
-// If config.php handles connection globally, it might also handle closing, or rely on PHP to auto-close.
-
-// The rest of your HTML for public/housing-detail.php (as in the previous example) follows...
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title : ($housing_item && isset($housing_item['title']) ? htmlspecialchars($housing_item['title']) : 'Housing Details'); ?> - CROUS-X</title>
+    <title><?php echo isset(\$housing['title']) ? htmlspecialchars(\$housing['title']) : 'Housing Details'; ?> - CROUS‑X</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="icon" type="image/png" href="images/icon.png" />
     <style>
-        /* ... your detail styles ... */
+    /* Carousel styles */
+    .carousel { position: relative; max-width: 800px; margin: 20px auto; }
+    .carousel-images img { width: 100%; display: none; border-radius:8px; }
+    .carousel-images img.active { display: block; }
+    .carousel-controls { position: absolute; top:50%; width:100%; display:flex; justify-content: space-between; transform: translateY(-50%); }
+    .carousel-controls button { background:rgba(0,0,0,0.5); color:#fff; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
+    /* Amenities list */
+    .amenities { list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0 0 20px; }
+    .amenities li { display:flex; align-items:center; gap:5px; font-size:0.95em; }
+    .amenities img { width:24px; height:24px; }
+    .detail-section { margin-bottom:20px; }
     </style>
 </head>
 <body>
-    <?php
-        // Make sure path to header.php is correct if it's not in public/
-        // If header.php is in public/
-        include 'header.php';
-        // If header.php is in housingWebProject/includes/header.php
-        // include ROOT_PATH . '/includes/header.php';
-    ?>
-    <div class="main-content-wrapper">
-        <div class="content-box detail-container">
-            <div class="back-link-container">
-                <a href="index.php" class="back-link">← Back to Listings</a>
-            </div>
-            <?php if ($error_message): ?>
-                <h2>Error</h2>
-                <p><?php echo htmlspecialchars($error_message); ?></p>
-            <?php elseif ($housing_item): ?>
-                <!-- ... your HTML to display $housing_item ... -->
-                 <h1><?php echo htmlspecialchars($housing_item['title']); ?></h1>
-                 <?php if (!empty($housing_item['image'])): ?>
-                    <img src="<?php echo htmlspecialchars(str_starts_with($housing_item['image'], 'http') ? $housing_item['image'] : 'images/' . $housing_item['image']); ?>" alt="<?php echo htmlspecialchars($housing_item['title']); ?>" class="detail-image">
-                <?php endif; ?>
-                <!-- ... all other detail sections ... -->
-                 <?php if (isset($housing_item['latitude']) && isset($housing_item['longitude']) && $housing_item['latitude'] !== null && $housing_item['longitude'] !== null): ?>
-                <div class="detail-section">
-                    <h2>Location</h2>
-                    <div id="detail-map" class="detail-map"></div>
+<?php include 'header.php'; ?>
+<div class="main-content-wrapper">
+    <div class="content-box detail-container">
+        <a href="index.php" class="back-link">← Back to Listings</a>
+
+        <?php if (\$error): ?>
+            <h2>Error</h2>
+            <p><?php echo htmlspecialchars(\$error); ?></p>
+        <?php else: ?>
+            <h1><?php echo htmlspecialchars(\$housing['title']); ?></h1>
+
+            <?php if (!empty(\$images)): ?>
+            <div class="carousel">
+                <div class="carousel-images">
+                    <?php foreach (\$images as \$idx => \$url): ?>
+                        <img src="<?php echo htmlspecialchars(\$url); ?>" class="<?php echo \$idx===0?'active':''; ?>">
+                    <?php endforeach; ?>
                 </div>
-                <?php endif; ?>
-            <?php else: ?>
-                <p>Housing details are not available for the selected listing.</p>
+                <div class="carousel-controls">
+                    <button id="prev-btn">‹ Prev</button>
+                    <button id="next-btn">Next ›</button>
+                </div>
+            </div>
             <?php endif; ?>
-        </div>
+
+            <div class="detail-section">
+                <h2>Description</h2>
+                <p><?php echo nl2br(htmlspecialchars(\$housing['description'])); ?></p>
+            </div>
+
+            <?php if (!empty(\$amenities)): ?>
+            <div class="detail-section">
+                <h2>Amenities</h2>
+                <ul class="amenities">
+                    <?php foreach (\$amenities as \$amen): ?>
+                        <li>
+                            <?php if (!empty(\$amen['icon_url'])): ?>
+                                <img src="<?php echo htmlspecialchars(\$amen['icon_url']); ?>" alt="<?php echo htmlspecialchars(\$amen['name']); ?>">
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars(\$amen['name']); ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
+            <div class="detail-section">
+                <h2>Details</h2>
+                <ul>
+                    <li><strong>Address:</strong> <?php echo htmlspecialchars(\$housing['address_street'] . ', ' . \$housing['address_city']); ?></li>
+                    <li><strong>Type:</strong> <?php echo htmlspecialchars(\$housing['property_type']); ?></li>
+                    <li><strong>Rent:</strong> $<?php echo number_format(\$housing['rent_amount'],2); ?> / <?php echo htmlspecialchars(\$housing['rent_frequency']); ?></li>
+                    <li><strong>Bedrooms:</strong> <?php echo htmlspecialchars(\$housing['num_bedrooms']); ?></li>
+                    <li><strong>Bathrooms:</strong> <?php echo htmlspecialchars(\$housing['num_bathrooms']); ?></li>
+                    <li><strong>Size:</strong> <?php echo htmlspecialchars(\$housing['square_footage']); ?> m²</li>
+                    <li><strong>Furnished:</strong> <?php echo \$housing['is_furnished']? 'Yes':'No'; ?></li>
+                    <li><strong>Pets Allowed:</strong> <?php echo \$housing['allows_pets']? 'Yes':'No'; ?></li>
+                    <li><strong>Available from:</strong> <?php echo htmlspecialchars(\$housing['availability_date']); ?></li>
+                    <li><strong>Status:</strong> <?php echo htmlspecialchars(\$housing['status']); ?></li>
+                </ul>
+            </div>
+
+            <?php if (\$housing['latitude'] && \$housing['longitude']): ?>
+            <div class="detail-section">
+                <h2>Location</h2>
+                <div id="detail-map" style="height:300px;"></div>
+            </div>
+            <?php endif; ?>
+
+        <?php endif; ?>
     </div>
+</div>
 
-    <?php // include 'footer.php'; ?>
-
-    <?php if ($housing_item && isset($housing_item['latitude']) && isset($housing_item['longitude']) && $housing_item['latitude'] !== null && $housing_item['longitude'] !== null): ?>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        var map = L.map('detail-map').setView([<?php echo $housing_item['latitude']; ?>, <?php echo $housing_item['longitude']; ?>], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([<?php echo $housing_item['latitude']; ?>, <?php echo $housing_item['longitude']; ?>]).addTo(map)
-            .bindPopup(<?php echo json_encode(htmlspecialchars($housing_item['title'])); ?>)
-            .openPopup();
-    </script>
-    <?php endif; ?>
-    <script src="script.js"></script>
+<!-- Inline scripts for carousel and map -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Carousel logic
+(function(){
+    const imgs = document.querySelectorAll('.carousel-images img');
+    let idx = 0;
+    function show(i){ imgs.forEach((img,j)=> img.classList.toggle('active', j===i)); }
+    document.getElementById('prev-btn').addEventListener('click', ()=> { idx = (idx -1 + imgs.length)%imgs.length; show(idx); });
+    document.getElementById('next-btn').addEventListener('click', ()=> { idx = (idx +1)%imgs.length; show(idx); });
+})();
+// Map
+<?php if (!empty(\$housing['latitude']) && !empty(\$housing['longitude'])): ?>
+var map = L.map('detail-map').setView([<?php echo \$housing['latitude'];?>, <?php echo \$housing['longitude'];?>], 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:19 }).addTo(map);
+L.marker([<?php echo \$housing['latitude'];?>, <?php echo \$housing['longitude'];?>]).addTo(map)
+    .bindPopup(<?php echo json_encode(htmlspecialchars(\$housing['title'])); ?>);
+<?php endif; ?>
+</script>
 </body>
 </html>
