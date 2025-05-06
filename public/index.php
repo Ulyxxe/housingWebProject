@@ -60,6 +60,7 @@ session_start();
         <ul>
           <li><a href="#" data-i18n-key="nav_news">News stand</a></li>
           <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
+          <li><a href="faq.php"      data-i18n-key="nav_faq">FAQ</a></li>
           <li><a href="#" data-i18n-key="nav_profile">My profile</a></li>
 
           <li class="language-switcher">
