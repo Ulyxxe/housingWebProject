@@ -882,9 +882,8 @@
     initialize();
   }
 
-  //#########################################
   // DETAILED HOUSING CARD RENDERING FUNCTION
-  //#########################################
+  //
 
   function renderHousing(housingToDisplay) {
     if (!resultsGrid) return;
@@ -907,7 +906,7 @@
     housingToDisplay.forEach((item) => {
       // 1. Create the anchor tag
       const link = document.createElement("a");
-      link.href = `./src/housing-detail.php?id=${item.listing_id}`; // Use the unique ID
+      link.href = `housing-detail.php?id=${item.listing_id}`; // Use the unique ID
       link.className = "result-card-link"; // For styling the link wrapper
 
       // 2. Create the card article (as you were doing)
