@@ -2821,5 +2821,67 @@ input:focus {
 /* ========================
      End of Language Switcher Styles
      ======================== */
-=======
->>>>>>> 96899be (remove responsive)
+
+
+
+
+
+//* ========================
+     Detailed Page Styles (Shared Styles)
+     ======================== */
+
+/* --- Results Grid & Cards --- */
+.results-layout {
+  display: flex;
+  gap: 20px;
+}
+.results-grid-container {
+  flex: 1 1 65%;
+  min-width: 0;
+}
+.map-container {
+  flex: 0 0 35%;
+  min-width: 200px;
+  position: relative;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* NEW: Style for the link wrapping the card */
+.result-card-link {
+  display: block; /* Makes the link take up the full space of its content */
+  text-decoration: none; /* Removes the default underline from the link */
+  color: inherit; /* Makes the link inherit text color, so card styles apply */
+  border-radius: 8px; /* Optional: if you want the link itself to have the radius */
+  /* Important: The transition and hover effects should now ideally target the card *within* the link,
+     or the link itself if it encompasses the visual styling.
+     The original .result-card:hover might still work if the link doesn't add its own background/padding.
+     Let's adjust hover to be safe.
+  */
+}
+
+.result-card {
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--container-bg);
+  transition: all var(--transition-speed) var(--transition-timing);
+  /* cursor: pointer; -- No longer needed on the card itself, link provides it */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ADJUSTED HOVER: Apply to the card when the link is hovered */
+.result-card-link:hover .result-card {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+.dark-mode .result-card-link:hover .result-card {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* ... (rest of your card styles: .card-image-placeholder, .card-content, etc.) ... */

@@ -82,7 +82,7 @@
 
   async function fetchHousingData() {
     try {
-      const res = await fetch('/api/getHousing.php');
+      const res = await fetch("/api/getHousing.php");
       const data = await res.json();
       // now each `item` is the raw row from your `housings` table,
       // so allHousingData = array of objects with
@@ -90,17 +90,16 @@
       window.allHousingData = data;
       updateDisplay();
     } catch (e) {
-      console.error('Error loading housing data', e);
+      console.error("Error loading housing data", e);
     }
   }
-  
+
   // Fetch the housing data after the DOM has loaded
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener("DOMContentLoaded", () => {
     fetchHousingData();
-  
+
     // Also run other initialization code (if needed)
   });
-  
 
   // ==========================================
   //          Internationalization (i18n) Functions
@@ -283,11 +282,11 @@
   function renderMapMarkers(filtered) {
     if (!map || !markersLayer) return;
     markersLayer.clearLayers();
-  
-    filtered.forEach(item => {
+
+    filtered.forEach((item) => {
       if (item.latitude != null && item.longitude != null) {
         const marker = L.marker([item.latitude, item.longitude], {
-          icon: customMarkerIcon
+          icon: customMarkerIcon,
         });
         marker.bindPopup(`
           <b>${item.title}</b><br>
@@ -325,21 +324,23 @@
   function renderHousing(housingToDisplay) {
     if (!resultsGrid) return;
     resultsGrid.innerHTML = "";
-  
+
     if (housingToDisplay.length === 0) {
       // ... same no-results code ...
       return;
     }
-  
-    housingToDisplay.forEach(item => {
+
+    housingToDisplay.forEach((item) => {
       const card = document.createElement("article");
       card.className = "result-card";
-  
+
       card.innerHTML = `
         <div class="card-image-placeholder">
-          ${ item.image
+          ${
+            item.image
               ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
-              : `<i class="far fa-image"></i>` }
+              : `<i class="far fa-image"></i>`
+          }
         </div>
         <div class="card-content">
           <h4 class="card-title">${item.title} (${item.property_type})</h4>
@@ -351,7 +352,6 @@
       resultsGrid.appendChild(card);
     });
   }
-  
 
   function updateSliderValueDisplay(slider, span, prefix = "", suffix = "") {
     if (slider && span) {
@@ -366,33 +366,33 @@
     const { maxPrice, maxSize, types, searchTerm } = activeFilters;
     const term = searchTerm.toLowerCase().trim();
     if (!Array.isArray(allHousingData)) return [];
-  
-    return allHousingData.filter(item => {
-      const priceMatch    = maxPrice === null || item.rent_amount    <= maxPrice;
-      const sizeMatch     = maxSize  === null || item.square_footage <= maxSize;
-      const typeMatch     = types.length === 0 || types.includes(item.property_type);
-      const searchMatch   = !term || item.title.toLowerCase().includes(term);
+
+    return allHousingData.filter((item) => {
+      const priceMatch = maxPrice === null || item.rent_amount <= maxPrice;
+      const sizeMatch = maxSize === null || item.square_footage <= maxSize;
+      const typeMatch =
+        types.length === 0 || types.includes(item.property_type);
+      const searchMatch = !term || item.title.toLowerCase().includes(term);
       return priceMatch && sizeMatch && typeMatch && searchMatch;
     });
   }
-
 
   function sortHousing(housingList, sortBy) {
     const sorted = [...housingList];
     switch (sortBy) {
       case "price-asc":
-        sorted.sort((a,b) => a.rent_amount - b.rent_amount);
+        sorted.sort((a, b) => a.rent_amount - b.rent_amount);
         break;
       case "price-desc":
-        sorted.sort((a,b) => b.rent_amount - a.rent_amount);
+        sorted.sort((a, b) => b.rent_amount - a.rent_amount);
         break;
       case "rating":
-        sorted.sort((a,b) => (b.rating||0) - (a.rating||0));
+        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case "new":
       default:
         // newest = highest listing_id first
-        sorted.sort((a,b) => b.listing_id - a.listing_id);
+        sorted.sort((a, b) => b.listing_id - a.listing_id);
         break;
     }
     return sorted;
@@ -881,4 +881,76 @@
     // DOMContentLoaded has already fired
     initialize();
   }
+
+  // DETAILED HOUSING CARD RENDERING FUNCTION
+  //
+
+  function renderHousing(housingToDisplay) {
+    if (!resultsGrid) return;
+    resultsGrid.innerHTML = ""; // Clear previous results
+
+    if (housingToDisplay.length === 0) {
+      // Create a paragraph for the "no results" message
+      const noResultsMessage = document.createElement("p");
+      noResultsMessage.setAttribute("data-i18n-key", "no_results"); // For translation
+      noResultsMessage.textContent = "No results found matching your criteria."; // Default text
+      resultsGrid.appendChild(noResultsMessage);
+
+      // Attempt to apply translation if the function is available
+      if (typeof applyTranslations === "function") {
+        applyTranslations(); // This will translate the newly added element
+      }
+      return;
+    }
+
+    housingToDisplay.forEach((item) => {
+      // 1. Create the anchor tag
+      const link = document.createElement("a");
+      link.href = `housing-detail.php?id=${item.listing_id}`; // Use the unique ID
+      link.className = "result-card-link"; // For styling the link wrapper
+
+      // 2. Create the card article (as you were doing)
+      const card = document.createElement("article");
+      card.className = "result-card";
+      // You don't strictly need data-id on the card if the link handles navigation,
+      // but it can be useful for other JS interactions if needed.
+      // card.dataset.id = item.listing_id;
+
+      card.innerHTML = `
+      <div class="card-image-placeholder">
+        ${
+          item.image
+            ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
+            : `<i class="far fa-image"></i>`
+        }
+      </div>
+      <div class="card-content">
+        <h4 class="card-title">${item.title} (${item.property_type})</h4>
+        <p class="card-price">$${item.rent_amount}/month</p>
+        <p class="card-size">Size: ${item.square_footage} m²</p>
+        <p class="card-rating">Rating: ${item.rating ?? "N/A"} ★</p>
+      </div>
+    `;
+
+      // 3. Append the card to the link, and the link to the grid
+      link.appendChild(card);
+      resultsGrid.appendChild(link);
+    });
+  }
+
+  // ... (rest of your script.js) ...
+
+  // Make sure your "no_results" key is in your language JSON files:
+  // e.g., in en.json:
+  // {
+  //   ...
+  //   "no_results": "No results found matching your criteria.",
+  //   ...
+  // }
+  // e.g., in fr.json:
+  // {
+  //   ...
+  //   "no_results": "Aucun résultat ne correspond à vos critères.",
+  //   ...
+  // }
 })(); // End IIFE
