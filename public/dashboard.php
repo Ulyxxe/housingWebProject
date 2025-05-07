@@ -2,7 +2,7 @@
 session_start(); // Must be the very first thing
 
 // Check if the user is logged in by verifying session variables
-if (!isset($_SESSION['userID'])) {
+if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to the login page
     header("Location: login.php");
     exit; // Stop script execution after redirect
@@ -12,7 +12,7 @@ if (!isset($_SESSION['userID'])) {
 // Use htmlspecialchars to prevent XSS when echoing data later.
 $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'N/A';
 $userType = isset($_SESSION['userType']) ? htmlspecialchars($_SESSION['userType']) : 'N/A';
-$userID = $_SESSION['userID']; // Assuming you might use this later
+$userID = $_SESSION['user_id']; // Assuming you might use this later
 
 ?>
 <!DOCTYPE html>
