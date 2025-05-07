@@ -196,6 +196,10 @@ SQL
         <!-- 6) Action/Booking Button (Placeholder) -->
         <section class="detail-section action-section">
             <button class="btn btn-register btn-apply">Apply Now / Request Booking</button>
+                  
+<a href="booking.php?id=<?php echo htmlspecialchars($housing['listing_id']); ?>" class="btn btn-register btn-apply">Apply Now / Request Booking</a>
+
+    
         </section>
 
       <?php else: ?>
