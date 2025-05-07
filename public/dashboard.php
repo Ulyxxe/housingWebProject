@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 // The user is authenticated. Get user info safely.
 // Use htmlspecialchars to prevent XSS when echoing data later.
 $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'N/A';
-$userType = isset($_SESSION['userType']) ? htmlspecialchars($_SESSION['userType']) : 'N/A';
+$userType = isset($_SESSION['user_type']) ? htmlspecialchars($_SESSION['userType']) : 'N/A';
 $userID = $_SESSION['user_id']; // Assuming you might use this later
 
 ?>
@@ -35,7 +35,7 @@ $userID = $_SESSION['user_id']; // Assuming you might use this later
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="icon" type="image/png" href="icon.png"> <!-- Your favicon -->
+    <link rel="icon" type="assets/images/png" href="icon.png"> <!-- Your favicon -->
 </head>
 <body>
 

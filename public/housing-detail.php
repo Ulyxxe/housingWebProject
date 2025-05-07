@@ -6,7 +6,7 @@ session_start();
 require_once __DIR__ . '/../config/config.php'; // Defines $pdo
 
 // Determine if user is logged in for header links
-$isLoggedIn = isset($_SESSION['userID']); // Matches authenticate.php and dashboard.php session key
+$isLoggedIn = isset($_SESSION['user_id']); // Matches authenticate.php and dashboard.php session key
 
 $housing = null;
 $error_message = null;
@@ -81,7 +81,7 @@ SQL
         <li><a href="faq.php" data-i18n-key="nav_faq">FAQ</a></li>
         
         <?php if ($isLoggedIn): ?>
-          <li><a href="src/Controllers/dashboard.php" data-i18n-key="nav_profile">My profile</a></li>
+          <li><a href="dashboard.php" data-i18n-key="nav_profile">My profile</a></li>
           <li><a href="logout.php" class="btn btn-signin">Logout</a></li> <!-- Re-using btn-signin style for logout -->
         <?php else: ?>
           <li><a href="login.php" class="btn btn-signin" data-i18n-key="nav_signin">Sign in</a></li>

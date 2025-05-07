@@ -4,7 +4,7 @@ session_start();
 // require __DIR__ . '/../config/config.php';
 
 // Determine if user is logged in
-$isLoggedIn = isset($_SESSION['user']);
+$isLoggedIn = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
