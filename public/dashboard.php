@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 // The user is authenticated. Get user info safely.
 // Use htmlspecialchars to prevent XSS when echoing data later.
 $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'N/A';
-$userType = isset($_SESSION['user_type']) ? htmlspecialchars($_SESSION['userType']) : 'N/A';
+$userType = isset($_SESSION['user_type']) ? htmlspecialchars($_SESSION['user_type']) : 'N/A';
 $userID = $_SESSION['user_id']; // Assuming you might use this later
 
 ?>
