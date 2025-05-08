@@ -21,5 +21,6 @@
   "chat_greeting": "Hi there! How can I help you navigate CROUS-X today?",
   "chat_placeholder": "Ask a question...",
   "chat_loading": "Thinking...",
-  "chat_title": "CROUS-X Assistant"
+  "chat_title": "CROUS-X Assistant",
+  "nav_admin": "Administrator Access"
 }
