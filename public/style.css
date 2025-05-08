@@ -1728,9 +1728,6 @@ input:focus {
   margin-bottom: 15px;
 }
 
-.carousel-section h2 {
-  /* Style if you add it back */
-}
 .carousel {
   /* This was already defined, ensure it's the one you want for detail page */
   display: flex;
@@ -1881,10 +1878,6 @@ input:focus {
 /* ========================================
      Booking Page & Enhanced Form Styles
      ======================================== */
-
-.booking-page-wrapper .content-box {
-  /* max-width and margin are inline in booking.php for now, can be moved here */
-}
 
 .booking-page-wrapper h1 {
   font-size: 1.8em;
