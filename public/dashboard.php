@@ -2,7 +2,7 @@
 session_start(); // Must be the very first thing
 
 // Check if the user is logged in by verifying session variables
-if (!isset($_SESSION['userID'])) {
+if (!isset($_SESSION['user_id'])) {
     // If not logged in, redirect to the login page
     header("Location: login.php");
     exit; // Stop script execution after redirect
@@ -11,8 +11,8 @@ if (!isset($_SESSION['userID'])) {
 // The user is authenticated. Get user info safely.
 // Use htmlspecialchars to prevent XSS when echoing data later.
 $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'N/A';
-$userType = isset($_SESSION['userType']) ? htmlspecialchars($_SESSION['userType']) : 'N/A';
-$userID = $_SESSION['userID']; // Assuming you might use this later
+$userType = isset($_SESSION['user_type']) ? htmlspecialchars($_SESSION['user_type']) : 'N/A';
+$userID = $_SESSION['user_id']; // Assuming you might use this later
 
 ?>
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ $userID = $_SESSION['userID']; // Assuming you might use this later
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="icon" type="image/png" href="icon.png"> <!-- Your favicon -->
+    <link rel="icon" type="assets/images/png" href="icon.png"> <!-- Your favicon -->
 </head>
 <body>
 

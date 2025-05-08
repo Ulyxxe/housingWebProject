@@ -156,6 +156,10 @@ button {
   width: 100%;
 }
 
+.logo-link { /* Ensure logo is clickable without underline */
+  text-decoration: none;
+}
+
 /* Hamburger menu language settings - Hidden by default */
 .hamburger {
   display: none;
@@ -2441,7 +2445,6 @@ input:focus {
   animation: spin 1.5s linear infinite; /* Add spin animation */
 }
 
-<<<<<<< HEAD
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -2483,7 +2486,32 @@ input:focus {
     padding: 10px 20px;
     position: relative; /* Keep relative for absolute nav */
   }
-
+@media screen and (max-width: 768px) {
+  .detail-page-main-content {
+    padding: 20px;
+    margin: 20px auto;
+  }
+  .detail-page-main-content h1 {
+    font-size: 1.8em;
+  }
+  .detail-page-main-content h2 {
+    font-size: 1.4em;
+  }
+  .carousel img {
+    height: 200px;
+  }
+  .image-placeholder-detail {
+    height: 200px;
+    min-width: unset; /* Allow shrinking */
+    width: 100%; /* Full width in single column */
+  }
+  .key-details-list, .amenities-list {
+    grid-template-columns: 1fr; /* Single column on smaller screens */
+  }
+  #detail-map {
+    height: 250px;
+  }
+}
   /* >>> HAMBURGER NAV ACTIVATION <<< */
   .main-nav {
     display: none; /* Hide the nav container by default */
@@ -2674,7 +2702,6 @@ input:focus {
     width: 50px;
     height: 50px;
     font-size: 24px;
-=======
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -2683,14 +2710,13 @@ input:focus {
         transform: rotate(360deg);
       }
     }
->>>>>>> 96899be (remove responsive)
   }
 }
 
 /* ========================
      Language Switcher Styles (Integrated and Corrected)
      ======================== */
-<<<<<<< HEAD
+
 
 .language-switcher {
   position: relative;
@@ -2821,5 +2847,497 @@ input:focus {
 /* ========================
      End of Language Switcher Styles
      ======================== */
-=======
->>>>>>> 96899be (remove responsive)
+
+
+
+
+
+//* ========================
+     Detailed Page Styles (Shared Styles)
+     ======================== */
+
+/* --- Results Grid & Cards --- */
+.results-layout {
+  display: flex;
+  gap: 20px;
+}
+.results-grid-container {
+  flex: 1 1 65%;
+  min-width: 0;
+}
+.map-container {
+  flex: 0 0 35%;
+  min-width: 200px;
+  position: relative;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* NEW: Style for the link wrapping the card */
+.result-card-link {
+  display: block; /* Makes the link take up the full space of its content */
+  text-decoration: none; /* Removes the default underline from the link */
+  color: inherit; /* Makes the link inherit text color, so card styles apply */
+  border-radius: 8px; /* Optional: if you want the link itself to have the radius */
+  /* Important: The transition and hover effects should now ideally target the card *within* the link,
+     or the link itself if it encompasses the visual styling.
+     The original .result-card:hover might still work if the link doesn't add its own background/padding.
+     Let's adjust hover to be safe.
+  */
+}
+
+.result-card {
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--container-bg);
+  transition: all var(--transition-speed) var(--transition-timing);
+  /* cursor: pointer; -- No longer needed on the card itself, link provides it */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ADJUSTED HOVER: Apply to the card when the link is hovered */
+.result-card-link:hover .result-card {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+.dark-mode .result-card-link:hover .result-card {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+
+/* Carousel styles */
+.carousel { position: relative; max-width: 800px; margin: 20px auto; }
+.carousel-images img { width: 100%; display: none; border-radius:8px; }
+.carousel-images img.active { display: block; }
+.carousel-controls { position: absolute; top:50%; width:100%; display:flex; justify-content: space-between; transform: translateY(-50%); }
+.carousel-controls button { background:rgba(0,0,0,0.5); color:#fff; border:none; padding:8px 12px; cursor:pointer; border-radius:4px; }
+/* Amenities list */
+.amenities { list-style:none; display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0 0 20px; }
+.amenities li { display:flex; align-items:center; gap:5px; font-size:0.95em; }
+.amenities img { width:24px; height:24px; }
+.detail-section { margin-bottom:20px; }
+   
+
+/* ========================================
+       Housing Detail Page Styles
+   ======================================== */
+   .detail-page-main-content { /* Wrapper for detail page, using content-box style */
+    max-width: 900px; /* Adjust as needed */
+    margin: 30px auto; /* Centering the box */
+    padding: 30px 40px; /* Consistent padding from content-box */
+  }
+  
+  .detail-container {
+    /* Styles for the inner container if .detail-page-main-content is not enough */
+    /* Removed max-width and margin from here as it's on the parent now */
+  }
+  
+  .back-to-listings {
+    margin-bottom: 20px;
+    font-size: 0.95em;
+  }
+  .back-to-listings a {
+    color: var(--primary-pink);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .back-to-listings a:hover {
+    text-decoration: underline;
+  }
+  .back-to-listings i {
+    margin-right: 6px;
+  }
+  
+  .detail-page-main-content h1 {
+    font-size: 2.2em;
+    color: var(--primary-pink);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--grey-border);
+    padding-bottom: 10px;
+  }
+  
+  .detail-page-main-content h2 {
+    font-size: 1.6em;
+    color: var(--text-color);
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+  .dark-mode .detail-page-main-content h2 {
+      color: var(--text-color); /* Already handled by var */
+  }
+  
+  
+  .detail-section {
+    margin-bottom: 30px;
+  }
+  
+  /* Carousel styles for detail page */
+  .carousel-section h2 { /* Optional heading for gallery */
+    /* Style if you add it back */
+  }
+  .carousel {
+    display: flex;
+    overflow-x: auto; /* Allows horizontal scrolling for images */
+    gap: 15px; /* Space between images */
+    padding-bottom: 10px; /* For scrollbar visibility if needed */
+    background-color: var(--grey-background); /* Light background for the carousel area */
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--grey-border);
+  }
+  .carousel img {
+    height: 250px; /* Adjust height as desired */
+    max-width: 100%; /* Ensure images don't overflow their flex item width if they are very wide */
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--grey-border);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .dark-mode .carousel {
+      background-color: var(--input-bg); /* Darker background */
+      border-color: var(--grey-border);
+  }
+  .dark-mode .carousel img {
+      border-color: var(--grey-border);
+  }
+  
+  .image-placeholder-detail {
+      height: 250px;
+      min-width: 300px; /* Give placeholder some width */
+      background-color: var(--placeholder-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      border-radius: 6px;
+      font-size: 1em;
+  }
+  .image-placeholder-detail i {
+      font-size: 3em;
+      margin-bottom: 10px;
+  }
+  
+  
+  /* Description section */
+  .description-section p {
+    line-height: 1.7;
+    color: var(--text-color);
+  }
+  
+  /* Key details list */
+  .key-details-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
+    gap: 15px;
+  }
+  .key-details-list li {
+    background-color: var(--grey-background);
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--grey-border);
+    font-size: 0.95em;
+  }
+  .key-details-list li strong {
+    color: var(--primary-pink);
+    margin-right: 5px;
+  }
+  .dark-mode .key-details-list li {
+      background-color: var(--input-bg);
+      border-color: var(--grey-border);
+  }
+  
+  /* Amenities list for detail page */
+  .amenities-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .amenities-list li {
+    padding: 8px 10px;
+    /* background-color: var(--light-pink); Using a different style than original inline */
+    /* color: var(--primary-pink); */
+    border-radius: 4px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--grey-border);
+  }
+  .amenities-list li i.fa-check-circle {
+    color: var(--primary-pink); /* Green or pink check */
+    margin-right: 8px;
+    font-size: 1.1em;
+  }
+  .dark-mode .amenities-list li {
+      border-color: var(--grey-border);
+  }
+  
+  
+  /* Map on detail page */
+  #detail-map {
+    height: 350px; /* Adjust as needed */
+    border: 1px solid var(--grey-border);
+    border-radius: 8px;
+    width: 100%;
+  }
+  .dark-mode #detail-map {
+      border-color: var(--grey-border);
+  }
+  
+  /* Action button section */
+  .action-section {
+      text-align: center; /* Center the button */
+      margin-top: 30px;
+  }
+  .btn-apply { /* Specific styling for the apply button if needed */
+      padding: 12px 30px;
+      font-size: 1.1em;
+  }
+  
+  
+  /* Error and Info Messages on Detail Page */
+  .error-message-section, .info-message-section {
+      padding: 20px;
+      border: 1px solid var(--grey-border);
+      border-radius: 8px;
+      margin-top: 20px;
+  }
+  .error-message-section {
+      background-color: #ffe3e3; /* Light red */
+      border-color: #ffb3b3; /* Darker red */
+      color: #c00; /* Red text */
+  }
+  .error-message-section h2 {
+      color: #c00;
+      margin-top: 0;
+  }
+  .dark-mode .error-message-section {
+      background-color: #5c1f1f;
+      border-color: #8c2e2e;
+      color: #ffdddd;
+  }
+  .dark-mode .error-message-section h2 {
+      color: #ffdddd;
+  }
+  
+/* ========================================
+   Booking Page & Enhanced Form Styles
+   ======================================== */
+
+   .booking-page-wrapper .content-box { /* Using content-box from existing styles */
+    /* max-width and margin are inline in booking.php for now, can be moved here */
+}
+
+.booking-page-wrapper h1 {
+    font-size: 1.8em; /* Slightly smaller than main page H1 if needed */
+    color: var(--primary-pink);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--grey-border);
+    text-align: center;
+}
+
+/* Housing Summary on Booking Page */
+.housing-summary-booking {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: var(--grey-background);
+    border-radius: 8px;
+    border: 1px solid var(--grey-border);
+}
+.dark-mode .housing-summary-booking {
+    background-color: var(--input-bg); /* Darker background */
+    border-color: var(--grey-border);
+}
+.booking-summary-image {
+    width: 120px; /* Adjust size as needed */
+    height: 90px;  /* Adjust size as needed */
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    border: 1px solid var(--grey-border);
+}
+.booking-summary-image-placeholder {
+    width: 120px;
+    height: 90px;
+    font-size: 0.7em;
+    min-width: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--placeholder-bg); /* Match other placeholders */
+    color: var(--light-text);
+    border-radius: 6px;
+}
+.booking-summary-image-placeholder i {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+.booking-summary-details {
+    flex-grow: 1;
+}
+.booking-summary-details h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--primary-pink);
+    font-size: 1.3em;
+}
+.booking-summary-details p {
+    margin-bottom: 5px;
+    font-size: 0.95em;
+    color: var(--text-color);
+}
+.booking-summary-details p strong {
+    font-weight: 600;
+}
+
+
+/* General styled form class (can be reused) */
+.styled-form .form-group {
+    margin-bottom: 20px; /* Consistent spacing */
+}
+
+.styled-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+/* Unified styling for text, email, password, date (Flatpickr input), and textarea */
+.styled-form input[type="text"],
+.styled-form input[type="email"],
+.styled-form input[type="password"],
+.styled-form input[type="date"], /* For native date picker if Flatpickr fails */
+.styled-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    line-height: 1.5; /* Better readability for textarea */
+    transition: border-color var(--transition-speed) var(--transition-timing),
+                box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+/* Specific for textarea */
+.styled-form textarea {
+    resize: vertical; /* Allow vertical resize, disable horizontal */
+    min-height: 100px; /* Minimum height */
+}
+
+/* Focus state for all these inputs */
+.styled-form input[type="text"]:focus,
+.styled-form input[type="email"]:focus,
+.styled-form input[type="password"]:focus,
+.styled-form input[type="date"]:focus,
+.styled-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 3px var(--light-pink);
+}
+.dark-mode .styled-form input[type="text"]:focus,
+.dark-mode .styled-form input[type="email"]:focus,
+.dark-mode .styled-form input[type="password"]:focus,
+.dark-mode .styled-form input[type="date"]:focus,
+.dark-mode .styled-form textarea:focus {
+    box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.5);
+}
+
+/* Readonly/Disabled input styling */
+.styled-form input:read-only,
+.styled-form input:disabled {
+    background-color: var(--grey-border) !important; /* Use important if needed to override other styles */
+    color: var(--light-text) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.dark-mode .styled-form input:read-only,
+.dark-mode .styled-form input:disabled {
+    background-color: #4a4a4c !important;
+    color: #8e8e93 !important;
+}
+
+
+/* Placeholder styling */
+.styled-form input::placeholder,
+.styled-form textarea::placeholder {
+    color: var(--light-text);
+    opacity: 0.8;
+}
+.dark-mode .styled-form input::placeholder,
+.dark-mode .styled-form textarea::placeholder {
+    color: #8e8e93; /* Lighter placeholder for dark mode */
+}
+
+
+/* Flatpickr Customizations (Optional, Flatpickr's default theme is decent) */
+/* The .flatpickr-input class is automatically added by Flatpickr to the original input if altInput is true */
+.flatpickr-input {
+    /* This will inherit styles from .styled-form input[type="text"] due to specificity,
+       or you can explicitly style it here if needed. */
+    /* Example: cursor: pointer; to indicate it's clickable */
+    cursor: pointer;
+}
+/* You can target Flatpickr's calendar elements if you want to deeply customize its theme.
+   For example, to change the selected day color:
+.flatpickr-day.selected {
+    background: var(--primary-pink);
+    border-color: var(--primary-pink);
+}
+*/
+
+/* Alert messages styling (if not already globally defined well) */
+.alert {
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.dark-mode .alert-danger {
+    color: #f8d7da;
+    background-color: #5c1f1f;
+    border-color: #8c2e2e;
+}
+.dark-mode .alert-success {
+    color: #d4edda;
+    background-color: #1c4d26;
+    border-color: #2a7237;
+}
+
+/* Small text like help text under inputs */
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: var(--light-text);
+}
