@@ -86,11 +86,6 @@ session_start();
             </a>
           </li>
 
-          <li>
-            <a href="admin.php" data-i18n-key="nav_admin" class="btn-signin">
-            Administrator
-            </a>
-          </li>
 
 
           <li>
