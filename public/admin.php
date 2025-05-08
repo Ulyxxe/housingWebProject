@@ -2,7 +2,6 @@
 // public/admin.php
 session_start();
 require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../config/generate_hash.php';
 
 if (!empty($_SESSION['is_admin'])) {
     header('Location: admin_dashboard.php');
