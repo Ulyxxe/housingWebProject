@@ -1,8 +1,8 @@
 // ==========================================
-//          CROUS-X Script
+//          CROUS-X App Script
 // ==========================================
-// Includes: Dark Mode, Filtering, Sorting, Map,
-// Hamburger Menu, Language Switcher (i18n), Chatbot support
+// Integrates: Dark Mode, Language Switcher (from landing, fetching external JSON)
+// Keeps: Filtering, Sorting, Map, Hamburger, Chatbot (from your original app)
 // ==========================================
 
 (function () {
@@ -11,14 +11,13 @@
   // --- Configuration & Constants ---
   const DEFAULT_LANG = "en";
   const SUPPORTED_LANGS = ["en", "fr", "es"];
-  const MAP_INITIAL_COORDS = [48.8566, 2.3522]; // Paris center
+  const LANGUAGES_PATH = "./languages/"; // Path to your language JSON files
+  const MAP_INITIAL_COORDS = [48.8566, 2.3522];
   const MAP_INITIAL_ZOOM = 12;
   const MAP_MAX_ZOOM = 19;
   const MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const MAP_ATTRIBUTION = "© OpenStreetMap contributors";
-  const MAP_INVALIDATE_DELAY = 50; // ms delay before invalidating map size
-  const MIN_MAP_WIDTH = 200; // Minimum dimensions for resize
-  const MIN_GRID_WIDTH = 200; // Minimum width for results grid during resize
+  const MAP_INVALIDATE_DELAY = 80;
   const customMarkerIcon =
     typeof L !== "undefined"
       ? L.divIcon({
@@ -31,123 +30,164 @@
       : null;
 
   // --- DOM Element Selection ---
-  const hamburgerButton = document.querySelector(".hamburger");
-  const mainNav = document.querySelector(".main-nav");
-  const themeToggleButton = document.getElementById("theme-toggle");
-  const languageToggle = document.getElementById("language-toggle");
-  const languageOptions = document.getElementById("language-options");
-  const currentLangSpan = languageToggle
-    ? languageToggle.querySelector(".current-lang")
-    : null;
-  const filtersContainer = document.getElementById("filters-container");
-  const priceRangeSlider = document.getElementById("price-range");
-  const sizeRangeSlider = document.getElementById("size-range");
-  const priceRangeValueSpan = document.getElementById("price-range-value");
-  const sizeRangeValueSpan = document.getElementById("size-range-value");
-  const typeCheckboxes = document.querySelectorAll(".filter-type");
-  const clearFiltersButton = document.getElementById("clear-filters-btn");
-  const resultsGrid = document.getElementById("results-grid");
-  const sortButtonsContainer = document.querySelector(".sort-options");
-  const sortButtons = document.querySelectorAll(".sort-btn");
-  const searchInput = document.getElementById("search-input");
-  const mapElement = document.getElementById("map");
-  const mapToggleButton = document.getElementById("map-toggle-button"); // Assuming this might be added later, or remove if not used
-  const resultsLayout = document.querySelector(".results-layout");
-  const mapContainer = document.querySelector(".map-container");
-  const mapResizeHandle = document.getElementById("map-resize-handle");
+  const selectors = {
+    body: document.body,
+    htmlElement: document.documentElement,
+    siteHeader: document.querySelector(".site-header"),
+    hamburgerButton: document.querySelector(".hamburger"),
+    mainNav: document.querySelector(".main-nav"),
+    themeToggleButton: document.getElementById("theme-toggle"),
+    languageSwitcherToggleButton: document.getElementById(
+      "language-switcher-toggle"
+    ),
+    languageSwitcherDropdown: document.getElementById(
+      "language-switcher-dropdown"
+    ),
+    languageChoiceButtons: null,
+    filtersContainer: document.getElementById("filters-container"),
+    priceRangeSlider: document.getElementById("price-range"),
+    sizeRangeSlider: document.getElementById("size-range"),
+    priceRangeValueSpan: document.getElementById("price-range-value"),
+    sizeRangeValueSpan: document.getElementById("size-range-value"),
+    typeCheckboxes: document.querySelectorAll(".filter-type"),
+    clearFiltersButton: document.getElementById("clear-filters-btn"),
+    resultsGrid: document.getElementById("results-grid"),
+    sortButtonsContainer: document.querySelector(".sort-options"),
+    sortButtons: document.querySelectorAll(".sort-btn"),
+    searchInput: document.getElementById("search-input"),
+    mapElement: document.getElementById("map"),
+    resultsLayout: document.getElementById("results-layout"),
+    mapContainerSticky: document.getElementById("map-container-sticky"),
+    chatWidget: document.getElementById("chat-widget"),
+    chatToggleButton: document.getElementById("chat-toggle-button"),
+    chatContainer: document.getElementById("chat-container"),
+    chatCloseButton: document.getElementById("chat-close-button"),
+    chatMessages: document.getElementById("chat-messages"),
+    chatInput: document.getElementById("chat-input"),
+    chatSendButton: document.getElementById("chat-send-button"),
+    chatLoading: document.getElementById("chat-loading"),
+  };
 
   // --- State Management ---
   let currentLanguageData = {};
   let currentLangCode = DEFAULT_LANG;
+  let isLanguageDropdownVisible = false;
   let activeFilters = {
-    maxPrice: priceRangeSlider ? parseInt(priceRangeSlider.max, 10) : 10000,
-    maxSize: sizeRangeSlider ? parseInt(sizeRangeSlider.max, 10) : 250,
+    maxPrice: selectors.priceRangeSlider
+      ? parseInt(selectors.priceRangeSlider.max, 10)
+      : 10000,
+    maxSize: selectors.sizeRangeSlider
+      ? parseInt(selectors.sizeRangeSlider.max, 10)
+      : 250,
     types: [],
     searchTerm: "",
   };
   let activeSort = "new";
   let map = null;
   let markersLayer = null;
-  let isResizingMap = false;
-  let mapResizeStartX, mapResizeInitialWidth;
+  window.allHousingData = [];
 
   // --- Data Fetching ---
   async function fetchHousingData() {
     try {
       const res = await fetch("./api/getHousing.php");
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       window.allHousingData = data;
-      updateDisplay();
     } catch (e) {
       console.error("Error loading housing data:", e);
       window.allHousingData = [];
-      updateDisplay();
     }
+    updateDisplay();
   }
 
-  // --- Internationalization (i18n) ---
+  // --- Internationalization (i18n) - Fetches external JSON ---
   async function loadLanguage(lang) {
-    if (!SUPPORTED_LANGS.includes(lang)) {
-      lang = DEFAULT_LANG;
-    }
+    if (!SUPPORTED_LANGS.includes(lang)) lang = DEFAULT_LANG;
     try {
-      const languagesPath = "./languages/";
+      // Fetch the language file from the LANGUAGES_PATH
       const response = await fetch(
-        `${languagesPath}${lang}.json?v=${Date.now()}`
-      );
+        `${LANGUAGES_PATH}${lang}.json?v=${Date.now()}`
+      ); // Cache bust
       if (!response.ok) {
+        console.error(
+          `Failed to fetch ${lang}.json, status: ${response.status}`
+        );
+        // Fallback to default language if the requested one fails
+        if (lang !== DEFAULT_LANG) return loadLanguage(DEFAULT_LANG);
+        // If default also fails, we might be in trouble or use a hardcoded minimal set
+        currentLanguageData = {}; // Clear previous data
         throw new Error(
-          `HTTP error! status: ${response.status}, failed to fetch ${response.url}`
+          `Could not load default language file ${DEFAULT_LANG}.json`
         );
       }
       currentLanguageData = await response.json();
       currentLangCode = lang;
       applyTranslations();
       updateLanguageSwitcherState(lang);
-      localStorage.setItem("selectedLanguage", lang);
+      localStorage.setItem("crousXAppLang", lang);
     } catch (error) {
-      console.error(`Could not load language file for ${lang}:`, error);
-      if (lang !== DEFAULT_LANG) {
+      console.error(`Could not load language for ${lang}:`, error);
+      // Attempt to load default language as a final fallback if not already trying
+      if (lang !== DEFAULT_LANG && currentLangCode !== DEFAULT_LANG) {
         await loadLanguage(DEFAULT_LANG);
+      } else if (
+        lang === DEFAULT_LANG &&
+        Object.keys(currentLanguageData).length === 0
+      ) {
+        // If default language itself failed to load, log and potentially show error to user
+        console.error("CRITICAL: Default language file could not be loaded.");
+        // You could set a very minimal hardcoded English set here as an ultimate fallback
+        // currentLanguageData = { "error_loading_lang": "Error loading language." };
+        // applyTranslations();
       }
     }
   }
 
   function applyTranslations() {
-    if (!currentLanguageData || Object.keys(currentLanguageData).length === 0)
+    if (!currentLanguageData || Object.keys(currentLanguageData).length === 0) {
+      console.warn("No language data loaded to apply translations.");
       return;
-    document.querySelectorAll("[data-i18n-key]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-key");
-      if (currentLanguageData[key] !== undefined)
-        el.textContent = currentLanguageData[key];
+    }
+    document.querySelectorAll("[data-lang-key]").forEach((el) => {
+      const key = el.dataset.langKey;
+      let translation = currentLanguageData[key] || `[${key}]`; // Show key if translation missing
+      if (key === "footer_copyright_main" || key === "footer_copyright") {
+        // Example for dynamic content
+        translation = translation.replace("{year}", new Date().getFullYear());
+      }
+      el.textContent = translation;
     });
-    document.querySelectorAll("[data-i18n-key-placeholder]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-key-placeholder");
+    document.querySelectorAll("[data-lang-key-placeholder]").forEach((el) => {
+      const key = el.dataset.langKeyPlaceholder;
       if (currentLanguageData[key] !== undefined)
         el.placeholder = currentLanguageData[key];
+      else el.placeholder = `[${key}]`;
     });
-    document.querySelectorAll("[data-i18n-key-aria-label]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-key-aria-label");
+    // Add more for aria-label, title if needed
+    document.querySelectorAll("[data-lang-key-aria-label]").forEach((el) => {
+      const key = el.getAttribute("data-lang-key-aria-label");
       if (currentLanguageData[key] !== undefined)
         el.setAttribute("aria-label", currentLanguageData[key]);
+      else el.setAttribute("aria-label", `[${key}]`);
     });
-    document.querySelectorAll("[data-i18n-key-title]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-key-title");
+    document.querySelectorAll("[data-lang-key-title]").forEach((el) => {
+      const key = el.getAttribute("data-lang-key-title");
       if (currentLanguageData[key] !== undefined)
         el.title = currentLanguageData[key];
+      else el.title = `[${key}]`;
     });
   }
 
   function updateLanguageSwitcherState(lang) {
-    if (currentLangSpan) currentLangSpan.textContent = lang.toUpperCase();
-    document.documentElement.lang = lang;
+    selectors.htmlElement.lang = lang;
+    selectors.languageChoiceButtons?.forEach((button) => {
+      button.classList.toggle("active", button.dataset.lang === lang);
+    });
   }
 
   function getInitialLanguage() {
-    const savedLang = localStorage.getItem("selectedLanguage");
+    const savedLang = localStorage.getItem("crousXAppLang");
     if (savedLang && SUPPORTED_LANGS.includes(savedLang)) return savedLang;
     const browserLang = navigator.language.split("-")[0];
     if (SUPPORTED_LANGS.includes(browserLang)) return browserLang;
@@ -156,10 +196,13 @@
 
   // --- Map Functions ---
   function initializeMap() {
-    if (!mapElement || typeof L === "undefined") return false;
+    if (!selectors.mapElement || typeof L === "undefined") return false;
     if (map) map.remove();
     try {
-      map = L.map(mapElement).setView(MAP_INITIAL_COORDS, MAP_INITIAL_ZOOM);
+      map = L.map(selectors.mapElement).setView(
+        MAP_INITIAL_COORDS,
+        MAP_INITIAL_ZOOM
+      );
       L.tileLayer(MAP_TILE_URL, {
         maxZoom: MAP_MAX_ZOOM,
         attribution: MAP_ATTRIBUTION,
@@ -171,24 +214,32 @@
       map.addLayer(markersLayer);
       return true;
     } catch (error) {
-      console.error("Error initializing Leaflet map:", error);
+      console.error("Error initializing map:", error);
       map = null;
       return false;
     }
   }
 
-  function renderMapMarkers(filtered) {
+  function renderMapMarkers(filteredData) {
     if (!map || !markersLayer) return;
     markersLayer.clearLayers();
-    filtered.forEach((item) => {
+    filteredData.forEach((item) => {
       if (item.latitude != null && item.longitude != null) {
         const marker = L.marker([item.latitude, item.longitude], {
           icon: customMarkerIcon,
         });
+        const typeText =
+          currentLanguageData[
+            `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
+          ] || item.property_type;
+        const ratingText = currentLanguageData?.rating_prefix || "Rating";
+        const priceText = currentLanguageData?.price_prefix || "Price"; // Assuming you might add this key
+        const perMonthText = currentLanguageData?.per_month_suffix || "/month";
+
         marker.bindPopup(
-          `<b>${item.title}</b><br>Type: ${item.property_type}<br>Price: $${
+          `<b>${item.title}</b><br>${typeText}<br>${priceText}: $${
             item.rent_amount
-          }/month<br>Rating: ${item.rating ?? "N/A"} ★`
+          }${perMonthText}<br>${ratingText}: ${item.rating ?? "N/A"} ★`
         );
         markersLayer.addLayer(marker);
       }
@@ -201,7 +252,7 @@
         try {
           map.invalidateSize({ animate: true });
         } catch (error) {
-          console.error("Error during map.invalidateSize():", error);
+          console.error("Error invalidating map size:", error);
         }
       }, MAP_INVALIDATE_DELAY);
     }
@@ -209,14 +260,13 @@
 
   // --- UI Rendering ---
   function renderHousing(housingToDisplay) {
-    if (!resultsGrid) return;
-    resultsGrid.innerHTML = "";
+    if (!selectors.resultsGrid) return;
+    selectors.resultsGrid.innerHTML = "";
     if (housingToDisplay.length === 0) {
       const noResultsMessage = document.createElement("p");
-      noResultsMessage.setAttribute("data-i18n-key", "no_results");
-      noResultsMessage.textContent = "No results found matching your criteria.";
-      resultsGrid.appendChild(noResultsMessage);
-      if (typeof applyTranslations === "function") applyTranslations();
+      noResultsMessage.setAttribute("data-lang-key", "no_results_app");
+      selectors.resultsGrid.appendChild(noResultsMessage);
+      applyTranslations(); // Apply translation for the "no results" message
       return;
     }
     housingToDisplay.forEach((item) => {
@@ -225,22 +275,37 @@
       link.className = "result-card-link";
       const card = document.createElement("article");
       card.className = "result-card";
+
+      const sizeText = currentLanguageData?.size_prefix || "Size";
+      const ratingText = currentLanguageData?.rating_prefix || "Rating";
+      const perMonthText = currentLanguageData?.per_month_suffix || "/month";
+      const propertyTypeText =
+        currentLanguageData[
+          `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
+        ] || item.property_type;
+
       card.innerHTML = `
         <div class="card-image-placeholder">
           ${
             item.image
-              ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
+              ? `<img src="${
+                  item.image.startsWith("http")
+                    ? item.image
+                    : "./uploads/" + item.image
+                }" alt="${item.title}" loading="lazy">`
               : `<i class="far fa-image"></i>`
           }
         </div>
         <div class="card-content">
-          <h4 class="card-title">${item.title} (${item.property_type})</h4>
-          <p class="card-price">$${item.rent_amount}/month</p>
-          <p class="card-size">Size: ${item.square_footage} m²</p>
-          <p class="card-rating">Rating: ${item.rating ?? "N/A"} ★</p>
+          <h4 class="card-title">${item.title} (${propertyTypeText})</h4>
+          <p class="card-price">$${item.rent_amount}${perMonthText}</p>
+          <p class="card-size">${sizeText}: ${item.square_footage} m²</p>
+          <p class="card-rating">${ratingText}: ${
+        item.rating ?? "N/A"
+      } <i class="fas fa-star"></i></p>
         </div>`;
       link.appendChild(card);
-      resultsGrid.appendChild(link);
+      selectors.resultsGrid.appendChild(link);
     });
   }
 
@@ -258,7 +323,10 @@
       const sizeMatch = item.square_footage <= maxSize;
       const typeMatch =
         types.length === 0 || types.includes(item.property_type);
-      const searchMatch = !term || item.title.toLowerCase().includes(term);
+      const searchMatch =
+        !term ||
+        item.title.toLowerCase().includes(term) ||
+        (item.address && item.address.toLowerCase().includes(term));
       return priceMatch && sizeMatch && typeMatch && searchMatch;
     });
   }
@@ -275,20 +343,20 @@
       case "rating":
         sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
-      default: // "new" or fallback
-        sorted.sort((a, b) => (b.listing_id || 0) - (a.listing_id || 0)); // Assuming listing_id indicates newness
+      default:
+        sorted.sort((a, b) => (b.listing_id || 0) - (a.listing_id || 0));
     }
     return sorted;
   }
 
   // --- Core Update ---
   function updateDisplay() {
-    if (!resultsGrid && !mapElement) return;
+    if (!selectors.resultsGrid && !selectors.mapElement) return;
     try {
       const filtered = filterHousing();
       const sortedFiltered = sortHousing(filtered, activeSort);
-      if (resultsGrid) renderHousing(sortedFiltered);
-      if (map && markersLayer) renderMapMarkers(filtered); // Use 'filtered' for map markers, sorting doesn't change marker positions
+      if (selectors.resultsGrid) renderHousing(sortedFiltered);
+      if (map && markersLayer) renderMapMarkers(filtered);
     } catch (error) {
       console.error("Error during updateDisplay:", error);
     }
@@ -296,29 +364,36 @@
 
   // --- Event Handlers ---
   function handleDarkModeToggle() {
-    if (!themeToggleButton) return;
-    const body = document.body;
-    body.classList.toggle("dark-mode");
-    const isDarkMode = body.classList.contains("dark-mode");
-    localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
-    const icon = themeToggleButton.querySelector("i");
-    if (icon) icon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon";
+    if (!selectors.themeToggleButton) return;
+    const currentTheme = selectors.htmlElement.getAttribute("data-theme");
+    const targetTheme = currentTheme === "dark" ? "light" : "dark";
+    selectors.htmlElement.setAttribute("data-theme", targetTheme);
+    localStorage.setItem("crousXAppTheme", targetTheme);
     if (map) invalidateMapSize();
   }
 
   function handleFilterChange() {
-    if (priceRangeSlider)
-      activeFilters.maxPrice = parseInt(priceRangeSlider.value, 10);
-    if (sizeRangeSlider)
-      activeFilters.maxSize = parseInt(sizeRangeSlider.value, 10);
+    if (selectors.priceRangeSlider)
+      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.value, 10);
+    if (selectors.sizeRangeSlider)
+      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.value, 10);
     activeFilters.types = [];
-    if (typeCheckboxes) {
-      typeCheckboxes.forEach((cb) => {
+    if (selectors.typeCheckboxes) {
+      selectors.typeCheckboxes.forEach((cb) => {
         if (cb.checked) activeFilters.types.push(cb.value);
       });
     }
-    updateSliderValueDisplay(priceRangeSlider, priceRangeValueSpan, "$");
-    updateSliderValueDisplay(sizeRangeSlider, sizeRangeValueSpan, "", " m²");
+    updateSliderValueDisplay(
+      selectors.priceRangeSlider,
+      selectors.priceRangeValueSpan,
+      "$"
+    );
+    updateSliderValueDisplay(
+      selectors.sizeRangeSlider,
+      selectors.sizeRangeValueSpan,
+      "",
+      " m²"
+    );
     updateDisplay();
   }
 
@@ -326,8 +401,8 @@
     const button = event.target.closest(".sort-btn");
     if (button && button.dataset.sort && button.dataset.sort !== activeSort) {
       activeSort = button.dataset.sort;
-      if (sortButtons) {
-        sortButtons.forEach((btn) =>
+      if (selectors.sortButtons) {
+        selectors.sortButtons.forEach((btn) =>
           btn.classList.toggle("active", btn === button)
         );
       }
@@ -336,278 +411,240 @@
   }
 
   function handleSearchInput() {
-    if (!searchInput) return;
-    activeFilters.searchTerm = searchInput.value;
+    if (!selectors.searchInput) return;
+    activeFilters.searchTerm = selectors.searchInput.value;
     updateDisplay();
   }
 
   function clearAllFilters() {
-    if (priceRangeSlider) {
-      priceRangeSlider.value = priceRangeSlider.max;
-      activeFilters.maxPrice = parseInt(priceRangeSlider.max, 10);
-      updateSliderValueDisplay(priceRangeSlider, priceRangeValueSpan, "$");
+    if (selectors.priceRangeSlider) {
+      selectors.priceRangeSlider.value = selectors.priceRangeSlider.max;
+      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.max, 10);
+      updateSliderValueDisplay(
+        selectors.priceRangeSlider,
+        selectors.priceRangeValueSpan,
+        "$"
+      );
     }
-    if (sizeRangeSlider) {
-      sizeRangeSlider.value = sizeRangeSlider.max;
-      activeFilters.maxSize = parseInt(sizeRangeSlider.max, 10);
-      updateSliderValueDisplay(sizeRangeSlider, sizeRangeValueSpan, "", " m²");
+    if (selectors.sizeRangeSlider) {
+      selectors.sizeRangeSlider.value = selectors.sizeRangeSlider.max;
+      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.max, 10);
+      updateSliderValueDisplay(
+        selectors.sizeRangeSlider,
+        selectors.sizeRangeValueSpan,
+        "",
+        " m²"
+      );
     }
-    if (typeCheckboxes) typeCheckboxes.forEach((cb) => (cb.checked = false));
+    if (selectors.typeCheckboxes)
+      selectors.typeCheckboxes.forEach((cb) => (cb.checked = false));
     activeFilters.types = [];
-    if (searchInput) searchInput.value = "";
+    if (selectors.searchInput) selectors.searchInput.value = "";
     activeFilters.searchTerm = "";
-    activeSort = "new"; // Reset to default sort
-    if (sortButtons) {
-      sortButtons.forEach((btn) =>
+    activeSort = "new";
+    if (selectors.sortButtons) {
+      selectors.sortButtons.forEach((btn) =>
         btn.classList.toggle("active", btn.dataset.sort === "new")
       );
     }
     updateDisplay();
   }
 
-  function handleMapToggle() {
-    // This function seems unused based on HTML, but kept for completeness
-    if (!resultsLayout || !mapToggleButton) return;
-    const isHidden = resultsLayout.classList.toggle("map-hidden");
-    mapToggleButton.setAttribute("aria-expanded", !isHidden);
-    const icon = mapToggleButton.querySelector("i");
-    const text = mapToggleButton.querySelector("span");
-    if (icon)
-      icon.className = isHidden ? "fas fa-map-location-dot" : "fas fa-compress";
-    if (text) text.textContent = isHidden ? "Show Map" : "Hide Map";
-    if (!isHidden) invalidateMapSize();
-  }
-
-  function handleMapResizeStart(event) {
-    if (
-      !mapResizeHandle ||
-      !mapContainer ||
-      !resultsLayout ||
-      !mapResizeHandle.contains(event.target)
-    )
-      return;
-    event.preventDefault();
-    isResizingMap = true;
-    mapResizeStartX = event.touches ? event.touches[0].clientX : event.clientX;
-    mapResizeInitialWidth = mapContainer.offsetWidth;
-    document.body.classList.add("map-resizing");
-    document.addEventListener("mousemove", handleMapResizeMove);
-    document.addEventListener("mouseup", handleMapResizeEnd);
-    document.addEventListener("touchmove", handleMapResizeMove, {
-      passive: false,
-    });
-    document.addEventListener("touchend", handleMapResizeEnd);
-  }
-
-  function handleMapResizeMove(event) {
-    if (!isResizingMap || !mapContainer) return;
-    if (map && map.dragging.enabled()) map.dragging.disable();
-    const currentX = event.touches ? event.touches[0].clientX : event.clientX;
-    const dx = currentX - mapResizeStartX;
-    let newWidth = mapResizeInitialWidth - dx;
-    const gridContainer = document.querySelector(".results-grid-container");
-    const availableWidth =
-      resultsLayout.offsetWidth - mapResizeHandle.offsetWidth;
-    const minGridAllowedWidth = gridContainer ? MIN_GRID_WIDTH : 0;
-    newWidth = Math.max(MIN_MAP_WIDTH, newWidth);
-    newWidth = Math.min(availableWidth - minGridAllowedWidth, newWidth);
-    mapContainer.style.flex = `0 0 ${newWidth}px`;
-    if (event.touches) event.preventDefault();
-  }
-
-  function handleMapResizeEnd() {
-    if (!isResizingMap) return;
-    isResizingMap = false;
-    document.body.classList.remove("map-resizing");
-    if (map && !map.dragging.enabled()) map.dragging.enable();
-    document.removeEventListener("mousemove", handleMapResizeMove);
-    document.removeEventListener("mouseup", handleMapResizeEnd);
-    document.removeEventListener("touchmove", handleMapResizeMove);
-    document.removeEventListener("touchend", handleMapResizeEnd);
-    invalidateMapSize();
-  }
-
-  function handleLanguageChange(event) {
-    event.preventDefault();
-    const targetLink = event.target.closest("a[data-lang]");
-    if (!targetLink) return;
-
-    const selectedLang = targetLink.getAttribute("data-lang");
-
-    if (selectedLang && selectedLang !== currentLangCode) {
-      loadLanguage(selectedLang).then(() => {
-        closeLanguageDropdown();
-        if (hamburgerButton && hamburgerButton.classList.contains("active")) {
-          // If mobile nav is open and language changes, close it.
-          // Note: links within mobile nav might already close it if setupEventListeners is done right
-        }
-      });
-    } else if (selectedLang) {
-      // Language already selected, just close dropdown
-      closeLanguageDropdown();
-    }
-  }
-
-  // --- Helper functions for UI states ---
-  function openHamburgerMenu() {
-    if (!hamburgerButton || !mainNav) return;
-    hamburgerButton.classList.add("active");
-    mainNav.classList.add("active");
-    hamburgerButton.setAttribute("aria-expanded", "true");
-    mainNav.setAttribute("aria-hidden", "false");
-    mainNav.removeAttribute("inert");
-    document.body.classList.add("nav-open");
-  }
-
-  function closeHamburgerMenu() {
-    if (!hamburgerButton || !mainNav) return;
-    hamburgerButton.classList.remove("active");
-    mainNav.classList.remove("active");
-    hamburgerButton.setAttribute("aria-expanded", "false");
-    mainNav.setAttribute("aria-hidden", "true");
-    mainNav.setAttribute("inert", "");
-    document.body.classList.remove("nav-open");
-
-    if (languageOptions && languageOptions.classList.contains("show")) {
-      closeLanguageDropdown();
-    }
-    if (hamburgerButton) hamburgerButton.focus();
-  }
-
-  function openLanguageDropdown() {
-    if (!languageOptions || !languageToggle) return;
-    languageOptions.classList.add("show");
-    languageToggle.setAttribute("aria-expanded", "true");
+  function toggleLanguageDropdown(event) {
+    event.stopPropagation();
+    isLanguageDropdownVisible = !isLanguageDropdownVisible;
+    selectors.siteHeader?.classList.toggle(
+      "language-dropdown-visible",
+      isLanguageDropdownVisible
+    );
+    selectors.languageSwitcherToggleButton?.setAttribute(
+      "aria-expanded",
+      isLanguageDropdownVisible
+    );
+    selectors.languageSwitcherDropdown?.setAttribute(
+      "aria-hidden",
+      !isLanguageDropdownVisible
+    );
   }
 
   function closeLanguageDropdown() {
-    if (!languageOptions || !languageToggle) return;
-    languageOptions.classList.remove("show");
-    languageToggle.setAttribute("aria-expanded", "false");
+    if (isLanguageDropdownVisible) {
+      isLanguageDropdownVisible = false;
+      selectors.siteHeader?.classList.remove("language-dropdown-visible");
+      selectors.languageSwitcherToggleButton?.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+      selectors.languageSwitcherDropdown?.setAttribute("aria-hidden", "true");
+    }
   }
 
-  // --- Event Listener Setup ---
-  function setupEventListeners() {
-    if (hamburgerButton && mainNav) {
-      hamburgerButton.setAttribute("aria-expanded", "false");
+  function handleLanguageChoice(event) {
+    const button = event.target.closest(".language-choice-button");
+    if (!button) return;
+    const chosenLang = button.dataset.lang;
+    if (chosenLang && chosenLang !== currentLangCode) {
+      loadLanguage(chosenLang).then(() => {
+        closeLanguageDropdown();
+        // Update dynamic parts of UI that depend on language, e.g., re-render cards
+        updateDisplay(); // Re-render cards and map popups with new language
+      });
+    } else if (chosenLang) {
+      closeLanguageDropdown();
+    }
+  }
 
-      // Check if the hamburger button is currently visible (i.e., we are in mobile view).
-      const hamburgerIsVisible =
-        getComputedStyle(hamburgerButton).display !== "none";
+  // Hamburger Menu Logic (from your original script, ensure selectors.mainNav is correct for app)
+  function setupHamburger() {
+    if (selectors.hamburgerButton && selectors.mainNav) {
+      // Initial ARIA setup
+      const isMobileNavInitiallyActive =
+        selectors.mainNav.classList.contains("active"); // Or however you track active
+      selectors.hamburgerButton.setAttribute(
+        "aria-expanded",
+        isMobileNavInitiallyActive.toString()
+      );
+      selectors.mainNav.setAttribute(
+        "aria-hidden",
+        (!isMobileNavInitiallyActive).toString()
+      );
+      if (!isMobileNavInitiallyActive)
+        selectors.mainNav.setAttribute("inert", "");
 
-      if (hamburgerIsVisible) {
-        // Mobile view: mainNav starts closed (CSS handles initial display:none).
-        // Set ARIA and inert attributes if it's not already active (which it shouldn't be on load).
-        if (!mainNav.classList.contains("active")) {
-          mainNav.setAttribute("aria-hidden", "true");
-          mainNav.setAttribute("inert", "");
-        }
-      } else {
-        // Desktop view: mainNav is visible. Ensure it's not ARIA-hidden or inert.
-        mainNav.removeAttribute("aria-hidden");
-        mainNav.removeAttribute("inert");
-      }
-
-      hamburgerButton.addEventListener("click", () => {
-        const isActive = mainNav.classList.contains("active");
+      selectors.hamburgerButton.addEventListener("click", () => {
+        const isActive = selectors.mainNav.classList.toggle("active");
+        selectors.hamburgerButton.classList.toggle("active");
+        selectors.hamburgerButton.setAttribute(
+          "aria-expanded",
+          isActive.toString()
+        );
+        selectors.mainNav.setAttribute("aria-hidden", (!isActive).toString());
         if (isActive) {
-          closeHamburgerMenu();
+          selectors.mainNav.removeAttribute("inert");
         } else {
-          openHamburgerMenu();
+          selectors.mainNav.setAttribute("inert", "");
+          // If language dropdown was open inside mobile nav, close it
+          if (isLanguageDropdownVisible) closeLanguageDropdown();
         }
+        // Toggle body class to prevent scrolling when mobile nav is open
+        document.body.classList.toggle("nav-open", isActive);
       });
 
-      mainNav
-        .querySelectorAll("a, button") // Listen to all buttons inside nav as well
+      // Close mobile nav when a link inside it is clicked (excluding language toggle itself)
+      selectors.mainNav
+        .querySelectorAll(
+          "a:not(#language-switcher-toggle), button:not(#language-switcher-toggle)"
+        )
         .forEach((item) => {
-          // Exclude the language toggle from closing the *entire* mobile nav
-          // as it has its own dropdown logic.
-          if (item.id === "language-toggle") return;
-
           item.addEventListener("click", () => {
-            if (mainNav.classList.contains("active")) {
-              // Only close if mobile nav is active
-              closeHamburgerMenu();
+            if (selectors.mainNav.classList.contains("active")) {
+              selectors.mainNav.classList.remove("active");
+              selectors.hamburgerButton.classList.remove("active");
+              selectors.hamburgerButton.setAttribute("aria-expanded", "false");
+              selectors.mainNav.setAttribute("aria-hidden", "true");
+              selectors.mainNav.setAttribute("inert", "");
+              document.body.classList.remove("nav-open");
+              if (isLanguageDropdownVisible) closeLanguageDropdown();
             }
           });
         });
 
+      // Close mobile nav if clicked outside
       document.addEventListener("click", (event) => {
         if (
-          mainNav.classList.contains("active") && // Only if mobile nav is open
-          !mainNav.contains(event.target) &&
-          !hamburgerButton.contains(event.target)
+          selectors.mainNav.classList.contains("active") &&
+          !selectors.mainNav.contains(event.target) &&
+          !selectors.hamburgerButton.contains(event.target)
         ) {
-          closeHamburgerMenu();
+          selectors.mainNav.classList.remove("active");
+          selectors.hamburgerButton.classList.remove("active");
+          selectors.hamburgerButton.setAttribute("aria-expanded", "false");
+          selectors.mainNav.setAttribute("aria-hidden", "true");
+          selectors.mainNav.setAttribute("inert", "");
+          document.body.classList.remove("nav-open");
+          if (isLanguageDropdownVisible) closeLanguageDropdown();
         }
-      });
-    }
-
-    if (languageToggle && languageOptions) {
-      languageToggle.addEventListener("click", (event) => {
-        event.stopPropagation(); // Prevent click from bubbling to document listener immediately
-        if (languageOptions.classList.contains("show")) {
-          closeLanguageDropdown();
-        } else {
-          openLanguageDropdown();
-          // If inside mobile nav, ensure mobile nav itself doesn't close
-          // This is implicitly handled because language-toggle is not a link that closes the mobile nav.
-        }
-      });
-      languageOptions.addEventListener("click", handleLanguageChange); // Delegate to parent
-      document.addEventListener("click", (event) => {
-        if (
-          languageOptions.classList.contains("show") &&
-          !languageToggle.contains(event.target) &&
-          !languageOptions.contains(event.target)
-        ) {
-          closeLanguageDropdown();
-        }
-      });
-    }
-
-    if (themeToggleButton)
-      themeToggleButton.addEventListener("click", handleDarkModeToggle);
-    if (filtersContainer) {
-      filtersContainer.addEventListener("input", (e) => {
-        if (e.target.matches("#price-range, #size-range")) handleFilterChange();
-      });
-      filtersContainer.addEventListener("change", (e) => {
-        if (e.target.matches(".filter-type")) handleFilterChange();
-      });
-    }
-    if (clearFiltersButton)
-      clearFiltersButton.addEventListener("click", clearAllFilters);
-    if (sortButtonsContainer)
-      sortButtonsContainer.addEventListener("click", handleSortChange);
-    if (searchInput) searchInput.addEventListener("input", handleSearchInput);
-
-    // If mapToggleButton exists and is intended for use:
-    // if (mapToggleButton) mapToggleButton.addEventListener("click", handleMapToggle);
-
-    if (mapResizeHandle) {
-      mapResizeHandle.addEventListener("mousedown", handleMapResizeStart);
-      mapResizeHandle.addEventListener("touchstart", handleMapResizeStart, {
-        passive: false,
       });
     }
   }
 
-  function applyPersistedTheme() {
-    const persistedDarkMode = localStorage.getItem("darkMode");
-    const body = document.body;
-    const isCurrentlyDark = body.classList.contains("dark-mode");
-    if (persistedDarkMode === "enabled" && !isCurrentlyDark) {
-      body.classList.add("dark-mode");
-    } else if (persistedDarkMode !== "enabled" && isCurrentlyDark) {
-      // handles "disabled" or null
-      body.classList.remove("dark-mode");
+  // --- Event Listener Setup ---
+  function setupEventListeners() {
+    if (selectors.themeToggleButton)
+      selectors.themeToggleButton.addEventListener(
+        "click",
+        handleDarkModeToggle
+      );
+    if (
+      selectors.languageSwitcherToggleButton &&
+      selectors.languageSwitcherDropdown
+    ) {
+      selectors.languageChoiceButtons =
+        selectors.languageSwitcherDropdown.querySelectorAll(
+          ".language-choice-button"
+        );
+      selectors.languageSwitcherToggleButton.addEventListener(
+        "click",
+        toggleLanguageDropdown
+      );
+      selectors.languageSwitcherDropdown.addEventListener(
+        "click",
+        handleLanguageChoice
+      );
+      document.addEventListener("click", (event) => {
+        if (
+          isLanguageDropdownVisible &&
+          !selectors.languageSwitcherToggleButton.contains(event.target) &&
+          !selectors.languageSwitcherDropdown.contains(event.target)
+        ) {
+          closeLanguageDropdown();
+        }
+      });
     }
-    const isDarkModeFinal = body.classList.contains("dark-mode");
-    const icon = themeToggleButton
-      ? themeToggleButton.querySelector("i")
-      : null;
-    if (icon) icon.className = isDarkModeFinal ? "fas fa-sun" : "fas fa-moon";
+    if (selectors.filtersContainer) {
+      selectors.filtersContainer.addEventListener("input", (e) => {
+        if (e.target.matches("#price-range, #size-range")) handleFilterChange();
+      });
+      selectors.filtersContainer.addEventListener("change", (e) => {
+        if (e.target.matches(".filter-type")) handleFilterChange();
+      });
+    }
+    if (selectors.clearFiltersButton)
+      selectors.clearFiltersButton.addEventListener("click", clearAllFilters);
+    if (selectors.sortButtonsContainer)
+      selectors.sortButtonsContainer.addEventListener(
+        "click",
+        handleSortChange
+      );
+    if (selectors.searchInput)
+      selectors.searchInput.addEventListener("input", handleSearchInput);
+
+    setupHamburger(); // Call hamburger setup
+
+    // Chat
+    if (selectors.chatToggleButton && selectors.chatContainer) {
+      selectors.chatToggleButton.addEventListener("click", () => {
+        constisHidden = selectors.chatContainer.classList.toggle("chat-hidden");
+        selectors.chatToggleButton.setAttribute("aria-expanded", !isHidden);
+        if (!isHidden && selectors.chatInput) selectors.chatInput.focus();
+      });
+    }
+    if (selectors.chatCloseButton && selectors.chatContainer) {
+      selectors.chatCloseButton.addEventListener("click", () => {
+        selectors.chatContainer.classList.add("chat-hidden");
+        selectors.chatToggleButton.setAttribute("aria-expanded", "false");
+      });
+    }
+    // Chat send logic from your chatbot.js should be integrated or called here
+  }
+
+  function applyPersistedTheme() {
+    const persistedTheme =
+      localStorage.getItem("crousXAppTheme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light");
+    selectors.htmlElement.setAttribute("data-theme", persistedTheme);
   }
 
   // --- Initialization ---
@@ -616,35 +653,37 @@
     const initialLang = getInitialLanguage();
     await loadLanguage(initialLang);
 
-    if (priceRangeSlider)
-      activeFilters.maxPrice = parseInt(priceRangeSlider.value, 10);
-    if (sizeRangeSlider)
-      activeFilters.maxSize = parseInt(sizeRangeSlider.value, 10);
-    updateSliderValueDisplay(priceRangeSlider, priceRangeValueSpan, "$");
-    updateSliderValueDisplay(sizeRangeSlider, sizeRangeValueSpan, "", " m²");
+    if (selectors.priceRangeSlider && selectors.priceRangeValueSpan) {
+      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.value, 10);
+      updateSliderValueDisplay(
+        selectors.priceRangeSlider,
+        selectors.priceRangeValueSpan,
+        "$"
+      );
+    }
+    if (selectors.sizeRangeSlider && selectors.sizeRangeValueSpan) {
+      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.value, 10);
+      updateSliderValueDisplay(
+        selectors.sizeRangeSlider,
+        selectors.sizeRangeValueSpan,
+        "",
+        " m²"
+      );
+    }
 
     let mapInitialized = false;
-    if (mapElement && typeof L !== "undefined") {
+    if (selectors.mapElement && typeof L !== "undefined") {
       mapInitialized = initializeMap();
     }
 
-    setupEventListeners(); // Setup listeners after initial state is set
+    setupEventListeners();
+    await fetchHousingData(); // This calls updateDisplay internally
 
-    if (typeof window.allHousingData === "undefined") {
-      await fetchHousingData();
-    } else {
-      // If data was somehow pre-loaded, still update display
-      updateDisplay();
+    if (selectors.mapContainerSticky && mapInitialized) {
+      const resizeObserver = new ResizeObserver(() => invalidateMapSize());
+      resizeObserver.observe(selectors.mapContainerSticky);
+      setTimeout(invalidateMapSize, 300);
     }
-    // If fetchHousingData already calls updateDisplay, this might be redundant
-    // but ensures display updates if data was preloaded or fetched successfully.
-    // updateDisplay() is called inside fetchHousingData() on success/error.
-
-    // Initial call to updateDisplay if data isn't fetched but elements exist
-    // This is now handled by fetchHousingData calling updateDisplay.
-    // if (resultsGrid || (mapElement && mapInitialized)) {
-    // updateDisplay();
-    // }
   }
 
   if (document.readyState === "loading") {
