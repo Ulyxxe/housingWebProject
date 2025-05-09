@@ -9,7 +9,7 @@
       name="description"
       content="Find your perfect student accommodation with CROUS-X. Easy search, verified listings, and a supportive community."
     />
-    <!-- <link rel="icon" href="images/crous-x-icon.svg" type="image/svg+xml" /> -->
+    <link rel="icon" href="images/crous-x-icon.svg" type="image/svg+xml" /> 
     <link rel="stylesheet" href="landing/landing-style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -156,7 +156,7 @@
             Paris.
           </p>
           <a
-            href="YOUR_LISTINGS_PAGE_URL_HERE"
+            href="home.php"
             class="hero-cta scroll-link"
             data-lang-key="hero_cta"
             >Explore Listings</a
@@ -325,7 +325,7 @@
             questions or need assistance, we're here to help.
           </p>
           <a
-            href="YOUR_LISTINGS_PAGE_URL_HERE"
+            href="home.php"
             class="contact-button"
             data-lang-key="contact_cta"
           >
@@ -346,7 +346,7 @@
       <footer class="site-footer-main">
         <p data-lang-key="footer_copyright">
           © <span id="current-year"></span> CROUS-X. Student Housing Made
-          Simple.
+          Simple by La Friteuse.
         </p>
         <div class="footer-socials">
           <a href="#" aria-label="Facebook"
