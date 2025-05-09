@@ -1,271 +1,166 @@
-// chatbot.js
+// chatbot.js (Self-Contained with Toggle Logic)
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Get DOM Elements ---
-  const chatbox = document.getElementById("chatbox");
-  const userInput = document.getElementById("userInput");
-  const sendButton = document.getElementById("sendButton");
-  // Optional: Get the widget container if you want to add open/close logic later
-  // const chatWidget = document.getElementById('chat-widget-container');
+  // --- Chat Widget DOM Elements ---
+  const chatToggleButton = document.getElementById("chat-toggle-button");
+  const chatContainer = document.getElementById("chat-container");
+  const chatCloseButton = document.getElementById("chat-close-button");
+  // --- Internal Chat DOM Elements ---
+  const chatMessagesContainer = document.getElementById("chat-messages");
+  const chatInputField = document.getElementById("chat-input");
+  const chatSendButtonElem = document.getElementById("chat-send-button");
+  const chatLoadingIndicator = document.getElementById("chat-loading");
 
-  // --- Basic Checks ---
-  if (!chatbox || !userInput || !sendButton) {
-    console.error("Chatbot UI elements missing! Cannot initialize chatbot.");
-    return; // Stop if elements aren't found
+  // --- Basic Checks for Core Chat Functionality ---
+  if (!chatMessagesContainer || !chatInputField || !chatSendButtonElem) {
+    console.error(
+      "Chatbot internal UI elements (chat-messages, chat-input, or chat-send-button) missing! Cannot initialize chatbot message functionality."
+    );
+    // We can still try to initialize the toggle if those elements exist
   }
 
-  // --- Functions ---
+  // --- Check for Toggle Elements ---
+  if (!chatToggleButton || !chatContainer || !chatCloseButton) {
+    console.warn(
+      "Chatbot toggle/container elements missing. Chat visibility control might not work."
+    );
+  }
 
-  function addMessage(text, sender) {
+  // --- Function to toggle chat visibility ---
+  function toggleChatVisibility() {
+    if (chatContainer && chatToggleButton) {
+      const isHidden = chatContainer.classList.toggle("chat-hidden");
+      chatToggleButton.setAttribute("aria-expanded", String(!isHidden));
+      const icon = chatToggleButton.querySelector("i");
+      if (icon) {
+        icon.className = isHidden ? "fas fa-comments" : "fas fa-times";
+      }
+      if (!isHidden && chatInputField) {
+        chatInputField.focus();
+      }
+    }
+  }
+
+  // --- Event Listeners for Toggling Chat ---
+  if (chatToggleButton) {
+    chatToggleButton.addEventListener("click", toggleChatVisibility);
+  }
+
+  if (chatCloseButton) {
+    chatCloseButton.addEventListener("click", toggleChatVisibility); // Close button also toggles
+  }
+
+  // --- Functions for internal chat logic (message handling, API calls) ---
+  function addMessageToChatUI(text, sender) {
+    if (!chatMessagesContainer) return; // Guard clause
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message");
-    // Use different CSS classes depending on sender
-    messageDiv.classList.add(sender === "user" ? "user-message" : "ai-message");
+    messageDiv.classList.add(sender === "user" ? "user" : "bot");
 
-    if (sender === "ai") {
-      // Convert Markdown to HTML using Marked for AI messages
-      messageDiv.innerHTML = marked.parse(text);
+    if (sender === "bot" && typeof marked !== "undefined" && marked?.parse) {
+      try {
+        messageDiv.innerHTML = marked.parse(text);
+      } catch (e) {
+        console.error("Error parsing Markdown:", e);
+        messageDiv.textContent = text; // Fallback to text if Markdown fails
+      }
     } else {
-      // For user messages, continue to use textContent to prevent accidental HTML injection
       messageDiv.textContent = text;
     }
 
-    chatbox.appendChild(messageDiv);
-    chatbox.scrollTo({
-      top: chatbox.scrollHeight,
+    chatMessagesContainer.appendChild(messageDiv);
+    chatMessagesContainer.scrollTo({
+      top: chatMessagesContainer.scrollHeight,
       behavior: "smooth",
     });
   }
 
-  function showLoading() {
-    // Check if loading indicator already exists
-    if (document.getElementById("loading-indicator")) return;
-
-    const loadingDiv = document.createElement("div");
-    loadingDiv.classList.add("message", "ai-message", "loading");
-    loadingDiv.id = "loading-indicator";
-    loadingDiv.textContent = "Thinking..."; // Use textContent
-    chatbox.appendChild(loadingDiv);
-    chatbox.scrollTo({ top: chatbox.scrollHeight, behavior: "smooth" });
-  }
-
-  function hideLoading() {
-    const loadingIndicator = document.getElementById("loading-indicator");
-    if (loadingIndicator) {
-      loadingIndicator.remove();
+  function showChatLoadingUI(isLoading) {
+    if (!chatLoadingIndicator) return;
+    if (isLoading) {
+      chatLoadingIndicator.classList.remove("chat-hidden");
+    } else {
+      chatLoadingIndicator.classList.add("chat-hidden");
     }
   }
 
-  async function sendMessage() {
-    const messageText = userInput.value.trim();
-    if (!messageText) return; // Don't send empty messages
+  async function processAndSendMessage() {
+    if (!chatInputField || !chatSendButtonElem) return; // Guard clause
 
-    addMessage(messageText, "user");
-    userInput.value = ""; // Clear input field
-    showLoading();
-    userInput.disabled = true;
-    sendButton.disabled = true;
+    const messageText = chatInputField.value.trim();
+    if (!messageText) return;
+
+    addMessageToChatUI(messageText, "user");
+    chatInputField.value = "";
+    chatInputField.disabled = true;
+    chatSendButtonElem.disabled = true;
+    showChatLoadingUI(true);
 
     try {
       const response = await fetch("api/chat_handler.php", {
-        // Path to your PHP script
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // API Key is handled by PHP, NOT sent from JS
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: messageText }),
       });
 
-      hideLoading(); // Hide loading indicator regardless of outcome
-
-      // Always try to parse the response, even on error, to get error message from PHP
+      showChatLoadingUI(false);
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle HTTP errors (4xx, 5xx) using the parsed error message from PHP
-        console.error("Error from backend:", response.status, data.error);
-        addMessage(`Error: ${data.error || "Failed to get response."}`, "ai");
+        addMessageToChatUI(
+          `Error: ${data.error || "Failed to get response."}`,
+          "bot"
+        );
       } else if (data.error) {
-        // Handle application-level errors sent back with a 200 OK status
-        console.error("Application error from backend:", data.error);
-        addMessage(`Error: ${data.error}`, "ai");
+        addMessageToChatUI(`Error: ${data.error}`, "bot");
       } else if (data.reply) {
-        // Success case
-        addMessage(data.reply, "ai");
+        addMessageToChatUI(data.reply, "bot");
       } else {
-        // Unexpected: Response OK but no reply or error field
-        console.error("Unexpected response format:", data);
-        addMessage("Sorry, I received an unexpected response.", "ai");
+        addMessageToChatUI("Sorry, I received an unexpected response.", "bot");
       }
     } catch (error) {
-      // Handle network errors (fetch failed completely)
-      hideLoading();
-      console.error("Network or fetch error:", error);
-      addMessage(
-        "Error: Could not connect to the assistant. Check your network.",
-        "ai"
-      );
-    } finally {
-      // Re-enable input regardless of success or failure
-      userInput.disabled = false;
-      sendButton.disabled = false;
-      userInput.focus(); // Set focus back to input field
-    }
-  }
-
-  // --- Event Listeners ---
-  sendButton.addEventListener("click", sendMessage);
-
-  userInput.addEventListener("keypress", (event) => {
-    // Send message if Enter key is pressed (without Shift key)
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevent default form submission or newline
-      sendMessage();
-    }
-  });
-}); // End DOMContentLoaded
-
-// --- Chat Widget Logic ---
-const chatWidget = document.getElementById("chat-widget"); //trying to fix the chatbot après changements du home page
-const chatToggleButton = document.getElementById("chat-toggle-button");
-const chatContainer = document.getElementById("chat-container");
-const chatCloseButton = document.getElementById("chat-close-button");
-const chatInput = document.getElementById("chat-input");
-const chatSendButton = document.getElementById("chat-send-button");
-const chatMessages = document.getElementById("chat-messages");
-const chatLoading = document.getElementById("chat-loading"); // Get loading indicator
-
-// --- Function to toggle chat visibility ---
-function toggleChat() {
-  if (chatContainer) {
-    const isHidden = chatContainer.classList.toggle("chat-hidden");
-    // Optional: Change toggle button icon based on state
-    const icon = chatToggleButton ? chatToggleButton.querySelector("i") : null;
-    if (icon) {
-      if (isHidden) {
-        icon.classList.remove("fa-times"); // Change back to chat icon
-        icon.classList.add("fa-comments");
-        chatToggleButton.setAttribute("aria-label", "Open chat");
-      } else {
-        icon.classList.remove("fa-comments"); // Change to close icon
-        icon.classList.add("fa-times");
-        chatToggleButton.setAttribute("aria-label", "Close chat");
-        // Focus input when opening
-        if (chatInput) chatInput.focus();
-      }
-    }
-  }
-}
-
-// --- Event Listeners ---
-if (chatToggleButton) {
-  chatToggleButton.addEventListener("click", toggleChat);
-}
-
-if (chatCloseButton) {
-  chatCloseButton.addEventListener("click", toggleChat); // Close button does the same toggle
-}
-
-// --- Function to add a message to the chat ---
-function addChatMessage(message, sender = "bot") {
-  if (!chatMessages) return;
-
-  const messageElement = document.createElement("div");
-  messageElement.classList.add("message", sender);
-
-  if (sender === "bot") {
-    // Convert markdown text for bot messages
-    messageElement.innerHTML = marked.parse(message);
-  } else {
-    messageElement.textContent = message;
-  }
-
-  chatMessages.appendChild(messageElement);
-  // Auto-scroll to the bottom
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// --- Function to show/hide loading indicator ---
-function showLoading(isLoading) {
-  if (!chatLoading) return;
-  if (isLoading) {
-    chatLoading.classList.remove("chat-hidden");
-  } else {
-    chatLoading.classList.add("chat-hidden");
-  }
-}
-
-// --- Function to handle sending a message ---
-async function handleSendMessage() {
-  if (!chatInput || !chatInput.value.trim()) return; // Ignore empty messages
-
-  const userMessage = chatInput.value.trim();
-  addChatMessage(userMessage, "user"); // Display user's message
-  chatInput.value = ""; // Clear input field
-  chatInput.disabled = true; // Disable input while waiting
-  chatSendButton.disabled = true;
-  showLoading(true); // Show thinking indicator
-
-  // --- API Call ---
-  try {
-    const response = await fetch("api/chat_handler.php", {
-      // Ensure this path is correct
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: userMessage }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      // Display specific error from API if available, otherwise generic
-      addChatMessage(
-        `Error: ${data.error || `HTTP ${response.status}`}`,
+      showChatLoadingUI(false);
+      console.error("Chat API Error:", error);
+      addMessageToChatUI(
+        "Error: Could not connect. Check your network.",
         "bot"
       );
-    } else if (data.reply) {
-      addChatMessage(data.reply, "bot"); // Display bot's reply
-    } else if (data.error) {
-      addChatMessage(`Error: ${data.error}`, "bot"); // Display error from JSON payload
-    } else {
-      addChatMessage("Sorry, I couldn't get a response.", "bot"); // Fallback
+    } finally {
+      chatInputField.disabled = false;
+      chatSendButtonElem.disabled = false;
+      chatInputField.focus();
     }
-  } catch (error) {
-    console.error("Chat API Error:", error);
-    addChatMessage(
-      "Sorry, something went wrong trying to connect. Please try again.",
-      "bot"
-    );
-  } finally {
-    chatInput.disabled = false; // Re-enable input
-    chatSendButton.disabled = false;
-    showLoading(false); // Hide thinking indicator
-    chatInput.focus(); // Refocus input
   }
-}
 
-// --- Event Listeners for Sending ---
-if (chatSendButton) {
-  chatSendButton.addEventListener("click", handleSendMessage);
-}
+  // --- Event Listeners for internal chat actions (Sending messages) ---
+  if (chatSendButtonElem) {
+    chatSendButtonElem.addEventListener("click", processAndSendMessage);
+  }
 
-if (chatInput) {
-  // Allow sending message by pressing Enter key
-  chatInput.addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent default form submission (if any)
-      handleSendMessage();
+  if (chatInputField) {
+    chatInputField.addEventListener("keypress", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        processAndSendMessage();
+      }
+    });
+  }
+
+  // Add initial greeting if it's defined in HTML and chat is not hidden initially
+  // (This assumes the greeting is part of the static HTML with a data-lang-key)
+  // The main script's `applyTranslations` will handle translating it.
+  // If chat starts open and needs a JS-added greeting, that would be more complex
+  // as `chatbot.js` doesn't have direct access to `currentLanguageData` from the main script.
+  const initialGreetingElement = chatMessagesContainer?.querySelector(
+    '.message.bot[data-lang-key="chat_greeting_app"]'
+  );
+  if (initialGreetingElement && chatMessagesContainer.children.length === 1) {
+    // If the greeting is already in the HTML, ensure it's scrolled into view if chat is open on load
+    if (chatContainer && !chatContainer.classList.contains("chat-hidden")) {
+      chatMessagesContainer.scrollTo({
+        top: chatMessagesContainer.scrollHeight,
+        behavior: "auto",
+      });
     }
-  });
-}
-
-// --- Initialize Chat State (Optional: Start hidden) ---
-// The chat starts hidden because of the chat-hidden class in HTML.
-// No extra JS needed for initial state unless you want it to open automatically under certain conditions.
-
-// --- Make sure the rest of your existing script.js code is still present ---
-// (e.g., dark mode toggle, map initialization, filtering logic, etc.)
-// ...
+  }
+}); // End DOMContentLoaded

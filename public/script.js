@@ -1,9 +1,4 @@
-// ==========================================
-//          CROUS-X App Script
-// ==========================================
-// Integrates: Dark Mode, Language Switcher (from landing, fetching external JSON)
-// Keeps: Filtering, Sorting, Map, Hamburger, Chatbot (from your original app)
-// ==========================================
+// script.js (Main Application Script - Chat Toggle Logic REMOVED)
 
 (function () {
   // IIFE to encapsulate scope
@@ -12,7 +7,7 @@
   const DEFAULT_LANG = "en";
   const SUPPORTED_LANGS = ["en", "fr", "es"];
   const LANGUAGES_PATH = "./languages/"; // Path to your language JSON files
-  const MAP_INITIAL_COORDS = [48.8566, 2.3522];
+  const MAP_INITIAL_COORDS = [48.8566, 2.3522]; // Paris center
   const MAP_INITIAL_ZOOM = 12;
   const MAP_MAX_ZOOM = 19;
   const MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -34,8 +29,8 @@
     body: document.body,
     htmlElement: document.documentElement,
     siteHeader: document.querySelector(".site-header"),
-    hamburgerButton: document.querySelector(".hamburger"),
-    mainNav: document.querySelector(".main-nav"),
+    hamburgerButton: document.querySelector(".hamburger"), // Keep for potential mobile nav
+    mainNav: document.querySelector(".main-nav"), // Keep for potential mobile nav
     themeToggleButton: document.getElementById("theme-toggle"),
     languageSwitcherToggleButton: document.getElementById(
       "language-switcher-toggle"
@@ -43,7 +38,7 @@
     languageSwitcherDropdown: document.getElementById(
       "language-switcher-dropdown"
     ),
-    languageChoiceButtons: null,
+    languageChoiceButtons: null, // Populated in setupLanguageSwitcher
     filtersContainer: document.getElementById("filters-container"),
     priceRangeSlider: document.getElementById("price-range"),
     sizeRangeSlider: document.getElementById("size-range"),
@@ -58,20 +53,13 @@
     mapElement: document.getElementById("map"),
     resultsLayout: document.getElementById("results-layout"),
     mapContainerSticky: document.getElementById("map-container-sticky"),
-    chatWidget: document.getElementById("chat-widget"),
-    chatToggleButton: document.getElementById("chat-toggle-button"),
-    chatContainer: document.getElementById("chat-container"),
-    chatCloseButton: document.getElementById("chat-close-button"),
-    chatMessages: document.getElementById("chat-messages"),
-    chatInput: document.getElementById("chat-input"),
-    chatSendButton: document.getElementById("chat-send-button"),
-    chatLoading: document.getElementById("chat-loading"),
+    // Chat-related selectors are REMOVED from this main script
   };
 
   // --- State Management ---
   let currentLanguageData = {};
   let currentLangCode = DEFAULT_LANG;
-  let isLanguageDropdownVisible = false;
+  let isLanguageDropdownVisible = false; // For the language dropdown in the header
   let activeFilters = {
     maxPrice: selectors.priceRangeSlider
       ? parseInt(selectors.priceRangeSlider.max, 10)
@@ -98,25 +86,18 @@
       console.error("Error loading housing data:", e);
       window.allHousingData = [];
     }
-    updateDisplay();
+    updateDisplay(); // Call updateDisplay after fetching or on error
   }
 
-  // --- Internationalization (i18n) - Fetches external JSON ---
+  // --- Internationalization (i18n) ---
   async function loadLanguage(lang) {
     if (!SUPPORTED_LANGS.includes(lang)) lang = DEFAULT_LANG;
     try {
-      // Fetch the language file from the LANGUAGES_PATH
       const response = await fetch(
         `${LANGUAGES_PATH}${lang}.json?v=${Date.now()}`
-      ); // Cache bust
+      );
       if (!response.ok) {
-        console.error(
-          `Failed to fetch ${lang}.json, status: ${response.status}`
-        );
-        // Fallback to default language if the requested one fails
         if (lang !== DEFAULT_LANG) return loadLanguage(DEFAULT_LANG);
-        // If default also fails, we might be in trouble or use a hardcoded minimal set
-        currentLanguageData = {}; // Clear previous data
         throw new Error(
           `Could not load default language file ${DEFAULT_LANG}.json`
         );
@@ -128,19 +109,13 @@
       localStorage.setItem("crousXAppLang", lang);
     } catch (error) {
       console.error(`Could not load language for ${lang}:`, error);
-      // Attempt to load default language as a final fallback if not already trying
-      if (lang !== DEFAULT_LANG && currentLangCode !== DEFAULT_LANG) {
+      if (lang !== DEFAULT_LANG && currentLangCode !== DEFAULT_LANG)
         await loadLanguage(DEFAULT_LANG);
-      } else if (
+      else if (
         lang === DEFAULT_LANG &&
         Object.keys(currentLanguageData).length === 0
-      ) {
-        // If default language itself failed to load, log and potentially show error to user
+      )
         console.error("CRITICAL: Default language file could not be loaded.");
-        // You could set a very minimal hardcoded English set here as an ultimate fallback
-        // currentLanguageData = { "error_loading_lang": "Error loading language." };
-        // applyTranslations();
-      }
     }
   }
 
@@ -151,31 +126,33 @@
     }
     document.querySelectorAll("[data-lang-key]").forEach((el) => {
       const key = el.dataset.langKey;
-      let translation = currentLanguageData[key] || `[${key}]`; // Show key if translation missing
-      if (key === "footer_copyright_main" || key === "footer_copyright") {
-        // Example for dynamic content
+      let translation = currentLanguageData[key] || `[${key}]`;
+      if (key === "footer_copyright_main")
         translation = translation.replace("{year}", new Date().getFullYear());
-      }
       el.textContent = translation;
     });
     document.querySelectorAll("[data-lang-key-placeholder]").forEach((el) => {
       const key = el.dataset.langKeyPlaceholder;
-      if (currentLanguageData[key] !== undefined)
-        el.placeholder = currentLanguageData[key];
-      else el.placeholder = `[${key}]`;
+      el.placeholder =
+        currentLanguageData[key] !== undefined
+          ? currentLanguageData[key]
+          : `[${key}]`;
     });
-    // Add more for aria-label, title if needed
     document.querySelectorAll("[data-lang-key-aria-label]").forEach((el) => {
       const key = el.getAttribute("data-lang-key-aria-label");
-      if (currentLanguageData[key] !== undefined)
-        el.setAttribute("aria-label", currentLanguageData[key]);
-      else el.setAttribute("aria-label", `[${key}]`);
+      el.setAttribute(
+        "aria-label",
+        currentLanguageData[key] !== undefined
+          ? currentLanguageData[key]
+          : `[${key}]`
+      );
     });
     document.querySelectorAll("[data-lang-key-title]").forEach((el) => {
       const key = el.getAttribute("data-lang-key-title");
-      if (currentLanguageData[key] !== undefined)
-        el.title = currentLanguageData[key];
-      else el.title = `[${key}]`;
+      el.title =
+        currentLanguageData[key] !== undefined
+          ? currentLanguageData[key]
+          : `[${key}]`;
     });
   }
 
@@ -233,9 +210,8 @@
             `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
           ] || item.property_type;
         const ratingText = currentLanguageData?.rating_prefix || "Rating";
-        const priceText = currentLanguageData?.price_prefix || "Price"; // Assuming you might add this key
+        const priceText = currentLanguageData?.price_prefix || "Price";
         const perMonthText = currentLanguageData?.per_month_suffix || "/month";
-
         marker.bindPopup(
           `<b>${item.title}</b><br>${typeText}<br>${priceText}: $${
             item.rent_amount
@@ -266,7 +242,7 @@
       const noResultsMessage = document.createElement("p");
       noResultsMessage.setAttribute("data-lang-key", "no_results_app");
       selectors.resultsGrid.appendChild(noResultsMessage);
-      applyTranslations(); // Apply translation for the "no results" message
+      applyTranslations();
       return;
     }
     housingToDisplay.forEach((item) => {
@@ -275,7 +251,6 @@
       link.className = "result-card-link";
       const card = document.createElement("article");
       card.className = "result-card";
-
       const sizeText = currentLanguageData?.size_prefix || "Size";
       const ratingText = currentLanguageData?.rating_prefix || "Rating";
       const perMonthText = currentLanguageData?.per_month_suffix || "/month";
@@ -283,7 +258,6 @@
         currentLanguageData[
           `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
         ] || item.property_type;
-
       card.innerHTML = `
         <div class="card-image-placeholder">
           ${
@@ -486,20 +460,17 @@
     if (chosenLang && chosenLang !== currentLangCode) {
       loadLanguage(chosenLang).then(() => {
         closeLanguageDropdown();
-        // Update dynamic parts of UI that depend on language, e.g., re-render cards
-        updateDisplay(); // Re-render cards and map popups with new language
+        updateDisplay();
       });
     } else if (chosenLang) {
       closeLanguageDropdown();
     }
   }
 
-  // Hamburger Menu Logic (from your original script, ensure selectors.mainNav is correct for app)
   function setupHamburger() {
     if (selectors.hamburgerButton && selectors.mainNav) {
-      // Initial ARIA setup
       const isMobileNavInitiallyActive =
-        selectors.mainNav.classList.contains("active"); // Or however you track active
+        selectors.mainNav.classList.contains("active");
       selectors.hamburgerButton.setAttribute(
         "aria-expanded",
         isMobileNavInitiallyActive.toString()
@@ -519,18 +490,12 @@
           isActive.toString()
         );
         selectors.mainNav.setAttribute("aria-hidden", (!isActive).toString());
-        if (isActive) {
-          selectors.mainNav.removeAttribute("inert");
-        } else {
-          selectors.mainNav.setAttribute("inert", "");
-          // If language dropdown was open inside mobile nav, close it
-          if (isLanguageDropdownVisible) closeLanguageDropdown();
-        }
-        // Toggle body class to prevent scrolling when mobile nav is open
+        if (isActive) selectors.mainNav.removeAttribute("inert");
+        else selectors.mainNav.setAttribute("inert", "");
         document.body.classList.toggle("nav-open", isActive);
+        if (!isActive && isLanguageDropdownVisible) closeLanguageDropdown();
       });
 
-      // Close mobile nav when a link inside it is clicked (excluding language toggle itself)
       selectors.mainNav
         .querySelectorAll(
           "a:not(#language-switcher-toggle), button:not(#language-switcher-toggle)"
@@ -548,8 +513,6 @@
             }
           });
         });
-
-      // Close mobile nav if clicked outside
       document.addEventListener("click", (event) => {
         if (
           selectors.mainNav.classList.contains("active") &&
@@ -592,9 +555,12 @@
         handleLanguageChoice
       );
       document.addEventListener("click", (event) => {
+        // Close dropdown on outside click
         if (
           isLanguageDropdownVisible &&
+          selectors.languageSwitcherToggleButton &&
           !selectors.languageSwitcherToggleButton.contains(event.target) &&
+          selectors.languageSwitcherDropdown &&
           !selectors.languageSwitcherDropdown.contains(event.target)
         ) {
           closeLanguageDropdown();
@@ -619,23 +585,8 @@
     if (selectors.searchInput)
       selectors.searchInput.addEventListener("input", handleSearchInput);
 
-    setupHamburger(); // Call hamburger setup
-
-    // Chat
-    if (selectors.chatToggleButton && selectors.chatContainer) {
-      selectors.chatToggleButton.addEventListener("click", () => {
-        constisHidden = selectors.chatContainer.classList.toggle("chat-hidden");
-        selectors.chatToggleButton.setAttribute("aria-expanded", !isHidden);
-        if (!isHidden && selectors.chatInput) selectors.chatInput.focus();
-      });
-    }
-    if (selectors.chatCloseButton && selectors.chatContainer) {
-      selectors.chatCloseButton.addEventListener("click", () => {
-        selectors.chatContainer.classList.add("chat-hidden");
-        selectors.chatToggleButton.setAttribute("aria-expanded", "false");
-      });
-    }
-    // Chat send logic from your chatbot.js should be integrated or called here
+    setupHamburger(); // Setup hamburger menu
+    // Chat toggle listeners are NOT set up here; they are in chatbot.js
   }
 
   function applyPersistedTheme() {
@@ -677,12 +628,12 @@
     }
 
     setupEventListeners();
-    await fetchHousingData(); // This calls updateDisplay internally
+    await fetchHousingData();
 
     if (selectors.mapContainerSticky && mapInitialized) {
       const resizeObserver = new ResizeObserver(() => invalidateMapSize());
       resizeObserver.observe(selectors.mapContainerSticky);
-      setTimeout(invalidateMapSize, 300);
+      setTimeout(invalidateMapSize, 300); // Initial invalidate after layout settles
     }
   }
 
