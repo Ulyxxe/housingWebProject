@@ -445,9 +445,9 @@ button {
 }
 .main-content-wrapper {
   display: flex;
-  gap: 2rem; /* Consistent gap */
-  padding: 2rem; /* Consistent padding */
-  max-width: 1400px; /* Max width for app content */
+  gap: 1.5rem; /* Consistent gap */
+  padding: 1.5rem; /* Consistent padding */
+  max-width: 1600px; /* Max width for app content */
   margin: 0 auto;
 }
 
@@ -457,7 +457,7 @@ button {
   background-color: var(--container-bg);
   border: 1px solid var(--grey-border);
   border-radius: 12px; /* More rounded */
-  padding: 1.5rem;
+  padding: 1.2rem;
   align-self: flex-start; /* Keep it at top */
   height: fit-content;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -704,7 +704,7 @@ button {
 /* Results Grid & Cards (Adapted) */
 .results-layout {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 .results-grid-container {
   flex: 1 1 60%;
@@ -713,7 +713,7 @@ button {
 .results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 .result-card-link {
   display: block;
