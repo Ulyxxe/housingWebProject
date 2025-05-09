@@ -14,7 +14,7 @@
       content="Search and filter student accommodations in Paris with CROUS-X."
     />
     <!-- <link rel="icon" href="assets/images/crous-x-icon.svg" type="image/svg+xml" /> -->
-    <link rel="stylesheet" href="crous-x-app-style.css" /> <!-- NEW CSS FILENAME -->
+    <link rel="stylesheet" href="style.css" /> <!-- NEW CSS FILENAME -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -176,7 +176,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="crous-x-app-script.js"></script> <!-- NEW JS FILENAME -->
+    <script src="script.js"></script> <!-- NEW JS FILENAME -->
     <!-- chatbot.js should be integrated into crous-x-app-script.js or loaded after if it depends on elements created by the main script -->
   </body>
 </html>
