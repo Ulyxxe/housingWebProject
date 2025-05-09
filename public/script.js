@@ -51,7 +51,7 @@
   const sortButtons = document.querySelectorAll(".sort-btn");
   const searchInput = document.getElementById("search-input");
   const mapElement = document.getElementById("map");
-  const mapToggleButton = document.getElementById("map-toggle-button");
+  const mapToggleButton = document.getElementById("map-toggle-button"); // Assuming this might be added later, or remove if not used
   const resultsLayout = document.querySelector(".results-layout");
   const mapContainer = document.querySelector(".map-container");
   const mapResizeHandle = document.getElementById("map-resize-handle");
@@ -74,18 +74,17 @@
   // --- Data Fetching ---
   async function fetchHousingData() {
     try {
-      // Ensure the API path is correct relative to where the script is loaded from or use absolute path
-      const res = await fetch("./api/getHousing.php"); // Assuming API is relative to the root HTML
+      const res = await fetch("./api/getHousing.php");
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      window.allHousingData = data; // Make it globally accessible for now
+      window.allHousingData = data;
       updateDisplay();
     } catch (e) {
       console.error("Error loading housing data:", e);
-      window.allHousingData = []; // Set to empty array on error to prevent further issues
-      updateDisplay(); // Still update display to show "no results" or similar
+      window.allHousingData = [];
+      updateDisplay();
     }
   }
 
@@ -276,8 +275,8 @@
       case "rating":
         sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
-      default:
-        sorted.sort((a, b) => b.listing_id - a.listing_id);
+      default: // "new" or fallback
+        sorted.sort((a, b) => (b.listing_id || 0) - (a.listing_id || 0)); // Assuming listing_id indicates newness
     }
     return sorted;
   }
@@ -289,7 +288,7 @@
       const filtered = filterHousing();
       const sortedFiltered = sortHousing(filtered, activeSort);
       if (resultsGrid) renderHousing(sortedFiltered);
-      if (map && markersLayer) renderMapMarkers(filtered);
+      if (map && markersLayer) renderMapMarkers(filtered); // Use 'filtered' for map markers, sorting doesn't change marker positions
     } catch (error) {
       console.error("Error during updateDisplay:", error);
     }
@@ -357,7 +356,7 @@
     activeFilters.types = [];
     if (searchInput) searchInput.value = "";
     activeFilters.searchTerm = "";
-    activeSort = "new";
+    activeSort = "new"; // Reset to default sort
     if (sortButtons) {
       sortButtons.forEach((btn) =>
         btn.classList.toggle("active", btn.dataset.sort === "new")
@@ -367,6 +366,7 @@
   }
 
   function handleMapToggle() {
+    // This function seems unused based on HTML, but kept for completeness
     if (!resultsLayout || !mapToggleButton) return;
     const isHidden = resultsLayout.classList.toggle("map-hidden");
     mapToggleButton.setAttribute("aria-expanded", !isHidden);
@@ -429,24 +429,22 @@
 
   function handleLanguageChange(event) {
     event.preventDefault();
-    const targetLink = event.target.closest("a[data-lang]"); // Ensure we get the link if click is on child
+    const targetLink = event.target.closest("a[data-lang]");
     if (!targetLink) return;
 
     const selectedLang = targetLink.getAttribute("data-lang");
 
     if (selectedLang && selectedLang !== currentLangCode) {
       loadLanguage(selectedLang).then(() => {
-        // Ensure dependent UI updates happen after language is fully loaded and applied
         closeLanguageDropdown();
         if (hamburgerButton && hamburgerButton.classList.contains("active")) {
-          closeHamburgerMenu(); // Use the dedicated close function
+          // If mobile nav is open and language changes, close it.
+          // Note: links within mobile nav might already close it if setupEventListeners is done right
         }
       });
     } else if (selectedLang) {
+      // Language already selected, just close dropdown
       closeLanguageDropdown();
-      if (hamburgerButton && hamburgerButton.classList.contains("active")) {
-        closeHamburgerMenu();
-      }
     }
   }
 
@@ -457,7 +455,7 @@
     mainNav.classList.add("active");
     hamburgerButton.setAttribute("aria-expanded", "true");
     mainNav.setAttribute("aria-hidden", "false");
-    mainNav.removeAttribute("inert"); // Make interactive
+    mainNav.removeAttribute("inert");
     document.body.classList.add("nav-open");
   }
 
@@ -467,14 +465,12 @@
     mainNav.classList.remove("active");
     hamburgerButton.setAttribute("aria-expanded", "false");
     mainNav.setAttribute("aria-hidden", "true");
-    mainNav.setAttribute("inert", ""); // Make non-interactive
+    mainNav.setAttribute("inert", "");
     document.body.classList.remove("nav-open");
 
-    // Close language dropdown if it's open within the nav
     if (languageOptions && languageOptions.classList.contains("show")) {
       closeLanguageDropdown();
     }
-    // IMPORTANT: Move focus back to the hamburger button
     if (hamburgerButton) hamburgerButton.focus();
   }
 
@@ -494,8 +490,23 @@
   function setupEventListeners() {
     if (hamburgerButton && mainNav) {
       hamburgerButton.setAttribute("aria-expanded", "false");
-      mainNav.setAttribute("aria-hidden", "true");
-      mainNav.setAttribute("inert", ""); // Initially inert
+
+      // Check if the hamburger button is currently visible (i.e., we are in mobile view).
+      const hamburgerIsVisible =
+        getComputedStyle(hamburgerButton).display !== "none";
+
+      if (hamburgerIsVisible) {
+        // Mobile view: mainNav starts closed (CSS handles initial display:none).
+        // Set ARIA and inert attributes if it's not already active (which it shouldn't be on load).
+        if (!mainNav.classList.contains("active")) {
+          mainNav.setAttribute("aria-hidden", "true");
+          mainNav.setAttribute("inert", "");
+        }
+      } else {
+        // Desktop view: mainNav is visible. Ensure it's not ARIA-hidden or inert.
+        mainNav.removeAttribute("aria-hidden");
+        mainNav.removeAttribute("inert");
+      }
 
       hamburgerButton.addEventListener("click", () => {
         const isActive = mainNav.classList.contains("active");
@@ -507,10 +518,15 @@
       });
 
       mainNav
-        .querySelectorAll("a, button:not(#language-toggle)")
+        .querySelectorAll("a, button") // Listen to all buttons inside nav as well
         .forEach((item) => {
+          // Exclude the language toggle from closing the *entire* mobile nav
+          // as it has its own dropdown logic.
+          if (item.id === "language-toggle") return;
+
           item.addEventListener("click", () => {
             if (mainNav.classList.contains("active")) {
+              // Only close if mobile nav is active
               closeHamburgerMenu();
             }
           });
@@ -518,7 +534,7 @@
 
       document.addEventListener("click", (event) => {
         if (
-          mainNav.classList.contains("active") &&
+          mainNav.classList.contains("active") && // Only if mobile nav is open
           !mainNav.contains(event.target) &&
           !hamburgerButton.contains(event.target)
         ) {
@@ -529,11 +545,13 @@
 
     if (languageToggle && languageOptions) {
       languageToggle.addEventListener("click", (event) => {
-        event.stopPropagation();
+        event.stopPropagation(); // Prevent click from bubbling to document listener immediately
         if (languageOptions.classList.contains("show")) {
           closeLanguageDropdown();
         } else {
           openLanguageDropdown();
+          // If inside mobile nav, ensure mobile nav itself doesn't close
+          // This is implicitly handled because language-toggle is not a link that closes the mobile nav.
         }
       });
       languageOptions.addEventListener("click", handleLanguageChange); // Delegate to parent
@@ -563,8 +581,10 @@
     if (sortButtonsContainer)
       sortButtonsContainer.addEventListener("click", handleSortChange);
     if (searchInput) searchInput.addEventListener("input", handleSearchInput);
-    if (mapToggleButton)
-      mapToggleButton.addEventListener("click", handleMapToggle);
+
+    // If mapToggleButton exists and is intended for use:
+    // if (mapToggleButton) mapToggleButton.addEventListener("click", handleMapToggle);
+
     if (mapResizeHandle) {
       mapResizeHandle.addEventListener("mousedown", handleMapResizeStart);
       mapResizeHandle.addEventListener("touchstart", handleMapResizeStart, {
@@ -580,6 +600,7 @@
     if (persistedDarkMode === "enabled" && !isCurrentlyDark) {
       body.classList.add("dark-mode");
     } else if (persistedDarkMode !== "enabled" && isCurrentlyDark) {
+      // handles "disabled" or null
       body.classList.remove("dark-mode");
     }
     const isDarkModeFinal = body.classList.contains("dark-mode");
@@ -609,16 +630,21 @@
 
     setupEventListeners(); // Setup listeners after initial state is set
 
-    // Fetch data after initial language and theme are set, but before initial display
-    // if the display depends on this data.
     if (typeof window.allHousingData === "undefined") {
-      // Fetch only if not already fetched
-      await fetchHousingData(); // Now this happens before the first updateDisplay that needs it
-    }
-
-    if (resultsGrid || (mapElement && mapInitialized)) {
+      await fetchHousingData();
+    } else {
+      // If data was somehow pre-loaded, still update display
       updateDisplay();
     }
+    // If fetchHousingData already calls updateDisplay, this might be redundant
+    // but ensures display updates if data was preloaded or fetched successfully.
+    // updateDisplay() is called inside fetchHousingData() on success/error.
+
+    // Initial call to updateDisplay if data isn't fetched but elements exist
+    // This is now handled by fetchHousingData calling updateDisplay.
+    // if (resultsGrid || (mapElement && mapInitialized)) {
+    // updateDisplay();
+    // }
   }
 
   if (document.readyState === "loading") {

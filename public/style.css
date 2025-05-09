@@ -112,7 +112,7 @@ button {
   background-color: var(--body-bg);
   position: sticky; /* Make header sticky */
   top: 0;
-  z-index: 900; /* Ensure header is above most content */
+  z-index: 1000; /* Ensure header is above most content */
 }
 
 .logo {
