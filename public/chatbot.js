@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     messageDiv.classList.add("message");
     // Use different CSS classes depending on sender
     messageDiv.classList.add(sender === "user" ? "user-message" : "ai-message");
-  
+
     if (sender === "ai") {
       // Convert Markdown to HTML using Marked for AI messages
       messageDiv.innerHTML = marked.parse(text);
@@ -29,14 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // For user messages, continue to use textContent to prevent accidental HTML injection
       messageDiv.textContent = text;
     }
-  
+
     chatbox.appendChild(messageDiv);
     chatbox.scrollTo({
       top: chatbox.scrollHeight,
       behavior: "smooth",
     });
   }
-  
 
   function showLoading() {
     // Check if loading indicator already exists
@@ -128,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 }); // End DOMContentLoaded
 
 // --- Chat Widget Logic ---
+const chatWidget = document.getElementById("chat-widget"); //trying to fix the chatbot après changements du home page
 const chatToggleButton = document.getElementById("chat-toggle-button");
 const chatContainer = document.getElementById("chat-container");
 const chatCloseButton = document.getElementById("chat-close-button");
@@ -180,12 +180,11 @@ function addChatMessage(message, sender = "bot") {
   } else {
     messageElement.textContent = message;
   }
-  
+
   chatMessages.appendChild(messageElement);
   // Auto-scroll to the bottom
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
 
 // --- Function to show/hide loading indicator ---
 function showLoading(isLoading) {
