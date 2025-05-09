@@ -176,7 +176,8 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="script.js"></script> <!-- NEW JS FILENAME -->
+    <script src="script.js"></script> 
+    <script src="chatbot.js"></script>
     <!-- chatbot.js should be integrated into crous-x-app-script.js or loaded after if it depends on elements created by the main script -->
   </body>
 </html>
