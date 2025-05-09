@@ -346,7 +346,7 @@
       <footer class="site-footer-main">
         <p data-lang-key="footer_copyright">
           © <span id="current-year"></span> CROUS-X. Student Housing Made
-          Simple.
+          Simple by La Friteuse.
         </p>
         <div class="footer-socials">
           <a href="#" aria-label="Facebook"
