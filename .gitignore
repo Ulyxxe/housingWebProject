@@ -1,3 +1,7 @@
 *.mp4
 # Ignore Node.js dependencies
 .env
+/vendor
+
+
+composer.*
