@@ -108,13 +108,13 @@ $isLoggedIn = true;
 <body>
 
     <header class="site-header">
-        <a href="index.php" class="logo-link"><div class="logo">CROUS-X</div></a>
+        <a href="home.php" class="logo-link"><div class="logo">CROUS-X</div></a>
         <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
             <span class="bar"></span><span class="bar"></span><span class="bar"></span>
         </button>
         <nav class="main-nav" aria-hidden="true">
             <ul>
-                <li><a href="index.php" data-i18n-key="nav_news">News stand</a></li>
+                <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
                 <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
                 <li><a href="faq.php" data-i18n-key="nav_faq">FAQ</a></li>
                 <li><a href="dashboard.php" data-i18n-key="nav_profile">My profile</a></li>
@@ -149,7 +149,7 @@ $isLoggedIn = true;
                 <div class="alert alert-success" role="alert"><?php echo htmlspecialchars($success_message); ?></div>
                  <p style="text-align:center;">
                     <a href="dashboard.php" class="btn btn-register">View My Requests</a> 
-                    <a href="index.php" class="btn btn-signin">Back to Listings</a>
+                    <a href="home.php" class="btn btn-signin">Back to Listings</a>
                 </p>
             <?php endif; ?>
 
@@ -203,7 +203,7 @@ $isLoggedIn = true;
 
             <?php elseif (!$error_message && !$success_message): ?>
                 <p>The housing listing could not be found or is unavailable for booking.</p>
-                <p><a href="index.php" class="btn btn-signin">Back to Listings</a></p>
+                <p><a href="home.php" class="btn btn-signin">Back to Listings</a></p>
             <?php endif; ?>
         </div>
     </div>

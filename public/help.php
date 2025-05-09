@@ -15,7 +15,7 @@ session_start();
 </head>
 <body>
   <header class="site-header">
-    <a href="index.php" class="logo">CROUS-X</a>
+    <a href="home.php" class="logo">CROUS-X</a>
     <button class="hamburger" aria-expanded="false">
       <span class="bar"></span>
       <span class="bar"></span>
@@ -23,7 +23,7 @@ session_start();
     </button>
     <nav class="main-nav" aria-hidden="true">
       <ul>
-        <li><a href="index.php" data-i18n-key="nav_news">News stand</a></li>
+        <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
         <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
         <li><a href="#" data-i18n-key="nav_profile">My profile</a></li>
         <li><a href="login.php" data-i18n-key="nav_signin">Sign in</a></li>

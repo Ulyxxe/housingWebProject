@@ -16,10 +16,10 @@ $isLoggedIn = isset($_SESSION['user_id']);
 </head>
 <body>
   <header class="site-header">
-    <a href="index.php" class="logo">CROUS-X</a>
+    <a href="home.php" class="logo">CROUS-X</a>
     <nav class="main-nav">
       <ul>
-        <li><a href="index.php" data-i18n-key="nav_news">News stand</a></li>
+        <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
         <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
         <li><a href="profile.php" data-i18n-key="nav_profile">My profile</a></li>
         <?php if ($isLoggedIn): ?>

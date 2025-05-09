@@ -66,7 +66,7 @@ SQL
 <body>
 
   <header class="site-header">
-    <a href="index.php" class="logo-link"><div class="logo">CROUS-X</div></a>
+    <a href="home.php" class="logo-link"><div class="logo">CROUS-X</div></a>
 
     <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
       <span class="bar"></span>
@@ -76,7 +76,7 @@ SQL
 
     <nav class="main-nav" aria-hidden="true">
       <ul>
-        <li><a href="index.php" data-i18n-key="nav_news">News stand</a></li>
+        <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
         <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
         <li><a href="faq.php" data-i18n-key="nav_faq">FAQ</a></li>
         
@@ -110,7 +110,7 @@ SQL
 
   <main class="content-box detail-page-main-content"> <!-- Using content-box for consistent styling -->
     <div class="detail-container">
-      <p class="back-to-listings"><a href="index.php"><i class="fas fa-arrow-left"></i> Back to Listings</a></p>
+      <p class="back-to-listings"><a href="home.php"><i class="fas fa-arrow-left"></i> Back to Listings</a></p>
 
       <?php if ($error_message): ?>
         <section class="error-message-section">
@@ -210,7 +210,7 @@ SQL
     </div>
   </main>
 
-  <!-- Chat Widget (Consistent with index.php) -->
+  <!-- Chat Widget (Consistent with home.php) -->
   <div id="chat-widget">
     <div id="chat-container" class="chat-hidden">
       <div id="chat-header">

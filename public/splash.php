@@ -108,7 +108,7 @@
           <h1>Bienvenue sur NomDuSite</h1>
           <p>Découvrez l'univers de [Votre Entreprise]</p>
           <!-- Lien redirigeant vers l'accueil -->
-          <a href="index.php">Entrer</a>
+          <a href="home.php">Entrer</a>
         </div>
       </div>
     </div>

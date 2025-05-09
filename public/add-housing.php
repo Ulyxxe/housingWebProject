@@ -39,6 +39,6 @@ try {
     <li><strong>Rating:</strong> <?php echo htmlspecialchars($housing['rating']); ?> ★</li>
     <li><strong>Location:</strong> Lat: <?php echo htmlspecialchars($housing['lat']); ?>, Lng: <?php echo htmlspecialchars($housing['lng']); ?></li>
   </ul>
-  <p><a href="index.php">Back to listings</a></p>
+  <p><a href="home.php">Back to listings</a></p>
 </body>
 </html>

@@ -43,12 +43,12 @@ session_start();
   </head>
   <body>
     <header class="site-header">
-      <a href="index.php">
+      <a href="home.php">
         <div class="logo">CROUS-X</div>
       </a>
       <nav class="main-nav">
         <ul>
-          <li><a href="index.php">Search Housing</a></li>
+          <li><a href="home.php">Search Housing</a></li>
           <!-- Link back to main page -->
           <li><a href="#">Need help ?</a></li>
           <!-- Removed My Profile, Sign in (current page), Register is kept -->

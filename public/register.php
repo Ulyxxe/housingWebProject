@@ -135,12 +135,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </head>
   <body>
     <header class="site-header">
-      <a href="index.php" class="logo-link">
+      <a href="home.php" class="logo-link">
         <div class="logo">CROUS-X</div>
       </a>
       <nav class="main-nav">
         <ul>
-          <li><a href="index.php">Search Housing</a></li>
+          <li><a href="home.php">Search Housing</a></li>
           <li><a href="help.php">Need help ?</a></li>
           <li>
             <button id="theme-toggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
