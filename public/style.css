@@ -792,20 +792,53 @@ button {
   /* New wrapper */
   flex: 0 0 40%; /* Initial size */
   min-width: 250px; /* Prevent extreme squishing */
+  max-width: 500px; /* Prevent extreme stretching */
   position: relative; /* For child sticky positioning */
 }
 .map-container#map-container-sticky {
-  /* Target the inner div for sticky */
   position: sticky;
-  top: calc(var(--header-height) + 2rem); /* Below header + app padding */
-  height: calc(
-    100vh - var(--header-height) - 4rem
-  ); /* Full height minus header and padding */
-  max-height: 700px; /* Optional max height */
+  top: calc(
+    var(--header-height) + 2rem
+  ); /* Same: Stick below header + padding */
+
+  /* --- FORCING SQUARE SHAPE --- */
+  width: 100%; /* Let it take the width defined by its parent's flex properties */
+  aspect-ratio: 1 / 1; /* This is the magic line: makes height equal to width */
+  /* --------------------------- */
+
+  /* Constraints for the square shape */
+  max-width: 500px; /* OPTIONAL: Prevent it from becoming too wide (and thus too tall)
+                         This value should be less than or equal to the parent's
+                         flex-basis or max-width if you want the square to fit.
+                         If the parent (.map-container-outer) has flex-basis: 40%,
+                         this max-width might be redundant or could constrain it further. */
+  max-height: calc(
+    100vh - var(--header-height) - 4rem - 2rem
+  ); /*
+                         Approximate max available vertical space.
+                         (Viewport - header - top/bottom app padding - some extra buffer).
+                         This prevents the square map from pushing content down if its
+                         calculated square height (based on width) is too large for the viewport.
+                         You might need to adjust this value.
+                         If you set a max-width, the max-height might naturally be constrained
+                         by the aspect-ratio.
+                      */
+  /* A simpler max-height if you don't want complex calc: */
+  /* max-height: 600px; */
+
   border-radius: 12px;
-  overflow: hidden; /* For rounded corners on map */
+  overflow: hidden;
   border: 1px solid var(--grey-border);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+}
+
+/* Ensure the parent container (.map-container-outer) allows the sticky child to determine its height */
+.map-container-outer {
+  flex: 0 0 40%; /* Example: Initial desired proportion of width */
+  min-width: 250px;
+  /* max-width: 500px; /* If you set max-width here, it also limits the square size */
+  position: relative; /* Good for containing sticky or absolute children */
+  /* Remove fixed height from parent if it was there, let child's aspect-ratio dictate */
 }
 #map {
   height: 100%;
