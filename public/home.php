@@ -30,7 +30,7 @@
   </head>
 
   <body>
-    <?php require 'includes/header.php'; // Or require_once if you prefer ?>
+    <?php require '/header.php'; // Or require_once if you prefer ?>
     <!-- App Content Area -->
     <div class="app-container">
         <div class="main-content-wrapper">
