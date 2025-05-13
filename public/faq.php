@@ -15,22 +15,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <a href="home.php" class="logo">CROUS-X</a>
-    <nav class="main-nav">
-      <ul>
-        <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
-        <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
-        <li><a href="profile.php" data-i18n-key="nav_profile">My profile</a></li>
-        <?php if ($isLoggedIn): ?>
-          <li><a href="logout.php">Logout</a></li>
-        <?php else: ?>
-          <li><a href="login.php" data-i18n-key="nav_signin">Sign in</a></li>
-          <li><a href="register.php" data-i18n-key="nav_register">Register</a></li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-  </header>
+  <?php require 'header.php'; // Or require_once if you prefer ?>
 
   <main class="content-box">
     <h1>Frequently Asked Questions</h1>

@@ -42,31 +42,7 @@ session_start();
     <link rel="icon" type="image/png" href="images/icon.png" />
   </head>
   <body>
-    <header class="site-header">
-      <a href="home.php">
-        <div class="logo">CROUS-X</div>
-      </a>
-      <nav class="main-nav">
-        <ul>
-          <li><a href="home.php">Search Housing</a></li>
-          <!-- Link back to main page -->
-          <li><a href="#">Need help ?</a></li>
-          <!-- Removed My Profile, Sign in (current page), Register is kept -->
-          <li>
-            <button
-              id="theme-toggle"
-              class="btn btn-dark-mode"
-              aria-label="Toggle dark mode"
-            >
-              <i class="fas fa-moon"></i>
-              <!-- Icon will be toggled by JS -->
-            </button>
-          </li>
-          <!-- Updated registration link to register.php -->
-          <li><a href="register.php" class="btn btn-register">Register</a></li>
-        </ul>
-      </nav>
-    </header>
+    <?php require 'header.php'; // Or require_once if you prefer ?>
 
     <div class="main-content-wrapper login-page-wrapper">
       <!-- Added login-page-wrapper class -->

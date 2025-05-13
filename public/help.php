@@ -14,36 +14,7 @@ session_start();
   <script defer src="chatbot.js"></script>
 </head>
 <body>
-  <header class="site-header">
-    <a href="home.php" class="logo">CROUS-X</a>
-    <button class="hamburger" aria-expanded="false">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </button>
-    <nav class="main-nav" aria-hidden="true">
-      <ul>
-        <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
-        <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
-        <li><a href="#" data-i18n-key="nav_profile">My profile</a></li>
-        <li><a href="login.php" data-i18n-key="nav_signin">Sign in</a></li>
-        <li><a href="register.php" data-i18n-key="nav_register">Register</a></li>
-      </ul>
-    </nav>
-    <div class="language-switcher">
-      <button id="language-toggle" aria-expanded="false">
-        <span class="current-lang">EN</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
-      <ul id="language-options" class="language-dropdown">
-        <li><a href="#" data-lang="en">English</a></li>
-        <li><a href="#" data-lang="fr">Français</a></li>
-        <li><a href="#" data-lang="es">Español</a></li>
-      </ul>
-    </div>
-    <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-    <button id="chat-toggle-button" aria-label="Open chat"><i class="fas fa-comments"></i></button>
-  </header>
+  <?php require 'header.php'; // Or require_once if you prefer ?>
 
   <main class="content-box" style="max-width: 800px; margin: 40px auto;">
     <h1>Help Center</h1>

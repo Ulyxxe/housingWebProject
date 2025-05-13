@@ -39,24 +39,7 @@ $userID = $_SESSION['user_id']; // Assuming you might use this later
 </head>
 <body>
 
-    <!-- Re-use the standard site header -->
-    <header class="site-header">
-        <div class="logo">CROUS-X</div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">Search Housing</a></li> <!-- Link back to main page -->
-                <li><a href="#">Need help ?</a></li>
-                <li><a href="profile.php">My profile</a></li> <!-- Link to profile page (create this later) -->
-                <li>
-                    <button id="theme-toggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
-                        <i class="fas fa-moon"></i> <!-- Icon toggled by JS -->
-                    </button>
-                </li>
-                <!-- Replace Sign in/Register with Logout -->
-                <li><a href="logout.php" class="btn btn-signin">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+    <?php require 'header.php'; // Or require_once if you prefer ?>
 
     <!-- Use the main content wrapper for consistent padding/layout -->
     <div class="main-content-wrapper dashboard-page-wrapper"> <!-- Added dashboard-page-wrapper class -->

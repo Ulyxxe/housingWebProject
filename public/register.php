@@ -134,23 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" href="assets/images/icon.png" />
   </head>
   <body>
-    <header class="site-header">
-      <a href="home.php" class="logo-link">
-        <div class="logo">CROUS-X</div>
-      </a>
-      <nav class="main-nav">
-        <ul>
-          <li><a href="home.php">Search Housing</a></li>
-          <li><a href="help.php">Need help ?</a></li>
-          <li>
-            <button id="theme-toggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
-              <i class="fas fa-moon"></i>
-            </button>
-          </li>
-          <li><a href="login.php" class="btn btn-signin">Sign in</a></li>
-        </ul>
-      </nav>
-    </header>
+    <?php require 'header.php'; // Or require_once if you prefer ?>
 
     <div class="main-content-wrapper register-page-wrapper">
       <div class="register-container">
