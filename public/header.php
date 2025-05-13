@@ -10,7 +10,7 @@
     <div class="header-group-left">
       <div class="logo">
         <!-- Make sure this path is correct from wherever the header is included, or use a root-relative path e.g., /crous-x-landing.html -->
-        <a href="crous-x-landing.html" aria-label="Go to Landing Page">CROUS-X</a>
+        <a href="index.html" aria-label="Go to Landing Page">CROUS-X</a>
       </div>
       <nav class="main-nav">
         <ul>

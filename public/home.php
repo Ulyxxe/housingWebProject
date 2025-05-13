@@ -1,9 +1,6 @@
 <?php
-// Start the session at the very beginning of your script
-if (session_status() == PHP_SESSION_NONE) { // More robust way to start session
-    session_start();
-}
-require_once 'config.php'; // Keep your PHP config if it's needed for sessions or other header-related settings
+// session_start(); // Keep your PHP session start
+// require_once 'config.php'; // Keep your PHP config
 ?>
 <!DOCTYPE html>
 <!-- Default lang to 'en', JS will update if needed -->
@@ -17,7 +14,7 @@ require_once 'config.php'; // Keep your PHP config if it's needed for sessions o
       content="Search and filter student accommodations in Paris with CROUS-X."
     />
     <!-- <link rel="icon" href="assets/images/crous-x-icon.svg" type="image/svg+xml" /> -->
-    <link rel="stylesheet" href="style.css" /> <!-- Your main CSS file -->
+    <link rel="stylesheet" href="style.css" /> <!-- NEW CSS FILENAME -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -28,17 +25,12 @@ require_once 'config.php'; // Keep your PHP config if it's needed for sessions o
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <!-- Removed your old style.css link, assuming crous-x-app-style.css replaces it -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- For chat markdown -->
   </head>
 
   <body>
-    <?php 
-      // Include the reusable header
-      // Make sure the path is correct. If your home page is in the root, 
-      // and header.php is in an 'includes' folder, this path is correct.
-      require 'includes/header.php'; 
-    ?>
-
+    <?php require 'includes/header.php'; // Or require_once if you prefer ?>
     <!-- App Content Area -->
     <div class="app-container">
         <div class="main-content-wrapper">
@@ -92,6 +84,7 @@ require_once 'config.php'; // Keep your PHP config if it's needed for sessions o
                 <div class="map-container-outer"> <!-- New wrapper for sticky positioning -->
                     <div class="map-container" id="map-container-sticky"> <!-- ID for JS targeting -->
                         <div id="map"></div>
+                        <!-- Map resize handle removed for simplicity in this integration, can be added back if desired -->
                     </div>
                 </div>
               </div>
@@ -99,7 +92,7 @@ require_once 'config.php'; // Keep your PHP config if it's needed for sessions o
         </div>
     </div>
 
-    <!-- Chat Widget -->
+    <!-- Chat Widget (using your existing structure) -->
     <div id="chat-widget">
       <div id="chat-container" class="chat-hidden">
         <div id="chat-header">
@@ -124,9 +117,12 @@ require_once 'config.php'; // Keep your PHP config if it's needed for sessions o
       </button>
     </div>
 
+    <!-- No cursor-dot or background-light from landing page here for app simplicity -->
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="script.js"></script> 
     <script src="chatbot.js"></script>
+    <!-- chatbot.js should be integrated into crous-x-app-script.js or loaded after if it depends on elements created by the main script -->
   </body>
 </html>
