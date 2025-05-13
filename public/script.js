@@ -265,7 +265,7 @@
               ? `<img src="${
                   item.image.startsWith("http")
                     ? item.image
-                    : "./uploads/" + item.image
+                    : "assets/images/" + item.image
                 }" alt="${item.title}" loading="lazy">`
               : `<i class="far fa-image"></i>`
           }
