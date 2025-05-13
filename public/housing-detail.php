@@ -1,3 +1,4 @@
+<?php
 // public/housing-detail.php
 session_start();
 
@@ -16,6 +17,7 @@ if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 } else {
     $housing_id = (int)$_GET['id']; 
     try {
+        // fetch main record + primary image
         $stmt = $pdo->prepare(<<<SQL
 SELECT
   h.*,
@@ -40,7 +42,7 @@ SQL
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-accent-color="crous-pink-primary"> <!-- Added default theme/accent attributes -->
+<html lang="en" data-theme="dark" data-accent-color="crous-pink-primary"> {/* Added default theme/accent */}
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -61,13 +63,30 @@ SQL
 </head>
 <body>
 
+  {/* YOUR EXISTING HEADER HTML FROM THE "project's CSS" section. 
+      Ensure this header HTML structure is the one compatible with your main style.css.
+      For brevity, I'm not repeating the full corrected header here, but it's crucial.
+      It should look like:
+      <header class="site-header">
+        <div class="header-inner">
+            <div class="header-group-left">
+                <div class="logo"><a href="home.php">CROUS-X</a></div>
+                <nav class="main-nav" id="desktop-nav">...</nav>
+            </div>
+            <div class="header-actions">
+                Auth buttons, lang switcher, theme toggle, hamburger
+            </div>
+        </div>
+        <nav class="main-nav mobile-nav-menu" id="mobile-nav">...</nav>
+      </header>
+  */}
   <header class="site-header">
     <div class="header-inner">
         <div class="header-group-left">
             <div class="logo">
                 <a href="home.php">CROUS-X</a>
             </div>
-            <nav class="main-nav" id="desktop-nav"> <!-- Desktop Nav -->
+            <nav class="main-nav" id="desktop-nav">
                 <ul>
                     <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
                     <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
@@ -85,7 +104,7 @@ SQL
                 <a href="register.php" class="auth-button primary" data-i18n-key="nav_register"><span>Register</span></a>
             <?php endif; ?>
 
-            <div class="language-switcher-container"> <!-- Wrapper for positioning dropdown -->
+            <div class="language-switcher-container">
                 <button id="language-switcher-toggle" class="header-button" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-globe"></i>
                 </button>
@@ -108,7 +127,6 @@ SQL
             </button>
         </div>
     </div>
-    <!-- Mobile Navigation Menu (initially hidden, toggled by hamburger) -->
     <nav class="main-nav mobile-nav-menu" id="mobile-nav" aria-hidden="true">
         <ul>
             <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
@@ -126,195 +144,191 @@ SQL
     </nav>
   </header>
 
-  <main class="app-container detail-page-container"> <!-- Replaced content-box, added detail-page-container -->
-    <div class="detail-page-content-wrapper"> <!-- New wrapper for max-width and padding -->
-      <p class="back-to-listings"><a href="home.php"><i class="fas fa-arrow-left"></i> <span data-i18n-key="back_to_listings">Back to Listings</span></a></p>
+
+  <main class="app-container detail-page-wrapper"> {/* Changed .content-box and .detail-page-main-content to this */}
+    <div class="detail-content-area"> {/* New wrapper for max-width and centering */}
+      <p class="back-to-listings-link"><a href="home.php"><i class="fas fa-arrow-left"></i> <span data-i18n-key="back_to_listings">Back to Listings</span></a></p>
 
       <?php if ($error_message): ?>
-        <section class="error-message-section">
+        <section class="error-message-display">
           <h2>Error</h2>
           <p><?php echo htmlspecialchars($error_message); ?></p>
         </section>
       <?php elseif ($housing): ?>
         
-        <div class="detail-main-layout">
-            <div class="detail-image-column">
-                <!-- Image carousel -->
-                <section class="detail-section carousel-section">
-                    <div class="carousel-main-image-wrapper">
-                        <button class="favorite-btn" aria-label="Add to favorites"><i class="far fa-heart"></i></button>
+        <div class="housing-detail-grid"> {/* This will be our two-column container */}
+            
+            <div class="housing-gallery-column">
+                {/* 1) Image carousel */}
+                <section class="detail-gallery-section">
+                    <div class="main-image-wrapper">
+                        <button class="action-icon-button favorite-toggle-button" aria-label="Add to favorites"><i class="far fa-heart"></i></button>
                         <?php if ($housing['primary_image']): ?>
-                            <img id="mainCarouselImage" src="<?php echo htmlspecialchars($housing['primary_image']); ?>" alt="Primary photo of <?php echo htmlspecialchars($housing['title']); ?>" class="carousel-main-image">
+                        <img id="housingMainImage" src="<?php echo htmlspecialchars($housing['primary_image']); ?>" alt="Primary photo of <?php echo htmlspecialchars($housing['title']); ?>" class="current-gallery-image">
                         <?php else: ?>
-                            <div class="image-placeholder-detail carousel-main-image">
-                                <i class="far fa-image"></i>
-                                <span>No primary image</span>
-                            </div>
+                        <div class="image-placeholder-large">
+                            <i class="far fa-image"></i>
+                        </div>
                         <?php endif; ?>
                     </div>
                     <?php
-                    $other_images = [];
+                    $other_images_html = '';
                     if ($housing_id) { 
-                        $stmt_images = $pdo->prepare("SELECT image_url FROM housing_images WHERE listing_id=? AND is_primary=0 LIMIT 4"); // Limit thumbnails
+                        $stmt_images = $pdo->prepare("SELECT image_url FROM housing_images WHERE listing_id=? AND is_primary=0 LIMIT 4"); // Limit to 4 thumbnails
                         $stmt_images->execute([$housing_id]);
-                        $other_images = $stmt_images->fetchAll(PDO::FETCH_ASSOC);
+                        while ($row = $stmt_images->fetch(PDO::FETCH_ASSOC)){
+                            $other_images_html .= '<img src="'.htmlspecialchars($row['image_url']).'" alt="Additional photo" class="gallery-thumb-image" data-fullsrc="'.htmlspecialchars($row['image_url']).'">';
+                        }
                     }
-                    if ($housing['primary_image'] || !empty($other_images)):
+                    // Add primary image to thumbnails if it exists, to make it clickable too
+                    if ($housing['primary_image'] || $other_images_html):
                     ?>
-                    <div class="carousel-thumbnails">
+                    <div class="gallery-thumbnails-container">
                         <?php if ($housing['primary_image']): ?>
-                            <img src="<?php echo htmlspecialchars($housing['primary_image']); ?>" alt="Thumbnail 1" class="carousel-thumbnail active" data-fullsrc="<?php echo htmlspecialchars($housing['primary_image']); ?>">
+                            <img src="<?php echo htmlspecialchars($housing['primary_image']); ?>" alt="Primary photo thumbnail" class="gallery-thumb-image active" data-fullsrc="<?php echo htmlspecialchars($housing['primary_image']); ?>">
                         <?php endif; ?>
-                        <?php foreach ($other_images as $index => $img_data): ?>
-                            <img src="<?php echo htmlspecialchars($img_data['image_url']); ?>" alt="Thumbnail <?php echo $index + 2; ?>" class="carousel-thumbnail" data-fullsrc="<?php echo htmlspecialchars($img_data['image_url']); ?>">
-                        <?php endforeach; ?>
+                        <?php echo $other_images_html; ?>
                     </div>
                     <?php endif; ?>
                 </section>
             </div>
 
-            <div class="detail-info-column">
-                <h1 class="detail-title"><?php echo htmlspecialchars($housing['title']); ?></h1>
-                <div class="detail-meta-top">
-                    <span class="detail-tag">For Rent</span> <!-- Example Tag -->
-                    <div class="detail-price">$<?php echo number_format((float)$housing['rent_amount'], 0); ?> <span class="rent-frequency">/ <?php echo htmlspecialchars($housing['rent_frequency']); ?></span></div>
+            <div class="housing-info-column">
+                <h1 class="housing-main-title"><?php echo htmlspecialchars($housing['title']); ?></h1>
+                
+                <div class="housing-top-meta">
+                    <span class="status-indicator-tag" data-i18n-key="status_for_rent">For Rent</span> {/* Example Tag */}
+                    <div class="price-display-area">
+                        <span class="amount">$<?php echo number_format((float)$housing['rent_amount'], 0); ?></span>
+                        <span class="frequency">/ <?php echo htmlspecialchars($housing['rent_frequency']); ?></span>
+                    </div>
                 </div>
                 
-                <?php if (!empty($housing['address_street'])): // Assuming you have address fields ?>
-                <p class="detail-address"><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($housing['address_street'] . ', ' . $housing['address_city']); ?></p>
+                <?php if (!empty($housing['address_street'])): ?>
+                <p class="location-address-text"><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars(implode(', ', array_filter([$housing['address_street'], $housing['address_city']] ) ) ); ?></p>
                 <?php endif; ?>
+                
 
-                <!-- Key details (styled more like mockup's "Label: Value" concept) -->
-                <section class="detail-section key-details-section">
-                  <h2 class="detail-section-title" data-i18n-key="details_heading">Details</h2>
-                  <div class="key-details-grid">
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_type">Type:</span>
-                          <span class="detail-value"><?php echo htmlspecialchars($housing['property_type']); ?></span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_bedrooms">Bedrooms:</span>
-                          <span class="detail-value"><?php echo intval($housing['num_bedrooms']); ?></span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_bathrooms">Bathrooms:</span>
-                          <span class="detail-value"><?php echo htmlspecialchars($housing['num_bathrooms']); ?></span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_size">Size:</span>
-                          <span class="detail-value"><?php echo intval($housing['square_footage']); ?> m²</span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_furnished">Furnished:</span>
-                          <span class="detail-value"><?php echo $housing['is_furnished'] ? 'Yes' : 'No'; ?></span>
-                      </div>
-                      <div class="detail-item">
-                          <span class="detail-label" data-i18n-key="detail_pets">Pets Allowed:</span>
-                          <span class="detail-value"><?php echo $housing['allows_pets'] ? 'Yes' : 'No'; ?></span>
-                      </div>
-                      <div class="detail-item detail-item-full">
-                          <span class="detail-label" data-i18n-key="detail_available">Available from:</span>
-                          <span class="detail-value"><?php echo htmlspecialchars(date("F j, Y", strtotime($housing['availability_date']))); ?></span>
-                      </div>
-                  </div>
-                </section>
-
-                <section class="detail-section action-section">
-                    <a href="booking.php?id=<?php echo htmlspecialchars($housing['listing_id']); ?>" class="btn-apply-detail" data-i18n-key="apply_now_button">Apply Now / Request Booking</a>
-                </section>
-
-                 <!-- Accordion for Description -->
+                {/* Key details formatted like mockup */}
+                <div class="key-info-block">
+                    <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_type">Type</span>
+                        <span class="info-value"><?php echo htmlspecialchars($housing['property_type']); ?></span>
+                    </div>
+                     <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_bedrooms">Bedrooms</span>
+                        <span class="info-value"><?php echo intval($housing['num_bedrooms']); ?></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_bathrooms">Bathrooms</span>
+                        <span class="info-value"><?php echo htmlspecialchars($housing['num_bathrooms']); ?></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_size">Size</span>
+                        <span class="info-value"><?php echo intval($housing['square_footage']); ?> m²</span>
+                    </div>
+                    {/* These were not in mockup dropdowns but are useful: */}
+                    <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_furnished">Furnished</span>
+                        <span class="info-value"><?php echo $housing['is_furnished'] ? 'Yes' : 'No'; ?></span>
+                    </div>
+                     <div class="info-item">
+                        <span class="info-label" data-i18n-key="info_label_pets">Pets Allowed</span>
+                        <span class="info-value"><?php echo $housing['allows_pets'] ? 'Yes' : 'No'; ?></span>
+                    </div>
+                </div>
+                
+                {/* Action/Booking Button */}
+                <a href="booking.php?id=<?php echo htmlspecialchars($housing['listing_id']); ?>" class="cta-button primary-cta-button" data-i18n-key="apply_booking_button">Apply Now / Request Booking</a>
+                
+                {/* Accordions for Description & Amenities */}
                 <?php if (!empty($housing['description'])): ?>
-                <div class="detail-accordion">
-                    <button class="accordion-toggle" aria-expanded="false">
-                        <span data-i18n-key="description_heading">Description</span>
-                        <i class="fas fa-chevron-down"></i>
+                <div class="content-accordion-item">
+                    <button class="accordion-trigger-button" aria-expanded="false">
+                        <span data-i18n-key="description_heading_accordion">Description</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
                     </button>
-                    <div class="accordion-content">
+                    <div class="accordion-panel-content">
                         <p><?php echo nl2br(htmlspecialchars($housing['description'])); ?></p>
                     </div>
                 </div>
                 <?php endif; ?>
 
-                <!-- Accordion for Amenities -->
                 <?php
                 if ($housing_id) {
                     $stmt_amenities = $pdo->prepare("SELECT a.name FROM housing_amenities ha JOIN amenities a USING(amenity_id) WHERE ha.listing_id=?");
                     $stmt_amenities->execute([$housing_id]);
                     $amenities_list = $stmt_amenities->fetchAll(PDO::FETCH_COLUMN);
                     if ($amenities_list): ?>
-                    <div class="detail-accordion">
-                        <button class="accordion-toggle" aria-expanded="false">
-                            <span data-i18n-key="amenities_heading">Amenities</span>
-                            <i class="fas fa-chevron-down"></i>
+                    <div class="content-accordion-item">
+                        <button class="accordion-trigger-button" aria-expanded="false">
+                            <span data-i18n-key="amenities_heading_accordion">Amenities</span>
+                            <i class="fas fa-chevron-down accordion-icon"></i>
                         </button>
-                        <div class="accordion-content">
-                            <ul class="amenities-list-detail">
+                        <div class="accordion-panel-content">
+                            <ul class="amenities-styled-list">
                             <?php foreach ($amenities_list as $amenity): ?>
-                                <li><i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($amenity); ?></li>
+                                <li><i class="fas fa-check"></i> <?php echo htmlspecialchars($amenity); ?></li>
                             <?php endforeach; ?>
                             </ul>
                         </div>
                     </div>
                     <?php endif;
                 } ?>
+                 <div class="info-item full-width-info"> {/* Availability Date, full width */}
+                    <span class="info-label" data-i18n-key="info_label_available_date">Available from:</span>
+                    <span class="info-value"><?php echo htmlspecialchars(date("F j, Y", strtotime($housing['availability_date']))); ?></span>
+                </div>
             </div>
-        </div>
-        
-        <!-- Map (full width below the two columns) -->
+        </div> {/* End .housing-detail-grid */}
+
+
+        {/* Map Section - Full width below grid */}
         <?php if ($housing['latitude'] && $housing['longitude']): ?>
-          <section class="detail-section map-section-detail">
-            <h2 class="detail-section-title" data-i18n-key="location_heading">Location</h2>
-            <div id="detail-map"></div>
+          <section class="page-section-layout map-container-section">
+            <h2 class="section-title-styled" data-i18n-key="location_map_title">Location</h2>
+            <div id="detailPageMap" class="map-render-area"></div>
           </section>
         <?php endif; ?>
-
-        <!-- Latest Reviews Section (Placeholder HTML structure based on mockup) -->
-        <section class="detail-section reviews-section-detail">
-            <h2 class="detail-section-title" data-i18n-key="latest_reviews_heading">Latest reviews</h2>
-            <div class="reviews-grid">
-                <!-- Example Review Card 1 -->
-                <div class="review-card-detail">
-                    <div class="review-card-rating">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-                    </div>
-                    <h3 class="review-card-title">Great Location!</h3>
-                    <p class="review-card-body">Loved how close it was to the university and local cafes. The apartment was clean and well-maintained.</p>
-                    <div class="review-card-author">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer Jane Doe" class="reviewer-avatar">
-                        <div class="reviewer-info">
-                            <span class="reviewer-name">Jane Doe</span>
-                            <span class="review-date">October 26, 2023</span>
+        
+        {/* Latest Reviews Section - Full width */}
+        <section class="page-section-layout reviews-container-section">
+            <h2 class="section-title-styled" data-i18n-key="latest_reviews_title">Latest reviews</h2>
+            <div class="reviews-grid-layout">
+                {/* Placeholder for PHP loop for reviews. Static examples: */}
+                <div class="review-card-item">
+                    <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                    <h3 class="review-card-heading">Great Value</h3>
+                    <p class="review-card-text">Really good for the price. Clean and convenient for students.</p>
+                    <div class="review-card-author-area">
+                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
+                        <div>
+                            <span class="author-name-text">Alex R.</span>
+                            <span class="review-date-text">November 10, 2023</span>
                         </div>
                     </div>
                 </div>
-                <!-- Example Review Card 2 -->
-                <div class="review-card-detail">
-                    <div class="review-card-rating">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="review-card-title">Absolutely Perfect</h3>
-                    <p class="review-card-body">Couldn't ask for a better place. It had all the amenities I needed and the landlord was very responsive.</p>
-                    <div class="review-card-author">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer John Smith" class="reviewer-avatar"> <!-- Make sure you have a placeholder image -->
-                        <div class="reviewer-info">
-                            <span class="reviewer-name">John Smith</span>
-                            <span class="review-date">November 02, 2023</span>
+                <div class="review-card-item">
+                    <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <h3 class="review-card-heading">Perfect for Studies!</h3>
+                    <p class="review-card-text">Quiet, comfortable, and had everything I needed. Landlord was also very helpful.</p>
+                    <div class="review-card-author-area">
+                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
+                        <div>
+                            <span class="author-name-text">Maria G.</span>
+                            <span class="review-date-text">October 28, 2023</span>
                         </div>
                     </div>
                 </div>
-                <!-- Example Review Card 3 -->
-                <div class="review-card-detail">
-                    <div class="review-card-rating">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                    </div>
-                    <h3 class="review-card-title">Decent Value</h3>
-                    <p class="review-card-body">Good for the price, though a bit noisy at times. Overall a satisfactory experience for a student.</p>
-                    <div class="review-card-author">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer Alex P." class="reviewer-avatar">
-                        <div class="reviewer-info">
-                            <span class="reviewer-name">Alex P.</span>
-                            <span class="review-date">September 15, 2023</span>
+                 <div class="review-card-item">
+                    <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                    <h3 class="review-card-heading">Good Student Housing</h3>
+                    <p class="review-card-text">Met my expectations for student accommodation. Close to campus.</p>
+                    <div class="review-card-author-area">
+                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
+                        <div>
+                            <span class="author-name-text">Sam K.</span>
+                            <span class="review-date-text">September 05, 2023</span>
                         </div>
                     </div>
                 </div>
@@ -322,14 +336,14 @@ SQL
         </section>
 
       <?php else: ?>
-        <section class="info-message-section">
-          <p data-i18n-key="no_details_message">No housing details to display.</p>
+        <section class="info-message-display">
+          <p data-i18n-key="no_housing_details_found">No housing details to display.</p>
         </section>
       <?php endif; ?>
-    </div>
+    </div> {/* End .detail-content-area */}
   </main>
 
-  <!-- Chat Widget (Consistent with home.php) -->
+  {/* Chat Widget (Keep as is from your original/previous setup) */}
   <div id="chat-widget">
     <div id="chat-container" class="chat-hidden">
       <div id="chat-header">
@@ -337,18 +351,18 @@ SQL
         <button id="chat-close-button" aria-label="Close chat">×</button>
       </div>
       <div id="chat-messages">
-        <div class="message bot" data-i18n-key="chat_greeting_detail"> <!-- Potentially different greeting -->
-          Hi there! Looking for more info about this housing? Ask me anything!
+        <div class="message bot" data-i18n-key="chat_greeting_detail_page"> {/* Specific greeting */}
+          Hello! Viewing details for a specific housing? Ask me anything about it!
         </div>
       </div>
       <div id="chat-input-area">
-        <input type="text" id="chat-input" placeholder="Ask about this housing..." data-i18n-key-placeholder="chat_placeholder_detail"/>
+        <input type="text" id="chat-input" placeholder="Ask about this housing..." data-i18n-key-placeholder="chat_placeholder_ask_housing"/>
         <button id="chat-send-button" aria-label="Send message">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
-      <div id="chat-loading" class="chat-hidden"> 
-          <i class="fas fa-spinner fa-spin"></i> <span data-i18n-key="chat_loading">Thinking...</span>
+      <div id="chat-loading" class="chat-hidden">
+          <i class="fas fa-spinner fa-spin"></i> <span data-i18n-key="chat_loading_text">Thinking...</span>
       </div>
     </div>
     <button id="chat-toggle-button" aria-label="Toggle chat">
@@ -356,7 +370,7 @@ SQL
     </button>
   </div>
 
-  <!-- Scripts -->
+  {/* Scripts */}
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
@@ -364,13 +378,13 @@ SQL
   <?php if ($housing && $housing['latitude'] && $housing['longitude']): ?>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const mapElement = document.getElementById('detail-map');
+      const mapElement = document.getElementById('detailPageMap'); // Updated ID
       if (mapElement) {
         const lat = <?php echo $housing['latitude']; ?>;
         const lon = <?php echo $housing['longitude']; ?>;
         const title = <?php echo json_encode($housing['title']); ?>;
 
-        const detailMap = L.map('detail-map').setView([lat, lon], 15);
+        const detailMap = L.map('detailPageMap').setView([lat, lon], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '© OpenStreetMap contributors'
@@ -382,48 +396,52 @@ SQL
   <?php endif; ?>
   
   <script>
-    // Simple Carousel & Accordion Logic
+    // Basic JS for Gallery Thumbnails, Accordions, Favorite Button
     document.addEventListener('DOMContentLoaded', function() {
-        // Carousel
-        const mainImage = document.getElementById('mainCarouselImage');
-        const thumbnails = document.querySelectorAll('.carousel-thumbnail');
-        thumbnails.forEach(thumb => {
+        // Gallery Thumbnail Click
+        const mainImageDisplay = document.getElementById('housingMainImage');
+        const thumbImages = document.querySelectorAll('.gallery-thumb-image');
+        thumbImages.forEach(thumb => {
             thumb.addEventListener('click', function() {
-                if (mainImage) mainImage.src = this.dataset.fullsrc;
-                thumbnails.forEach(t => t.classList.remove('active'));
+                if (mainImageDisplay) mainImageDisplay.src = this.dataset.fullsrc;
+                thumbImages.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
             });
         });
 
-        // Accordions
-        const accordionToggles = document.querySelectorAll('.accordion-toggle');
-        accordionToggles.forEach(toggle => {
-            toggle.addEventListener('click', function() {
-                const content = this.nextElementSibling;
+        // Accordion Toggle
+        const accordionTriggers = document.querySelectorAll('.accordion-trigger-button');
+        accordionTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const panel = this.nextElementSibling;
                 const isExpanded = this.getAttribute('aria-expanded') === 'true';
                 
                 this.setAttribute('aria-expanded', !isExpanded);
-                content.style.maxHeight = !isExpanded ? content.scrollHeight + "px" : null;
-                content.style.opacity = !isExpanded ? 1 : 0;
-                this.querySelector('i').classList.toggle('fa-chevron-down');
-                this.querySelector('i').classList.toggle('fa-chevron-up');
+                panel.style.maxHeight = !isExpanded ? panel.scrollHeight + "px" : null;
+                panel.style.opacity = !isExpanded ? 1 : 0;
+                panel.style.paddingTop = !isExpanded ? '0.8rem' : '0'; // Match bottom padding if any
+                panel.style.paddingBottom = !isExpanded ? '0.8rem' : '0';
+                
+                const icon = this.querySelector('.accordion-icon');
+                icon.classList.toggle('fa-chevron-up', !isExpanded);
+                icon.classList.toggle('fa-chevron-down', isExpanded);
             });
         });
 
-        // Favorite button (visual only)
-        const favButton = document.querySelector('.favorite-btn');
-        if (favButton) {
-            favButton.addEventListener('click', function() {
+        // Favorite Button Toggle (Visual Only)
+        const favoriteButton = document.querySelector('.favorite-toggle-button');
+        if (favoriteButton) {
+            favoriteButton.addEventListener('click', function() {
                 this.classList.toggle('active');
                 const icon = this.querySelector('i');
-                icon.classList.toggle('far');
-                icon.classList.toggle('fas'); // fas for solid heart
+                icon.classList.toggle('far'); // outline
+                icon.classList.toggle('fas'); // solid (filled)
             });
         }
     });
   </script>
 
-  <script src="script.js" defer></script> <!-- General script for header, theme, lang -->
+  <script src="script.js" defer></script> {/* Your main site script for header, theme, lang */}
   <script src="chatbot.js" defer></script>
 </body>
 </html>
