@@ -1269,3 +1269,497 @@ button {
     margin-right: 0;
   }
 }
+
+/* ========================================
+   Housing Detail Page Styles
+   ======================================== */
+
+.detail-page-container {
+  /* Was .app-container for consistency */
+  padding-top: calc(
+    var(--header-height) + 1.5rem
+  ); /* Space for sticky header + breathing room */
+  padding-bottom: 3rem;
+}
+
+.detail-page-content-wrapper {
+  max-width: 1200px; /* Max width for detail content */
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.back-to-listings {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+.back-to-listings a {
+  color: var(--text-secondary);
+  transition: color var(--transition-speed) var(--transition-timing);
+}
+.back-to-listings a:hover {
+  color: var(--accent-primary);
+}
+.back-to-listings i {
+  margin-right: 0.5em;
+}
+
+.detail-main-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr; /* Adjust ratio as needed, e.g., 60% 40% */
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.detail-image-column {
+  position: relative; /* For favorite button */
+}
+.carousel-main-image-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--bg-secondary); /* Placeholder bg */
+  aspect-ratio: 4 / 3; /* Maintain aspect ratio */
+}
+.carousel-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px; /* Match wrapper */
+}
+.image-placeholder-detail.carousel-main-image {
+  /* For placeholder case */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+.image-placeholder-detail.carousel-main-image i {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+.favorite-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(
+    var(--bg-primary-rgb, 20, 18, 31),
+    0.7
+  ); /* Use RGB if available, else fallback */
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  z-index: 10;
+}
+.favorite-btn:hover,
+.favorite-btn.active {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary); /* Or #fff for light theme if accent is light */
+  border-color: var(--accent-primary);
+}
+[data-theme="dark"] .favorite-btn.active {
+  color: #000;
+}
+.favorite-btn i.fas {
+  /* Solid heart for active */
+  color: inherit;
+}
+
+.carousel-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
+}
+.carousel-thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color var(--transition-speed) var(--transition-timing),
+    opacity 0.2s ease;
+  opacity: 0.7;
+}
+.carousel-thumbnail:hover,
+.carousel-thumbnail.active {
+  border-color: var(--accent-primary);
+  opacity: 1;
+}
+
+.detail-info-column {
+  background-color: var(--container-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  align-self: flex-start; /* Prevent stretching if image column is taller */
+}
+.detail-title {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-headings);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.detail-meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap; /* For smaller screens */
+  gap: 0.5rem;
+}
+.detail-tag {
+  background-color: rgba(var(--accent-primary-rgb), 0.15);
+  color: var(--accent-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.3em 0.8em;
+  border-radius: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.detail-price {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+.detail-price .rent-frequency {
+  font-size: 0.6em;
+  font-weight: 400;
+  color: var(--text-secondary);
+  vertical-align: baseline;
+}
+.detail-address {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+.detail-address i {
+  margin-right: 0.5em;
+  color: var(--accent-primary);
+}
+
+.detail-section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-headings);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color-subtle);
+}
+.key-details-section .detail-section-title {
+  /* No border for this one inside info column */
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 1.2rem;
+}
+
+.key-details-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 1fr)
+  ); /* Responsive columns */
+  gap: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.detail-item {
+  font-size: 0.95rem;
+}
+.detail-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 0.2em;
+}
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.detail-item-full {
+  grid-column: 1 / -1; /* Make it span full width if needed */
+}
+
+.btn-apply-detail {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background-color: var(--accent-primary);
+  color: var(
+    --bg-primary
+  ); /* Will be #000 on dark theme due to auth-button.primary rule */
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.2);
+  margin-bottom: 1.5rem; /* Space before accordions */
+}
+[data-theme="dark"] .btn-apply-detail {
+  color: #000;
+}
+.btn-apply-detail:hover {
+  background-color: var(--accent-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(var(--accent-primary-rgb), 0.3);
+}
+
+.detail-accordion {
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 8px;
+  background-color: var(
+    --bg-secondary
+  ); /* Slightly different bg for accordion */
+  overflow: hidden; /* For smooth max-height transition */
+}
+.accordion-toggle {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-headings);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.accordion-toggle:hover {
+  background-color: rgba(var(--accent-primary-rgb), 0.05);
+}
+.accordion-toggle i {
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+}
+.accordion-toggle[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+.accordion-content {
+  padding: 0 1.2rem 1.2rem 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s,
+    padding 0.4s ease-out;
+}
+.accordion-toggle[aria-expanded="true"] + .accordion-content {
+  /* Values set by JS, but can have defaults */
+  /* max-height will be set by JS */
+  /* opacity: 1; */
+}
+.amenities-list-detail {
+  list-style: none;
+  padding-left: 0;
+  columns: 2; /* For multi-column layout if many amenities */
+  gap: 0.5rem;
+}
+.amenities-list-detail li {
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+}
+.amenities-list-detail i {
+  color: var(--accent-primary);
+  margin-right: 0.6em;
+  font-size: 0.9em;
+}
+
+/* Map section below main layout */
+.map-section-detail {
+  margin-top: 2.5rem; /* Space from content above */
+  margin-bottom: 2.5rem;
+}
+#detail-map {
+  height: 400px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+/* Reviews Section */
+.reviews-section-detail {
+  margin-bottom: 2rem;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.review-card-detail {
+  background-color: var(--container-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+}
+.review-card-detail:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(var(--accent-primary-rgb), 0.08);
+}
+.review-card-rating {
+  color: var(--accent-primary);
+  font-size: 1rem;
+}
+.review-card-rating .fa-star {
+  /* filled star */
+  opacity: 1;
+}
+.review-card-rating .far.fa-star {
+  /* empty star */
+  opacity: 0.5;
+}
+.review-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-headings);
+  margin: 0; /* Reset margin */
+}
+.review-card-body {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+.review-card-author {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: auto; /* Pushes to bottom */
+  padding-top: 0.8rem; /* Space above author if content is short */
+  border-top: 1px solid var(--border-color-subtle);
+}
+.reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+.reviewer-info {
+  display: flex;
+  flex-direction: column;
+}
+.reviewer-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.review-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Responsive Adjustments for Detail Page */
+@media (max-width: 992px) {
+  /* Medium devices (tablets, less than 992px) */
+  .detail-main-layout {
+    grid-template-columns: 1fr; /* Stack columns */
+    gap: 1.5rem;
+  }
+  .detail-info-column {
+    /* No specific changes needed, will take full width */
+  }
+  .amenities-list-detail {
+    columns: 1; /* Single column for amenities on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  /* Small devices (landscape phones, 768px and down) */
+  .detail-page-content-wrapper {
+    padding: 0 1rem;
+  }
+  .detail-meta-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .detail-price {
+    margin-top: 0.5rem;
+  }
+  #detail-map {
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Extra small devices (portrait phones, less than 576px) */
+  .carousel-thumbnails {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+  }
+  .key-details-grid {
+    grid-template-columns: 1fr; /* Single column for key details */
+  }
+  .reviews-grid {
+    grid-template-columns: 1fr; /* Single column for reviews */
+  }
+}
+
+/* Header: Language switcher dropdown specific positioning inside header-actions */
+.language-switcher-container {
+  position: relative; /* For absolute positioning of the dropdown */
+}
+/* Adjusting the position of language dropdown if it's inside header-actions */
+.header-actions .language-switcher-dropdown {
+  top: calc(100% + 0.5rem); /* Position below the button */
+  right: 0;
+  /* If you want it to align to the left of the button:
+  left: 0;
+  right: auto; 
+  */
+}
+
+/* Ensure hamburger is shown and desktop nav hidden on mobile (from base CSS) */
+@media (max-width: 768px) {
+  .main-nav#desktop-nav {
+    display: none;
+  }
+  .main-nav.mobile-nav-menu {
+    /* This is the one toggled by hamburger */
+    display: none; /* Hidden by default */
+    /* ... other mobile nav styles from your base CSS ... */
+  }
+  .main-nav.mobile-nav-menu.active {
+    /* Class added by JS */
+    display: block;
+  }
+  .hamburger {
+    display: flex; /* Show hamburger */
+  }
+}
+@media (min-width: 769px) {
+  .main-nav#desktop-nav {
+    display: flex; /* Show desktop nav */
+  }
+  .main-nav.mobile-nav-menu {
+    display: none; /* Hide mobile nav menu */
+  }
+  .hamburger {
+    display: none; /* Hide hamburger */
+  }
+}
