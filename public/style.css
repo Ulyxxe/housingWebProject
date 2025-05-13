@@ -159,8 +159,6 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: all var(--transition-smooth);
-  background: none; /* Ensure buttons are transparent by default */
-  border: none; /* Ensure buttons have no border by default */
 }
 
 /* Custom Font (Keep if used) */
@@ -224,11 +222,9 @@ button {
 }
 
 .main-nav {
-  /* General main-nav, used for both desktop and mobile container */
   margin-right: 1.5rem;
-}
-.main-nav#desktop-nav ul {
-  /* Specific for desktop nav items */
+} /* Keep for desktop nav */
+.main-nav ul {
   list-style: none;
   display: flex;
   gap: 1.8rem;
@@ -236,7 +232,7 @@ button {
   margin: 0;
   align-items: center;
 }
-.main-nav#desktop-nav a {
+.main-nav a {
   font-family: var(--font-mono);
   font-size: 0.9rem;
   color: var(--header-text-secondary);
@@ -244,7 +240,7 @@ button {
   position: relative;
   transition: color 0.3s ease;
 }
-.main-nav#desktop-nav a::after {
+.main-nav a::after {
   content: "";
   position: absolute;
   bottom: -5px;
@@ -255,14 +251,14 @@ button {
   transition: width 0.3s ease, background-color 0.3s ease;
   border-radius: 1px;
 }
-.main-nav#desktop-nav a:hover {
+.main-nav a:hover {
   color: var(--header-text-primary);
 }
-.main-nav#desktop-nav a.active-nav-link {
+.main-nav a.active-nav-link {
   color: var(--header-text-primary);
   font-weight: 500;
 }
-.main-nav#desktop-nav a.active-nav-link::after {
+.main-nav a.active-nav-link::after {
   width: 100%;
 }
 
@@ -272,7 +268,6 @@ button {
   gap: 0.8rem;
 }
 .header-button {
-  /* Base style for icon buttons in header (theme, lang) */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -288,28 +283,18 @@ button {
   background-color: rgba(var(--header-border-rgb), 0.1);
   transform: translateY(-1px);
 }
-.header-button i, /* For FontAwesome icons */
+.header-button i,
 .header-button svg {
-  /* For SVG icons */
   width: 18px;
   height: 18px;
   display: block;
-  fill: currentColor; /* For SVGs that use fill */
-  stroke: currentColor; /* For SVGs that use stroke */
-}
-.theme-toggle-button svg {
-  /* Specific for theme toggle SVGs */
-  stroke: var(--header-text-secondary);
-  fill: none;
-  stroke-width: 2;
-}
-.theme-toggle-button:hover svg {
-  stroke: var(--header-text-primary);
+  fill: currentColor;
+  stroke: none;
+  transition: fill 0.3s ease, stroke 0.3s ease;
 }
 
 .auth-button {
-  display: inline-flex; /* Ensures icon and text align */
-  align-items: center;
+  /* For Sign In / Register / User */
   padding: 0.5rem 1rem;
   gap: 0.5rem;
   font-size: 0.85rem;
@@ -317,17 +302,16 @@ button {
   border: 1px solid rgba(var(--header-border-rgb), 0.2);
   background-color: rgba(var(--header-border-rgb), 0.05);
   color: var(--header-text-primary);
-  border-radius: 8px; /* Consistent rounding */
-  text-decoration: none;
 }
 .auth-button.primary {
+  /* For Register or prominent action */
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
-  color: var(--bg-primary);
+  color: var(--bg-primary); /* Text color for on accent */
 }
 [data-theme="dark"] .auth-button.primary {
   color: #000;
-}
+} /* Ensure contrast */
 .auth-button:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
@@ -336,23 +320,11 @@ button {
 .auth-button.primary:hover {
   background-color: var(--accent-secondary);
   border-color: var(--accent-secondary);
-  color: var(
-    --bg-primary
-  ); /* Keep text color consistent on hover for primary */
-}
-[data-theme="dark"] .auth-button.primary:hover {
-  color: #000;
 }
 .auth-button i {
-  margin-right: 0.2em; /* Reduced gap for icon-only scenarios */
-  font-size: 1.1em; /* Slightly larger icon */
+  margin-right: 0.4em;
 }
 
-/* Language Switcher */
-.language-switcher-container {
-  /* Added wrapper */
-  position: relative;
-}
 #language-switcher-toggle i {
   color: var(--header-text-secondary);
 }
@@ -360,10 +332,31 @@ button {
 #language-switcher-toggle[aria-expanded="true"] i {
   color: var(--accent-primary);
 }
+.theme-toggle-button svg {
+  stroke: var(--header-text-secondary);
+  fill: none;
+  stroke-width: 2;
+}
+.theme-toggle-button:hover svg {
+  stroke: var(--header-text-primary);
+}
+[data-theme="dark"] .theme-toggle-button .sun-icon {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle-button .moon-icon {
+  display: none;
+}
+[data-theme="light"] .theme-toggle-button .sun-icon {
+  display: none;
+}
+[data-theme="light"] .theme-toggle-button .moon-icon {
+  display: block;
+}
+
 .language-switcher-dropdown {
   position: absolute;
-  top: calc(100% + 0.5rem); /* Position below the button */
-  right: 0;
+  top: calc(var(--header-height) * 0.8); /* Adjusted positioning */
+  right: 1rem;
   background-color: rgba(var(--header-bg-rgb), 0.95);
   border-radius: 8px;
   padding: 0.6rem;
@@ -383,7 +376,6 @@ button {
   min-width: 120px;
 }
 .site-header.language-dropdown-visible .language-switcher-dropdown {
-  /* JS toggles class on site-header */
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
@@ -399,7 +391,6 @@ button {
   color: var(--header-text-secondary);
   text-align: left;
   transition: var(--transition-smooth);
-  background: none; /* From base button reset */
 }
 .language-choice-button:hover {
   background-color: rgba(var(--header-border-rgb), 0.1);
@@ -414,23 +405,9 @@ button {
   color: #000;
 }
 
-/* Theme Toggle Icons */
-[data-theme="dark"] .theme-toggle-button .sun-icon {
-  display: block;
-}
-[data-theme="dark"] .theme-toggle-button .moon-icon {
-  display: none;
-}
-[data-theme="light"] .theme-toggle-button .sun-icon {
-  display: none;
-}
-[data-theme="light"] .theme-toggle-button .moon-icon {
-  display: block;
-}
-
-/* Hamburger Menu */
+/* Hamburger Menu (from your original, adapted) */
 .hamburger {
-  display: none;
+  display: none; /* Initially hidden for desktop-first approach */
   flex-direction: column;
   justify-content: space-around;
   width: 28px;
@@ -439,7 +416,7 @@ button {
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 1100;
+  z-index: 1100; /* Above header content */
 }
 .hamburger .bar {
   display: block;
@@ -459,80 +436,29 @@ button {
   transform: translateY(-9.5px) rotate(-45deg);
 }
 
-/* Mobile Navigation Menu Structure */
-.main-nav.mobile-nav-menu {
-  display: none; /* Hidden by default */
-  position: absolute;
-  top: var(--header-height); /* Position below header */
-  left: 0;
-  width: 100%;
-  background-color: var(
-    --bg-overlay
-  ); /* Use overlay for slight transparency over content */
-  border-top: 1px solid var(--border-color);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1040; /* Below header, above content */
-  max-height: calc(100vh - var(--header-height));
-  overflow-y: auto;
-}
-.main-nav.mobile-nav-menu.active {
-  /* Class added by JS to show */
-  display: block;
-}
-.main-nav.mobile-nav-menu ul {
-  list-style: none;
-  padding: 0.5rem 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-.main-nav.mobile-nav-menu li {
-  width: 100%;
-}
-.main-nav.mobile-nav-menu a {
-  display: block;
-  padding: 0.9rem 1.5rem; /* Generous padding for touch */
-  width: 100%;
-  color: var(--text-primary); /* Use main text color for mobile nav links */
-  text-decoration: none;
-  border-bottom: 1px solid var(--border-color-subtle);
-  font-weight: 500;
-  font-family: var(--font-primary); /* Consistent font */
-  transition: background-color var(--transition-smooth),
-    color var(--transition-smooth);
-}
-.main-nav.mobile-nav-menu li:last-child a {
-  border-bottom: none;
-}
-.main-nav.mobile-nav-menu a:hover {
-  background-color: rgba(var(--accent-primary-rgb), 0.1);
-  color: var(--accent-primary);
-}
-
 /* ========================================
-   App Container & Main Layout (e.g., for listings page)
+   App Container & Main Layout (New)
    ======================================== */
 .app-container {
-  padding-top: var(--header-height);
-  min-height: 100vh;
+  padding-top: var(--header-height); /* Space for sticky header */
+  min-height: 100vh; /* Ensure it takes full viewport height */
 }
 .main-content-wrapper {
-  /* For listings page layout */
   display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  max-width: 1600px;
+  gap: 1.5rem; /* Consistent gap */
+  padding: 1.5rem; /* Consistent padding */
+  max-width: 1600px; /* Max width for app content */
   margin: 0 auto;
 }
 
-/* Filters Sidebar (for listings page) */
+/* Filters Sidebar (Adapted) */
 .filters-sidebar {
-  flex: 0 0 280px;
+  flex: 0 0 280px; /* Slightly wider */
   background-color: var(--container-bg);
   border: 1px solid var(--grey-border);
-  border-radius: 12px;
+  border-radius: 12px; /* More rounded */
   padding: 1.2rem;
-  align-self: flex-start;
+  align-self: flex-start; /* Keep it at top */
   height: fit-content;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease, border-color 0.3s ease,
@@ -542,6 +468,7 @@ button {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 .sidebar-title {
+  /* New class for sidebar title */
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-headings);
@@ -556,13 +483,14 @@ button {
   margin-bottom: 0;
 }
 .filter-group h4 {
+  /* Was h3 */
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 1rem;
   color: var(--text-headings);
 }
 
-/* Checkbox & Slider Styles (for listings page filters) */
+/* Checkbox & Slider Styles (Adapted from your original, using new variables) */
 .checkbox-item {
   display: flex;
   align-items: center;
@@ -652,7 +580,7 @@ button {
   border-radius: 50%;
   cursor: pointer;
   transition: all var(--transition-speed) var(--transition-timing);
-  border: 2px solid var(--container-bg); /* Creates a 'cutout' effect */
+  border: 2px solid var(--container-bg);
 }
 .slider::-webkit-slider-thumb:hover {
   transform: scale(1.15);
@@ -672,16 +600,13 @@ button {
   box-shadow: 0 0 8px rgba(var(--accent-primary-rgb), 0.5);
 }
 
-/* Clear Filters Button (for listings page) */
+/* Clear Filters Button */
 .btn.full-width {
-  /* Generic full-width button */
   width: 100%;
   padding: 0.7rem 1rem;
   font-size: 0.9rem;
-  border-radius: 8px; /* Standard button rounding */
 }
 .btn-secondary {
-  /* Specific secondary button style */
   background-color: var(--bg-tertiary);
   color: var(--text-secondary);
   border: 1px solid var(--border-color);
@@ -689,10 +614,9 @@ button {
 .btn-secondary:hover {
   background-color: var(--border-color-subtle);
   color: var(--text-primary);
-  border-color: var(--border-color);
 }
 
-/* Results Area (for listings page) */
+/* Results Area (Adapted) */
 .results-area {
   flex: 1;
   min-width: 0;
@@ -708,7 +632,7 @@ button {
 .search-container {
   display: flex;
   border: 1px solid var(--grey-border);
-  border-radius: 25px; /* Pill shape search */
+  border-radius: 25px;
   overflow: hidden;
   max-width: 350px;
   background-color: var(--input-bg);
@@ -734,13 +658,11 @@ button {
   color: var(--text-secondary);
 }
 .search-container .search-btn {
-  /* Search button inside input */
   border: none;
   background: none;
   padding: 0 1rem;
   color: var(--accent-primary);
   font-size: 1.1em;
-  cursor: pointer;
 }
 .sort-options {
   display: flex;
@@ -750,7 +672,7 @@ button {
 .sort-btn {
   padding: 0.5rem 1rem;
   border: 1px solid var(--grey-border);
-  border-radius: 20px; /* Pill shape sort buttons */
+  border-radius: 20px;
   background-color: var(--input-bg);
   color: var(--text-secondary);
   font-size: 0.85rem;
@@ -758,7 +680,6 @@ button {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  cursor: pointer;
 }
 .sort-btn:not(.active):hover {
   border-color: var(--border-color);
@@ -780,7 +701,7 @@ button {
   font-size: 0.8em;
 }
 
-/* Results Grid & Cards (for listings page) */
+/* Results Grid & Cards (Adapted) */
 .results-layout {
   display: flex;
   gap: 1.2rem;
@@ -805,11 +726,11 @@ button {
 .result-card {
   background-color: var(--container-bg);
   border: 1px solid var(--grey-border);
-  border-radius: 12px;
+  border-radius: 12px; /* More rounded */
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100%; /* Make cards equal height if in grid */
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
 }
 .result-card-link:hover {
@@ -853,7 +774,7 @@ button {
   font-size: 1rem;
   font-weight: 700;
   color: var(--accent-primary);
-  margin-bottom: auto;
+  margin-bottom: auto; /* Pushes rating/size down */
 }
 .card-size,
 .card-rating {
@@ -866,36 +787,67 @@ button {
   opacity: 0.8;
 }
 
-/* Map Container (for listings page, with sticky behavior) */
+/* Map Container (Adapted for sticky behavior within app layout) */
 .map-container-outer {
-  flex: 0 0 40%;
-  min-width: 250px;
-  max-width: 500px;
-  position: relative;
+  /* New wrapper */
+  flex: 0 0 40%; /* Initial size */
+  min-width: 250px; /* Prevent extreme squishing */
+  max-width: 500px; /* Prevent extreme stretching */
+  position: relative; /* For child sticky positioning */
 }
 .map-container#map-container-sticky {
   position: sticky;
   top: calc(
-    var(--header-height) + 1.5rem
-  ); /* Consistent with detail page potential sticky */
-  width: 100%;
-  aspect-ratio: 1 / 1;
+    var(--header-height) + 2rem
+  ); /* Same: Stick below header + padding */
+
+  /* --- FORCING SQUARE SHAPE --- */
+  width: 100%; /* Let it take the width defined by its parent's flex properties */
+  aspect-ratio: 1 / 1; /* This is the magic line: makes height equal to width */
+  /* --------------------------- */
+
+  /* Constraints for the square shape */
+  max-width: 500px; /* OPTIONAL: Prevent it from becoming too wide (and thus too tall)
+                         This value should be less than or equal to the parent's
+                         flex-basis or max-width if you want the square to fit.
+                         If the parent (.map-container-outer) has flex-basis: 40%,
+                         this max-width might be redundant or could constrain it further. */
   max-height: calc(
-    100vh - var(--header-height) - 3rem
-  ); /* Simplified max height */
+    100vh - var(--header-height) - 4rem - 2rem
+  ); /*
+                         Approximate max available vertical space.
+                         (Viewport - header - top/bottom app padding - some extra buffer).
+                         This prevents the square map from pushing content down if its
+                         calculated square height (based on width) is too large for the viewport.
+                         You might need to adjust this value.
+                         If you set a max-width, the max-height might naturally be constrained
+                         by the aspect-ratio.
+                      */
+  /* A simpler max-height if you don't want complex calc: */
+  /* max-height: 600px; */
+
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--grey-border);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
 }
+
+/* Ensure the parent container (.map-container-outer) allows the sticky child to determine its height */
+.map-container-outer {
+  flex: 0 0 40%; /* Example: Initial desired proportion of width */
+  min-width: 250px;
+  /* max-width: 500px; /* If you set max-width here, it also limits the square size */
+  position: relative; /* Good for containing sticky or absolute children */
+  /* Remove fixed height from parent if it was there, let child's aspect-ratio dictate */
+}
 #map {
-  /* ID for the Leaflet map div */
   height: 100%;
   width: 100%;
-  z-index: 1; /* Ensure map is interactive */
+  z-index: 1;
 }
+/* Map resize handle removed for simplicity, can be re-added if desired */
 
-/* Leaflet Overrides (general for all maps) */
+/* Leaflet Overrides (Keep from your original, using new variables) */
 [data-theme="dark"] .leaflet-tile-pane {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
     brightness(0.7);
@@ -908,7 +860,6 @@ button {
   border-color: var(--border-color);
 }
 .custom-div-icon {
-  /* For custom map markers */
   background-color: var(--accent-primary);
   border: 2px solid var(--container-bg);
   border-radius: 50%;
@@ -922,10 +873,10 @@ button {
   transform: scale(1.2);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
 }
-/* Marker Clusters (if used) */
+/* Marker Clusters (Keep from your original, colors can be themed if desired) */
 .marker-cluster {
   transition: filter 0.2s ease;
-  color: #fff !important; /* Ensure text visibility */
+  color: #fff !important;
 }
 .marker-cluster div {
   color: #fff !important;
@@ -934,14 +885,9 @@ button {
 .marker-cluster:hover {
   filter: brightness(1.1);
 }
-/* You might have specific styles for marker-cluster-small, -medium, -large */
-/* Example:
-.marker-cluster-small { background-color: rgba(var(--accent-primary-rgb), 0.7); }
-.marker-cluster-medium { background-color: rgba(var(--accent-primary-rgb), 0.8); }
-.marker-cluster-large { background-color: rgba(var(--accent-primary-rgb), 0.9); }
-*/
+/* ... (rest of your marker cluster styles) */
 
-/* Chat Widget (Consistent across pages) */
+/* Chat Widget (Adapted from your original, using new variables) */
 #chat-widget {
   position: fixed;
   bottom: 1.5rem;
@@ -966,7 +912,6 @@ button {
   margin-top: 0.8rem;
   transition: background-color var(--transition-smooth),
     transform var(--transition-smooth);
-  cursor: pointer;
 }
 [data-theme="dark"] #chat-toggle-button {
   color: #000;
@@ -986,24 +931,22 @@ button {
   flex-direction: column;
   overflow: hidden;
   transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
-    margin-bottom 0.3s ease, visibility 0s linear 0.3s; /* Ensure visibility transition is correct */
-  opacity: 1; /* Default visible state for transition */
+    margin-bottom 0.3s ease, visibility 0.3s ease;
+  opacity: 1;
   transform: translateY(0);
-  visibility: visible; /* Default visible state */
+  visibility: visible;
 }
 [data-theme="dark"] #chat-container {
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 #chat-container.chat-hidden {
-  /* State when chat is hidden */
   opacity: 0;
   transform: translateY(20px) scale(0.95);
   pointer-events: none;
-  height: 0 !important; /* Important to override inline style from JS if used for max-height */
+  height: 0;
   border: none;
-  margin-bottom: -10px; /* Adjust to prevent layout jump */
+  margin-bottom: -10px;
   visibility: hidden;
-  transition-delay: 0s, 0s, 0s, 0s, 0s; /* Ensure no delay when hiding */
 }
 #chat-header {
   background-color: var(--accent-primary);
@@ -1029,7 +972,6 @@ button {
   font-weight: bold;
   padding: 0 0.3rem;
   line-height: 1;
-  cursor: pointer;
 }
 #chat-close-button:hover {
   transform: scale(1.1);
@@ -1039,16 +981,14 @@ button {
   flex-grow: 1;
   padding: 1rem;
   overflow-y: auto;
-  background-color: var(
-    --input-bg
-  ); /* Or var(--bg-tertiary) for subtle difference */
+  background-color: var(--input-bg);
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
 }
 .message {
   padding: 0.6rem 0.9rem;
-  border-radius: 18px; /* Rounded message bubbles */
+  border-radius: 18px;
   max-width: 85%;
   line-height: 1.45;
   word-wrap: break-word;
@@ -1057,16 +997,16 @@ button {
 .message.user {
   background-color: var(--accent-primary);
   color: var(--bg-primary);
-  border-bottom-right-radius: 5px; /* Tail effect */
+  border-bottom-right-radius: 5px;
   align-self: flex-end;
 }
 [data-theme="dark"] .message.user {
   color: #000;
 }
 .message.bot {
-  background-color: var(--bg-tertiary); /* Different from user messages */
+  background-color: var(--bg-tertiary);
   color: var(--text-primary);
-  border-bottom-left-radius: 5px; /* Tail effect */
+  border-bottom-left-radius: 5px;
   align-self: flex-start;
 }
 #chat-input-area {
@@ -1079,7 +1019,7 @@ button {
 #chat-input {
   flex-grow: 1;
   border: 1px solid var(--grey-border);
-  border-radius: 20px; /* Pill shape input */
+  border-radius: 20px;
   padding: 0.6rem 1rem;
   margin-right: 0.6rem;
   outline: none;
@@ -1097,7 +1037,7 @@ button {
   background-color: var(--accent-primary);
   color: var(--bg-primary);
   border: none;
-  border-radius: 50%; /* Circular send button */
+  border-radius: 50%;
   width: 36px;
   height: 36px;
   flex-shrink: 0;
@@ -1105,7 +1045,6 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 }
 [data-theme="dark"] #chat-send-button {
   color: #000;
@@ -1126,13 +1065,12 @@ button {
   border-top: 1px solid var(--grey-border);
   font-style: italic;
   flex-shrink: 0;
-  display: none; /* Hidden by default */
+  display: none;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
 }
 #chat-loading.active {
-  /* Class added by JS */
   display: flex;
 }
 #chat-loading i {
@@ -1148,397 +1086,7 @@ button {
   }
 }
 
-/* ========================================
-   Housing Detail Page Specific Styles
-   ======================================== */
-
-.detail-page-wrapper {
-  /* This is the <main class="app-container detail-page-wrapper"> */
-  padding-top: calc(var(--header-height) + 1.5rem);
-  padding-bottom: 3rem;
-}
-.detail-content-area {
-  /* Wrapper for max-width and centering */
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-.back-to-listings-link a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-  transition: color var(--transition-smooth);
-}
-.back-to-listings-link a:hover {
-  color: var(--accent-primary);
-}
-
-/* Two-Column Grid for Main Content */
-.housing-detail-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr; /* Gallery vs Info ratio */
-  gap: 2rem;
-  margin-bottom: 2.5rem;
-}
-
-/* Gallery Column (Left) */
-.main-image-wrapper {
-  position: relative;
-  background-color: var(--bg-tertiary);
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  margin-bottom: 1rem;
-  border: 1px solid var(--border-color-subtle);
-}
-.current-gallery-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.image-placeholder-large {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--text-secondary);
-  font-size: 4.5rem;
-}
-.action-icon-button.favorite-toggle-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: rgba(var(--header-bg-rgb, 30, 26, 46), 0.7);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  cursor: pointer;
-}
-.action-icon-button.favorite-toggle-button:hover,
-.action-icon-button.favorite-toggle-button.active {
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
-}
-[data-theme="dark"] .action-icon-button.favorite-toggle-button.active {
-  color: #000;
-}
-
-.gallery-thumbnails-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: 0.75rem;
-}
-.gallery-thumb-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  opacity: 0.7;
-  transition: border-color var(--transition-smooth),
-    opacity var(--transition-smooth);
-}
-.gallery-thumb-image:hover,
-.gallery-thumb-image.active {
-  border-color: var(--accent-primary);
-  opacity: 1;
-}
-
-/* Info Column (Right) */
-.housing-info-column {
-  background-color: var(--container-bg);
-  padding: 1.5rem 1.8rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
-  align-self: start;
-}
-[data-theme="dark"] .housing-info-column {
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
-}
-
-.housing-main-title {
-  font-size: clamp(1.7rem, 3vw, 2.3rem);
-  font-weight: 700;
-  color: var(--text-headings);
-  margin-bottom: 0.5rem;
-  line-height: 1.2;
-}
-.housing-top-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-.status-indicator-tag {
-  background-color: rgba(var(--accent-primary-rgb), 0.15);
-  color: var(--accent-primary);
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.3em 0.8em;
-  border-radius: 15px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.price-display-area {
-  font-size: clamp(1.8rem, 3.2vw, 2.2rem);
-  font-weight: 700;
-  color: var(--accent-primary);
-  line-height: 1;
-  text-align: right;
-}
-.price-display-area .frequency {
-  font-size: 0.5em;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-.location-address-text {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4em;
-}
-.location-address-text i {
-  color: var(--accent-primary);
-  font-size: 0.9em;
-}
-
-.key-info-block {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.8rem 1.2rem;
-  margin-bottom: 1.8rem;
-  padding: 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 8px;
-}
-.info-item {
-  font-size: 0.9rem;
-}
-.info-item.full-width-info {
-  grid-column: 1 / -1;
-}
-.info-label {
-  display: block;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  margin-bottom: 0.2em;
-  font-weight: 400;
-}
-.info-value {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.cta-button.primary-cta-button {
-  display: block;
-  width: 100%;
-  padding: 0.9rem 1.5rem;
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  transition: var(--transition-smooth);
-  box-shadow: 0 4px 12px var(--shadow-light);
-  margin-bottom: 1.5rem;
-}
-[data-theme="dark"] .cta-button.primary-cta-button {
-  color: #000;
-}
-.cta-button.primary-cta-button:hover {
-  background-color: var(--accent-secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px var(--shadow-light);
-}
-
-/* Accordions */
-.content-accordion-item {
-  margin-bottom: 0.8rem;
-  border: 1px solid var(--border-color-subtle);
-  border-radius: 8px;
-  background-color: var(--bg-tertiary);
-  overflow: hidden;
-}
-.content-accordion-item:last-child {
-  margin-bottom: 0;
-}
-.accordion-trigger-button {
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0.9rem 1.2rem;
-  text-align: left;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-headings);
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color var(--transition-smooth);
-}
-.accordion-trigger-button:hover {
-  background-color: rgba(var(--accent-primary-rgb), 0.05);
-}
-.accordion-icon {
-  font-size: 0.85em;
-  transition: transform 0.3s ease;
-  color: var(--text-secondary);
-}
-.accordion-trigger-button[aria-expanded="true"] .accordion-icon {
-  transform: rotate(180deg);
-}
-.accordion-panel-content {
-  padding: 0 1.2rem; /* Manage padding via transition */
-  font-size: 0.9rem;
-  line-height: 1.65;
-  color: var(--text-secondary);
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease-out, opacity 0.3s ease-out 0.05s,
-    padding 0.35s ease-out;
-}
-.accordion-trigger-button[aria-expanded="true"] + .accordion-panel-content {
-  padding-top: 0.8rem; /* Add padding when expanded */
-  padding-bottom: 1rem; /* Add padding when expanded */
-}
-
-.amenities-styled-list {
-  list-style: none;
-  padding-left: 0;
-  columns: 2;
-  gap: 0.4rem 1rem;
-}
-.amenities-styled-list li {
-  margin-bottom: 0.45em;
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-}
-.amenities-styled-list li i {
-  color: var(--accent-primary);
-  margin-right: 0.6em;
-  font-size: 0.85em;
-}
-
-/* Full-Width Sections (Map, Reviews) */
-.page-section-layout {
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
-}
-.section-title-styled {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--text-headings);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-color-subtle);
-}
-.map-render-area {
-  /* For #detailPageMap */
-  height: 400px;
-  width: 100%;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  background-color: var(--bg-tertiary);
-}
-
-/* Reviews Grid */
-.reviews-grid-layout {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-.review-card-item {
-  background-color: var(--container-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
-  transition: transform var(--transition-smooth),
-    box-shadow var(--transition-smooth);
-}
-.review-card-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(var(--accent-primary-rgb), 0.07);
-}
-[data-theme="dark"] .review-card-item {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.review-card-stars {
-  color: var(--accent-primary);
-  font-size: 0.9rem;
-  margin-bottom: 0.6rem;
-}
-.review-card-stars .far.fa-star {
-  color: var(--text-secondary);
-  opacity: 0.6;
-}
-.review-card-heading {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-headings);
-  margin-bottom: 0.5rem;
-}
-.review-card-text {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  flex-grow: 1;
-}
-.review-card-author-area {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin-top: auto;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--border-color-subtle);
-}
-.author-avatar-image {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border-color);
-}
-.author-name-text {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-.review-date-text {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  display: block;
-}
-
-/* --- Responsive Adjustments --- */
+/* Responsive Adjustments (Adapted from your original) */
 @media screen and (max-width: 1024px) {
   /* Tablet & Smaller Desktop */
   .main-content-wrapper {
@@ -1562,42 +1110,82 @@ button {
     top: calc(var(--header-height) + 1.5rem);
     height: calc(100vh - var(--header-height) - 3rem);
   }
-  /* Detail Page Specific Responsive */
-  .housing-detail-grid {
-    grid-template-columns: 1fr; /* Stack gallery and info columns */
-  }
-  .housing-info-column {
-    margin-top: 1.5rem; /* Add space when stacked */
-  }
-  .amenities-styled-list {
-    columns: 1; /* Single column for amenities */
-  }
 }
 
 @media screen and (max-width: 768px) {
   /* Tablet & Mobile */
   body {
     font-size: 15px;
+  } /* Slightly larger base for mobile app */
+  .site-header {
+    padding: 0.8rem 1rem;
   }
-  /* Header adjustments from base */
   .header-inner {
     padding: 0 1rem;
   }
   .logo a {
     font-size: 1.8rem;
   }
-  .main-nav#desktop-nav {
+  .main-nav {
     display: none;
-  } /* Hide desktop nav */
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+  }
+  .main-nav.active {
+    display: block;
+  }
+  .main-nav ul {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.5rem 0;
+    gap: 0;
+  }
+  .main-nav li {
+    width: 100%;
+  }
+  .main-nav a,
+  .main-nav .auth-button,
+  #language-switcher-toggle.header-button {
+    /* Include lang toggle in mobile */
+    display: block;
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    border-bottom: 1px solid var(--border-color-subtle);
+    font-weight: 500;
+    text-align: left;
+    border-radius: 0;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+  }
+  .main-nav li:last-child > a,
+  .main-nav li:last-child > button {
+    border-bottom: none;
+  }
+  .main-nav .auth-button {
+    margin: 0.5rem 1.5rem;
+    width: calc(100% - 3rem);
+    text-align: center;
+  }
+  .main-nav .auth-button.primary {
+    margin-top: 0.8rem;
+  }
   .hamburger {
     display: flex;
-  } /* Show hamburger */
+    z-index: 1100;
+  } /* Ensure hamburger is on top of mobile nav */
 
   .app-container {
-    /* Covers both listings and detail page */
     padding-top: calc(var(--header-height) + 1rem);
-  }
-  /* For listings page */
+  } /* Adjust for sticky header */
   .main-content-wrapper {
     flex-direction: column;
     gap: 1.5rem;
@@ -1621,7 +1209,7 @@ button {
   .map-container-outer {
     order: -1;
     width: 100%;
-    height: 300px;
+    height: 300px; /* Fixed height for map */
     flex-basis: auto;
   }
   .map-container#map-container-sticky {
@@ -1642,40 +1230,19 @@ button {
   }
   .sort-options {
     justify-content: space-around;
-  }
-
-  /* Chat Widget adjustment */
+  } /* Space out sort buttons */
   #chat-container {
     width: calc(100vw - 30px);
     max-width: 340px;
     max-height: calc(100vh - 80px);
-  }
-
-  /* Detail Page Specific Responsive */
-  .detail-content-area {
-    padding: 0 1rem;
-  }
-  .key-info-block {
-    grid-template-columns: 1fr;
-  }
-  .section-title-styled {
-    font-size: 1.4rem;
-  }
-  .map-render-area {
-    height: 300px;
-  }
-  .reviews-grid-layout {
-    grid-template-columns: 1fr;
   }
 }
 
 @media screen and (max-width: 480px) {
   /* Small Mobile */
   .app-container {
-    /* Covers both */
     padding-top: calc(var(--header-height) + 0.5rem);
   }
-  /* For listings page */
   .main-content-wrapper {
     padding: 0.8rem;
   }
@@ -1685,7 +1252,7 @@ button {
   .results-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
+  } /* Single column */
   .card-image-placeholder {
     height: 160px;
   }
@@ -1694,24 +1261,11 @@ button {
   }
   .auth-button span {
     display: none;
-  }
+  } /* Hide text on very small screens for icon-only auth button */
   .auth-button {
     padding: 0.6rem;
   }
   .auth-button i {
     margin-right: 0;
-  }
-
-  /* Detail Page Specific Responsive */
-  .gallery-thumbnails-container {
-    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-  }
-  .housing-top-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-  .price-display-area {
-    text-align: left;
   }
 }
