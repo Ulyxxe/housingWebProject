@@ -262,11 +262,7 @@
         <div class="card-image-placeholder">
           ${
             item.image
-              ? `<img src="${
-                  item.image.startsWith("http")
-                    ? item.image
-                    : "./uploads/" + item.image
-                }" alt="${item.title}" loading="lazy">`
+              ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
               : `<i class="far fa-image"></i>`
           }
         </div>
