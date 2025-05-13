@@ -509,7 +509,7 @@ html[data-accent-color="crous-accent-gold"] {
   backdrop-filter: blur(var(--header-blur));
   box-shadow: none;
   transition: transform 0.4s ease, background-color 0.3s ease,
-    border-color 0.3s ease, backdrop-filter 0.3s ease;
+    border-color 0.3s ease, backdrop-filter 0.3s ease, max-width 0.3s ease; /* Added max-width transition */
 }
 .header-inner {
   display: flex;
@@ -634,7 +634,9 @@ html[data-accent-color="crous-accent-gold"] {
   box-shadow: 0 2px 8px rgba(var(--accent-primary-rgb), 0.3);
 }
 .listings-button:hover i {
-  color: var(--bg-primary);
+  color: var(
+    --bg-primary
+  ); /* This might conflict with your .header-button i { color: var(--bg-primary); } if that's intended globally on hover for this button type */
 }
 /* Styles for language switcher toggle (was color-palette-toggle) */
 #language-switcher-toggle i {
@@ -1153,8 +1155,59 @@ body.has-scrolled .scroll-indicator {
   }
 }
 
+/* --- Larger Desktop Adjustments --- */
+@media (min-width: 1440px) {
+  /* Optionally, increase base font size for very large screens for better physical text size */
+  /* html {
+    font-size: 17px; 
+  } */
+
+  .site-header,
+  .section-content {
+    max-width: 1280px;
+  }
+  .hero-content {
+    max-width: 1000px; /* Was 900px */
+  }
+  .features-grid,
+  .process-steps {
+    max-width: 1100px; /* Was 1000px */
+  }
+  .contact-content {
+    max-width: 750px; /* Was 700px, modest increase for readability */
+  }
+  .hero-description {
+    max-width: 800px; /* Was 750px */
+  }
+}
+
+@media (min-width: 1800px) {
+  /* Optionally, further increase base font size */
+  /* html {
+    font-size: 18px;
+  } */
+
+  .site-header,
+  .section-content {
+    max-width: 1360px; /* Or 1400px if preferred */
+  }
+  .hero-content {
+    max-width: 1100px; /* Was 1000px at 1440px breakpoint */
+  }
+  .features-grid,
+  .process-steps {
+    max-width: 1200px; /* Was 1100px at 1440px breakpoint */
+  }
+  .contact-content {
+    max-width: 800px; /* Was 750px at 1440px breakpoint */
+  }
+  .hero-description {
+    max-width: 850px; /* Was 800px */
+  }
+}
+
 .header-button i {
-  font-size: 1em;
-  width: auto;
-  height: auto;
+  font-size: 1em; /* This means the icon size will be relative to the font-size of the button itself */
+  width: auto; /* Allow intrinsic width of the icon character */
+  height: auto; /* Allow intrinsic height of the icon character */
 }
