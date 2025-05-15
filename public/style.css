@@ -2492,60 +2492,124 @@ button {
 }
 
 /* ========================================
-   Filter Group Styles
+   Filter Group Styles & noUiSlider Theming
    ======================================== */
-/* Styling for noUiSlider elements */
+
+/* Container for the slider (if you want to add specific margins/padding around it) */
 .filter-group .noui-slider-container {
-  margin-top: 0.8rem;
-  padding: 0 0.5rem; /* Add some horizontal padding so handles don't touch edges */
+  margin-top: 1rem; /* Space above the slider itself */
+  margin-bottom: 0.5rem; /* Space below the slider, before next element */
+  padding: 0 8px; /* Horizontal padding so handles don't touch edges visually */
 }
 
-/* Target the noUiSlider elements - you can theme these further */
+/* The main slider track (target element) */
 .noUi-target {
-  background: var(--border-color-subtle); /* Track background */
+  background: var(
+    --input-bg
+  ); /* Darker background for the track, from your theme */
   border-radius: 4px;
-  border: 1px solid var(--border-color);
-  box-shadow: none;
-  height: 8px;
+  border: 1px solid var(--border-color); /* Slightly more visible border */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2); /* Inner shadow for depth */
+  height: 6px; /* Slightly thinner track */
+  position: relative; /* Keep this for noUiSlider's internal logic */
 }
 
+/* The part of the track between the two handles (the selected range) */
 .noUi-connect {
-  background: var(--accent-primary); /* Color of the range between handles */
-  border-radius: 4px;
+  background: var(--accent-primary); /* Your pink accent color */
+  border-radius: 4px; /* Match target if it fills the track */
   box-shadow: none;
+  /* height is determined by the library based on .noUi-target */
 }
 
+/* The draggable handles */
 .noUi-handle {
-  height: 18px;
-  width: 18px;
-  top: -6px; /* Adjust to center on the track */
-  right: -9px; /* Half of width to align */
-  border-radius: 50%;
-  background: var(--accent-primary);
-  border: 2px solid var(--container-bg); /* Match slider thumb style */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  height: 16px; /* Adjust size */
+  width: 16px; /* Adjust size */
+  top: -5px; /* Recalculate: (track_height - handle_height) / 2 = (6px - 16px) / 2 = -5px */
+  right: -8px; /* Recalculate: (handle_width / 2) */
+  border-radius: 50%; /* Keep them circular */
+  background: var(
+    --bg-primary
+  ); /* Match your page background for a "cut-out" look */
+  border: 2px solid var(--accent-primary); /* Pink border for the handles */
+  box-shadow: 0 0 0 3px var(--bg-primary), 0 1px 4px rgba(0, 0, 0, 0.3); /* Create a "floating" effect */
   cursor: grab;
-  transition: transform 0.1s ease-out;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
 }
-.noUi-handle:focus {
-  outline: none; /* Remove default focus outline if you handle it otherwise */
+
+.noUi-handle:focus,
+.noUi-handle:hover {
+  outline: none;
+  border-color: var(--accent-secondary); /* Darker pink on hover/focus */
+  box-shadow: 0 0 0 3px var(--bg-primary),
+    0 2px 6px rgba(var(--accent-primary-rgb), 0.4);
 }
+
 .noUi-handle:active {
   cursor: grabbing;
-  transform: scale(1.15);
+  transform: scale(1.1);
+  border-color: var(--accent-secondary);
 }
 
+/* Hide default noUiSlider ::before and ::after on handles if you don't need them */
 .noUi-handle::before,
 .noUi-handle::after {
-  display: none; /* Hide default noUiSlider pseudo-elements if not needed */
+  display: none;
 }
 
-/* Remove styles for the old dual-slider-group if they exist */
-.filter-group .dual-slider-group {
-  display: none; /* Or remove entirely if you've deleted the HTML */
+/* Tooltips that show the current value on the handles (if enabled in JS) */
+.noUi-tooltip {
+  display: block;
+  position: absolute;
+  bottom: 110%; /* Position above the handle */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--bg-tertiary); /* Dark background for tooltip */
+  color: var(--text-primary); /* Light text */
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0; /* Hidden by default, noUiSlider controls visibility */
+  transition: opacity 0.1s, transform 0.1s;
 }
 
-/* Enhanced No Results Message */
+.noUi-active .noUi-tooltip {
+  /* Show when handle is active or tooltips are always on */
+  opacity: 1;
+}
+
+/* Styles for the range header text (e.g., "Price Range", "$0 - $10000") */
+.filter-group .range-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Align items vertically */
+  margin-bottom: 0.5rem; /* Reduced margin as slider container has its own margin */
+  font-size: 0.9rem; /* Match other filter group text if needed */
+}
+
+.filter-group .range-header label {
+  font-weight: 500; /* Make the "Price Range" label slightly bolder */
+  color: var(--text-primary); /* Ensure good contrast */
+}
+
+.filter-group .range-header span {
+  /* This is your #price-range-value-display */
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--input-bg); /* Match input field background */
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.85em; /* Slightly smaller than the label */
+}
+
+/* ========================================
+   NO Results Styles
+   ======================================== */
 .results-grid .no-results-found {
   grid-column: 1 / -1; /* Make it span all columns if results-grid is a multi-column grid */
   display: flex;
