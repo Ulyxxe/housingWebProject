@@ -8,7 +8,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CROUS-X | Find Student Housing</title> <!-- App-specific title -->
+    <title>CROUS-X | Find Student Housing</title>
     <meta
       name="description"
       content="Search and filter student accommodations in Paris with CROUS-X."
@@ -24,14 +24,17 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <!-- noUiSlider CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" integrity="sha512-qveKnGrvOChbSzAdtSs8p69eoLegNoHPWzf9VolD/ស្លāk5L7gVNHY<seg_22>DqM0H_LgOyTCTHRGl7qSgEV_isQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="icon" type="image/png" href="assets/images/icon.png"> 
+    <link rel="icon" type="image/png" href="assets/images/icon.png">
 
   </head>
 
   <body>
-    <?php require 'header.php'; // Or require_once if you prefer ?>
-    <!-- App Content Area -->
+    <?php require 'header.php'; ?>
     <div class="app-container">
         <div class="main-content-wrapper">
             <aside class="filters-sidebar" id="filters-container">
@@ -49,11 +52,8 @@
                   <label data-lang-key="filter_price_range">Price Range</label>
                   <span id="price-range-value-display">$0 - $10000</span>
                 </div>
-                <div class="dual-slider-group">
-                    <label for="price-range-min" class="slider-label-min" data-lang-key="filter_min">Min:</label>
-                    <input type="range" id="price-range-min" name="price-range-min" min="0" max="10000" value="0" class="slider filter-range filter-range-min" />
-                    <label for="price-range-max" class="slider-label-max" data-lang-key="filter_max">Max:</label>
-                    <input type="range" id="price-range-max" name="price-range-max" min="0" max="10000" value="10000" class="slider filter-range filter-range-max" />
+                <div class="noui-slider-container">
+                    <div id="price-slider"></div> {/* This div will become the noUiSlider for price */}
                 </div>
               </section>
 
@@ -62,17 +62,15 @@
                   <label data-lang-key="filter_size_range">Size Range</label>
                   <span id="size-range-value-display">9 m² - 250 m²</span>
                 </div>
-                 <div class="dual-slider-group">
-                    <label for="size-range-min" class="slider-label-min" data-lang-key="filter_min">Min:</label>
-                    <input type="range" id="size-range-min" name="size-range-min" min="9" max="250" value="9" class="slider filter-range filter-range-min" />
-                    <label for="size-range-max" class="slider-label-max" data-lang-key="filter_max">Max:</label>
-                    <input type="range" id="size-range-max" name="size-range-max" min="9" max="250" value="250" class="slider filter-range filter-range-max" />
+                <div class="noui-slider-container">
+                    <div id="size-slider"></div> {/* This div will become the noUiSlider for size */}
                 </div>
               </section>
               <button id="clear-filters-btn" class="btn btn-secondary full-width" data-lang-key="filter_clear">Clear Filters</button>
             </aside>
 
             <main class="results-area">
+              {/* ... rest of your results-area HTML ... */}
               <div class="search-and-sort">
                 <div class="search-container">
                   <input type="search" id="search-input" placeholder="Search by name..." data-lang-key-placeholder="search_placeholder_app" />
@@ -89,7 +87,6 @@
               <div class="results-layout" id="results-layout">
                 <div class="results-grid-container">
                   <div class="results-grid" id="results-grid">
-                    <!-- Housing cards will be injected here by JS -->
                     <p data-lang-key="loading_listings_app">Loading listings...</p>
                   </div>
                 </div>
@@ -107,6 +104,8 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <!-- noUiSlider JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js" integrity="sha512-UOJe4paV6hYWBnS0c9GnUkQVYLFPOhfmTCpUPcNkN2D9cmLgqGo8id2SNo3FvVB3uaMijMjo7VPL1AwIFlqxKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="script.js"></script> 
     <script src="chatbot.js"></script>
   </body>

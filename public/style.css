@@ -2491,27 +2491,103 @@ button {
   }
 }
 
-/*dual filtering bars*/
+/* ========================================
+   Filter Group Styles
+   ======================================== */
+/* Styling for noUiSlider elements */
+.filter-group .noui-slider-container {
+  margin-top: 0.8rem;
+  padding: 0 0.5rem; /* Add some horizontal padding so handles don't touch edges */
+}
+
+/* Target the noUiSlider elements - you can theme these further */
+.noUi-target {
+  background: var(--border-color-subtle); /* Track background */
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+  height: 8px;
+}
+
+.noUi-connect {
+  background: var(--accent-primary); /* Color of the range between handles */
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.noUi-handle {
+  height: 18px;
+  width: 18px;
+  top: -6px; /* Adjust to center on the track */
+  right: -9px; /* Half of width to align */
+  border-radius: 50%;
+  background: var(--accent-primary);
+  border: 2px solid var(--container-bg); /* Match slider thumb style */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: transform 0.1s ease-out;
+}
+.noUi-handle:focus {
+  outline: none; /* Remove default focus outline if you handle it otherwise */
+}
+.noUi-handle:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+}
+
+.noUi-handle::before,
+.noUi-handle::after {
+  display: none; /* Hide default noUiSlider pseudo-elements if not needed */
+}
+
+/* Remove styles for the old dual-slider-group if they exist */
 .filter-group .dual-slider-group {
-  margin-top: 0.8rem; /* Add some space below the main range header */
+  display: none; /* Or remove entirely if you've deleted the HTML */
 }
 
-.filter-group .dual-slider-group .slider {
-  width: 100%; /* Ensure sliders take full width within their context */
-  margin-bottom: 0.5rem; /* Space below each slider */
-}
-.filter-group .dual-slider-group .slider:last-of-type {
-  margin-bottom: 0;
-}
-
-.filter-group .slider-label-min,
-.filter-group .slider-label-max {
-  display: block; /* Or inline-block if you want them beside sliders, but stacking is simpler */
-  font-size: 0.8em;
+/* Enhanced No Results Message */
+.results-grid .no-results-found {
+  grid-column: 1 / -1; /* Make it span all columns if results-grid is a multi-column grid */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1rem; /* More padding */
+  margin-top: 2rem;
+  background-color: var(--input-bg); /* Subtle background */
+  border-radius: 10px;
+  border: 1px dashed var(--border-color); /* Dashed border for emphasis */
   color: var(--text-secondary);
-  margin-bottom: 0.2em;
+  min-height: 200px; /* Give it some height */
 }
-.filter-group .range-header label {
-  /* The main label for "Price Range" or "Size Range" */
-  font-weight: 500; /* Make it slightly more prominent */
+
+.no-results-found .no-results-icon {
+  font-size: 3rem; /* Larger icon */
+  color: var(--accent-primary); /* Use accent color for the icon */
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.no-results-found h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-headings); /* Use heading color */
+  margin-bottom: 0.8rem;
+}
+
+.no-results-found p {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 450px; /* Limit width of suggestion text for readability */
+}
+
+/* Optional: Style for light theme if needed */
+[data-theme="light"] .results-grid .no-results-found {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color-subtle);
+}
+
+[data-theme="light"] .no-results-found .no-results-icon {
+  color: var(--accent-secondary); /* Slightly darker accent for light theme */
 }
