@@ -86,9 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-            // Insert into 'users' table.
-            // 'user_type' will use its DB default ('student').
-            // 'is_active' will use its DB default (1).
             $stmt = $pdo->prepare(
                 "INSERT INTO users (username, email, password_hash, first_name, last_name) 
                  VALUES (:username, :email, :password_hash, :first_name, :last_name)"
@@ -100,15 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':last_name', $last_name);
             
             if ($stmt->execute()) {
-                $success = "Registration successful! You can now <a href='login.php'>log in</a>.";
-                // To automatically log in:
+                $success = "Registration successful! You can now <a href='login.php' data-i18n-key='register_success_login_link'>log in</a>.";
+                // To automatically log in and redirect:
                 // $_SESSION['user_id'] = $pdo->lastInsertId();
                 // $_SESSION['username'] = $username;
-                // $_SESSION['email'] = $email;
-                // $_SESSION['first_name'] = $first_name;
-                // $_SESSION['last_name'] = $last_name;
-                // $_SESSION['user_type'] = 'student'; // Or fetch it if needed
-                // header("Location: dashboard.php");
+                // // ... set other session variables ...
+                // header("Location: dashboard.php"); // Or home.php
                 // exit;
             } else {
                 $errors[] = "Registration failed. Please try again.";
@@ -119,13 +113,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Determine if user is logged in (for header logic)
+$isLoggedIn = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register - CROUS-X</title>
+    <title data-i18n-key="register_page_title_document">Register - CROUS-X</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
@@ -134,118 +131,151 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" href="assets/images/icon.png" />
   </head>
   <body>
-    <?php require 'header.php'; // Or require_once if you prefer ?>
+    <?php require 'header.php'; ?>
 
-    <div class="main-content-wrapper register-page-wrapper">
-      <div class="register-container">
-        <h2>Create Account</h2>
+    <main class="app-container auth-page-wrapper"> <!-- Consistent main wrapper -->
+      <div class="auth-form-container"> <!-- Specific container for the form box -->
+        <h2 class="auth-form-title" data-i18n-key="register_form_title">Create Account</h2>
 
         <?php if (!empty($success)): ?>
-          <div class="alert alert-success" role="alert" style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
-            <?php echo $success; ?>
+          <div class="form-message success-message">
+            <i class="fas fa-check-circle"></i>
+            <span data-i18n-key="register_success_message_dynamic"><?php echo $success; // Link is part of the success message here ?></span>
           </div>
         <?php endif; ?>
 
         <?php if (!empty($errors)): ?>
-          <div class="alert alert-danger" role="alert" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
-            <ul style="margin: 0; padding-left: 20px;">
-              <?php foreach ($errors as $error): ?>
-                <li><?php echo htmlspecialchars($error); ?></li>
-              <?php endforeach; ?>
-            </ul>
+          <div class="form-message error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong data-i18n-key="register_error_heading">Please correct the following errors:</strong>
+              <ul class="error-list">
+                <?php foreach ($errors as $error): ?>
+                  <li><?php echo htmlspecialchars($error); ?></li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
           </div>
         <?php endif; ?>
 
-        <?php if (empty($success)): ?>
-        <form action="register.php" method="post" id="registrationForm">
-          <div class="form-group">
-            <label for="first_name">First Name</label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name" 
-              placeholder="Enter your first name"
-              value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>"
-              required
-            />
+        <?php if (empty($success)): // Only show form if registration isn't successful ?>
+        <form action="register.php" method="post" id="registrationForm" class="auth-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first_name" data-i18n-key="register_label_firstname">First Name</label>
+              <div class="input-group">
+                <span class="input-group-icon"><i class="fas fa-user"></i></span>
+                <input
+                  type="text"
+                  id="first_name"
+                  name="first_name" 
+                  placeholder="Enter your first name"
+                  data-i18n-key-placeholder="register_placeholder_firstname"
+                  value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="last_name" data-i18n-key="register_label_lastname">Last Name</label>
+              <div class="input-group">
+                <span class="input-group-icon"><i class="fas fa-user"></i></span>
+                <input
+                  type="text"
+                  id="last_name"
+                  name="last_name" 
+                  placeholder="Enter your last name"
+                  data-i18n-key-placeholder="register_placeholder_lastname"
+                  value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>"
+                  required
+                />
+              </div>
+            </div>
           </div>
+
           <div class="form-group">
-            <label for="last_name">Last Name</label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name" 
-              placeholder="Enter your last name"
-              value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username" 
-              placeholder="Choose a username (letters, numbers, _)"
-              value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>"
-              pattern="^[a-zA-Z0-9_]+$"
-              title="Username can only contain letters, numbers, and underscores."
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="password">Password (min. 6 characters)</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Create a password"
-              required
-            />
+            <label for="username" data-i18n-key="register_label_username">Username</label>
+             <div class="input-group">
+              <span class="input-group-icon"><i class="fas fa-at"></i></span>
+              <input
+                type="text"
+                id="username"
+                name="username" 
+                placeholder="Choose a username"
+                data-i18n-key-placeholder="register_placeholder_username"
+                value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>"
+                pattern="^[a-zA-Z0-9_]+$"
+                title="Username can only contain letters, numbers, and underscores."
+                required
+              />
+            </div>
           </div>
           <div class="form-group">
-            <label for="confirm-password">Confirm Password</label>
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirm_password"
-              placeholder="Confirm your password"
-              required
-            />
+            <label for="email" data-i18n-key="register_label_email">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-icon"><i class="fas fa-envelope"></i></span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="your.email@example.com"
+                data-i18n-key-placeholder="register_placeholder_email"
+                value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>"
+                required
+              />
+            </div>
           </div>
-          <div class="form-group terms-group">
-            <input type="checkbox" id="terms" name="terms" required 
-                   <?php echo (isset($_POST['terms'])) ? 'checked' : ''; ?> />
-            <label for="terms"
-              >I agree to the <a href="#">Terms of Service</a> &
-              <a href="#">Privacy Policy</a></label
-            >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password" data-i18n-key="register_label_password">Password</label>
+              <div class="input-group">
+                <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Create a password (min. 6)"
+                  data-i18n-key-placeholder="register_placeholder_password"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirm-password" data-i18n-key="register_label_confirmpassword">Confirm Password</label>
+              <div class="input-group">
+                <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  name="confirm_password"
+                  placeholder="Confirm your password"
+                  data-i18n-key-placeholder="register_placeholder_confirmpassword"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <button type="submit" class="btn btn-register btn-register-submit">
+          <div class="form-group terms-agreement-group">
+            <label class="checkbox-item-inline">
+              <input type="checkbox" id="terms" name="terms" required 
+                     <?php echo (isset($_POST['terms'])) ? 'checked' : ''; ?> />
+              <span data-i18n-key="register_text_agree_terms_part1">I agree to the</span> <a href="#" data-i18n-key="register_link_terms">Terms of Service</a> & <a href="#" data-i18n-key="register_link_privacy">Privacy Policy</a>
+            </label>
+          </div>
+          <button type="submit" class="btn-auth primary-auth-button" data-i18n-key="register_button_register">
             Register
           </button>
         </form>
-        <?php endif; ?>
+        <?php endif; // End of if(empty($success)) ?>
 
-        <div class="login-links">
-          <p>Already have an account? <a href="login.php">Sign in here</a></p>
+        <div class="auth-form-footer-links">
+          <p data-i18n-key="register_text_already_account">Already have an account? <a href="login.php" data-i18n-key="register_link_signin_here">Sign in here</a></p>
         </div>
       </div>
-    </div>
+    </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

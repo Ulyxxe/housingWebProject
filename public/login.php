@@ -3,23 +3,26 @@
 session_start();
 
 // Optionally include configuration or helper files
-// require_once 'config.php';
+// require_once __DIR__ . '/../config/config.php';
+
+// Determine if user is logged in (for header logic)
+$isLoggedIn = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - CROUS-X</title>
-    <!-- Leaflet CSS (Optional for login, but keeps consistency if header uses it) -->
+    <title data-i18n-key="login_page_title_document">Login - CROUS-X</title>
+    
+    <!-- Leaflet CSS (Optional, keep if header depends on it or for consistency) -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-
-    <!-- Marker Cluster CSS (Optional for login) -->
+    <!-- Marker Cluster CSS (Optional) -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
@@ -39,52 +42,70 @@ session_start();
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="icon" type="image/png" href="images/icon.png" />
+    <link rel="icon" type="image/png" href="assets/images/icon.png" /> <!-- Corrected path -->
   </head>
   <body>
-    <?php require 'header.php'; // Or require_once if you prefer ?>
+    <?php require 'header.php'; ?>
 
-    <div class="main-content-wrapper login-page-wrapper">
-      <!-- Added login-page-wrapper class -->
+    <main class="app-container auth-page-wrapper"> <!-- Consistent main wrapper -->
+      <div class="auth-form-container"> <!-- Specific container for the form box -->
+        <h2 class="auth-form-title" data-i18n-key="login_form_title">Sign In</h2>
+        
+        <!-- Placeholder for login error messages -->
+        <?php if (isset($_SESSION['login_error'])): ?>
+            <div class="form-message error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <?php echo htmlspecialchars($_SESSION['login_error']); unset($_SESSION['login_error']); ?>
+            </div>
+        <?php endif; ?>
 
-      <div class="login-container">
-        <h2>Sign In</h2>
-        <form action="authenticate.php" method="post" id="loginForm">
-          <!-- Post to your authentication handler -->
+        <form action="authenticate.php" method="post" id="loginForm" class="auth-form">
           <div class="form-group">
-            <label for="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-            />
+            <label for="email" data-i18n-key="login_label_email">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-icon"><i class="fas fa-envelope"></i></span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="your.email@example.com"
+                data-i18n-key-placeholder="login_placeholder_email"
+                required
+              />
+            </div>
           </div>
           <div class="form-group">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-            />
+            <label for="password" data-i18n-key="login_label_password">Password</label>
+            <div class="input-group">
+              <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                data-i18n-key-placeholder="login_placeholder_password"
+                required
+              />
+            </div>
           </div>
           <div class="form-group form-options">
-            <a href="#" class="forgot-password">Forgot Password?</a>
+            {/* Optional: Remember me checkbox
+            <label class="checkbox-item-inline">
+              <input type="checkbox" name="remember_me">
+              <span data-i18n-key="login_label_remember_me">Remember me</span>
+            </label>
+            */}
+            <a href="#" class="forgot-password-link" data-i18n-key="login_link_forgot_password">Forgot Password?</a>
           </div>
-          <button type="submit" class="btn btn-register btn-login-submit">
+          <button type="submit" class="btn-auth primary-auth-button" data-i18n-key="login_button_signin">
             Sign In
           </button>
-          <!-- Reusing register style for the button -->
         </form>
-        <div class="login-links">
-          <p>Don't have an account? <a href="register.php">Register here</a></p>
+        <div class="auth-form-footer-links">
+          <p data-i18n-key="login_text_no_account">Don't have an account? <a href="register.php" data-i18n-key="login_link_register_here">Register here</a></p>
         </div>
       </div>
-    </div>
-    <!-- End main-content-wrapper -->
+    </main>
 
     <!-- Leaflet JS (Keep if needed by other scripts or header) -->
     <script
@@ -94,7 +115,8 @@ session_start();
     ></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
-    <!-- Your script.js - needed for dark mode toggle -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    <!-- No need for chatbot.js unless you specifically want the chatbot on the login page -->
+    <!-- <script src="chatbot.js" defer></script> -->
   </body>
 </html>

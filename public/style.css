@@ -1822,3 +1822,317 @@ button {
     padding-left: 1.6em;
   }
 }
+
+/* ========================================
+   Authentication Pages (Login, Register)
+   ======================================== */
+.auth-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height)); /* Full height minus header */
+  padding: 2rem 1rem; /* Padding for smaller screens */
+}
+
+.auth-form-container {
+  background-color: var(--container-bg);
+  padding: 2rem 2.5rem; /* More padding */
+  border-radius: 12px; /* More rounded corners */
+  border: 1px solid var(--grey-border);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 420px; /* Max width of the form box */
+  text-align: center; /* Center title and footer links */
+}
+[data-theme="dark"] .auth-form-container {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.auth-form-title {
+  font-size: 1.8rem; /* Slightly larger title */
+  font-weight: 600;
+  color: var(--text-headings);
+  margin-bottom: 1.8rem;
+  text-align: center;
+}
+
+.auth-form .form-group {
+  margin-bottom: 1.2rem;
+  text-align: left; /* Align labels to the left */
+}
+
+.auth-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* Input Group for Icons */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-group-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  opacity: 0.7;
+  pointer-events: none; /* Allow click-through to input */
+  font-size: 0.9em;
+}
+
+.auth-form input[type="email"],
+.auth-form input[type="password"],
+.auth-form input[type="text"], /* For register page name fields */
+.auth-form input[type="tel"] {
+  /* If you add phone number */
+  width: 100%;
+  padding: 0.75rem 0.8rem 0.75rem 2.5rem; /* Left padding for icon */
+  background-color: var(--input-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 8px; /* Rounded inputs */
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+}
+.auth-form input[type="email"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="text"]:focus,
+.auth-form input[type="tel"]:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.2);
+}
+.auth-form input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.auth-form .form-options {
+  display: flex;
+  justify-content: space-between; /* Puts remember me left, forgot password right */
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.forgot-password-link {
+  color: var(--text-link);
+  text-decoration: none;
+}
+.forgot-password-link:hover {
+  text-decoration: underline;
+  filter: brightness(1.1);
+}
+
+/* Inline Checkbox (if you add 'Remember Me') */
+.checkbox-item-inline {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.checkbox-item-inline input[type="checkbox"] {
+  margin-right: 0.5em;
+  width: 15px;
+  height: 15px;
+  /* Use your existing .checkbox-item input[type="checkbox"] styles if they are better */
+  accent-color: var(--accent-primary); /* Modern way to color checkbox */
+}
+
+.btn-auth {
+  /* General button style for auth forms */
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-smooth),
+    transform var(--transition-smooth);
+}
+.btn-auth:hover {
+  transform: translateY(-2px);
+}
+.btn-auth:active {
+  transform: translateY(0);
+}
+
+.primary-auth-button {
+  /* For main actions like Sign In, Register */
+  background-color: var(--accent-primary);
+  color: var(--bg-primary); /* Text color on accent */
+}
+[data-theme="dark"] .primary-auth-button {
+  color: #000; /* Ensure contrast on dark theme with pink button */
+}
+.primary-auth-button:hover {
+  background-color: var(--accent-secondary);
+}
+
+.auth-form-footer-links {
+  margin-top: 1.8rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.auth-form-footer-links a {
+  color: var(--text-link);
+  font-weight: 500;
+  text-decoration: none;
+}
+.auth-form-footer-links a:hover {
+  text-decoration: underline;
+  filter: brightness(1.1);
+}
+
+/* Form Messages (for errors or success) */
+.form-message {
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+.form-message i {
+  margin-right: 0.6rem;
+  font-size: 1.1em;
+}
+.error-message {
+  background-color: rgba(
+    217,
+    83,
+    79,
+    0.15
+  ); /* Bootstrap danger color, lightened */
+  border: 1px solid rgba(217, 83, 79, 0.3);
+  color: #d9534f; /* Bootstrap danger color */
+}
+[data-theme="dark"] .error-message {
+  background-color: rgba(217, 83, 79, 0.25);
+  border: 1px solid rgba(217, 83, 79, 0.5);
+  color: #e7726e; /* Lighter red for dark theme */
+}
+.success-message {
+  background-color: rgba(
+    92,
+    184,
+    92,
+    0.15
+  ); /* Bootstrap success color, lightened */
+  border: 1px solid rgba(92, 184, 92, 0.3);
+  color: #5cb85c;
+}
+[data-theme="dark"] .success-message {
+  background-color: rgba(92, 184, 92, 0.25);
+  border: 1px solid rgba(92, 184, 92, 0.5);
+  color: #79c779;
+}
+
+/* Responsive */
+@media screen and (max-width: 480px) {
+  .auth-form-container {
+    padding: 1.5rem;
+  }
+  .auth-form-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* ========================================
+   Authentication Pages (Login, Register) - Enhancements
+   ======================================== */
+
+/* Ensure .auth-page-wrapper, .auth-form-container, .auth-form-title, 
+   .auth-form .form-group, label, .input-group, .input-group-icon, 
+   input styles, .btn-auth, .primary-auth-button, .auth-form-footer-links,
+   .form-message, .error-message, .success-message 
+   are already defined from the login page styling. */
+
+/* For two-column layout on wider screens for certain fields */
+.auth-form .form-row {
+  display: flex;
+  gap: 1rem; /* Space between columns */
+  margin-bottom: 1.2rem; /* Keep consistent bottom margin for rows */
+}
+.auth-form .form-row .form-group {
+  flex: 1; /* Each group takes equal space */
+  margin-bottom: 0; /* Remove individual bottom margin as row handles it */
+}
+
+/* Specific to Register Page Terms Agreement */
+.terms-agreement-group {
+  margin-top: 0.5rem; /* Little less top margin for terms */
+  margin-bottom: 1.5rem !important; /* More bottom margin before button */
+  text-align: left;
+}
+.terms-agreement-group .checkbox-item-inline {
+  /* Re-use from login if available */
+  display: flex;
+  align-items: flex-start; /* Align checkbox with start of text line */
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.terms-agreement-group .checkbox-item-inline input[type="checkbox"] {
+  margin-right: 0.6em;
+  margin-top: 0.2em; /* Align checkbox better with text */
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  accent-color: var(--accent-primary);
+}
+.terms-agreement-group .checkbox-item-inline a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+.terms-agreement-group .checkbox-item-inline a:hover {
+  text-decoration: underline;
+}
+
+/* Styling for error list within error message */
+.error-message .error-list {
+  list-style: none; /* Or disc if you prefer bullets */
+  padding-left: 0; /* Or 1rem if using bullets */
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+.error-message .error-list li {
+  margin-bottom: 0.3rem;
+}
+.error-message .error-list li:last-child {
+  margin-bottom: 0;
+}
+.error-message > div {
+  /* To allow icon and text to align nicely */
+  display: flex;
+  flex-direction: column; /* Stack heading and list */
+  text-align: left;
+}
+.error-message > div strong {
+  margin-bottom: 0.3em;
+}
+
+/* Responsive adjustments for form rows */
+@media screen and (max-width: 576px) {
+  /* Adjust breakpoint as needed */
+  .auth-form .form-row {
+    flex-direction: column; /* Stack fields in a row on smaller screens */
+    gap: 0; /* Remove gap when stacked */
+    margin-bottom: 0; /* Handled by individual form-groups now */
+  }
+  .auth-form .form-row .form-group {
+    margin-bottom: 1.2rem; /* Add back bottom margin for stacked items */
+  }
+}
