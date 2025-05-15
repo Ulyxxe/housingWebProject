@@ -53,6 +53,15 @@
     sans-serif;
   --font-mono: "Roboto Mono", monospace;
   --transition-smooth: all 0.3s ease-in-out; /* Consistent with landing */
+
+  /*Slider Styles (Dark Theme)*/
+  --slider-track-bg: #222030; /* A dark color for the non-selected part of the track */
+  --slider-gradient-start: var(--accent-primary); /* e.g., #e91e63 */
+  --slider-gradient-end: #8a2be2; /* A contrasting cool color, e.g., blueviolet */
+  --slider-handle-bg: var(
+    --bg-primary
+  ); /* Center of handle matches page background */
+  --slider-handle-border-color: #ffd780; /* A light gold/peach color for handle border */
 }
 
 [data-theme="light"] {
@@ -88,6 +97,13 @@
   /* Light theme language hover (example, adjust as needed) */
   --lang-hover-bg: rgba(233, 30, 99, 0.08); /* Lighter translucent pink */
   --lang-hover-text: var(--accent-secondary); /* Darker pink text */
+
+  /*Slider Styles (Light Theme)*/
+  --slider-track-bg: #d1d1e0; /* Lighter track for light theme */
+  --slider-gradient-start: var(--accent-primary);
+  --slider-gradient-end: #7f00ff; /* A slightly adjusted purple for light theme */
+  --slider-handle-bg: var(--bg-primary); /* e.g., #fdfbff */
+  --slider-handle-border-color: #e6a157; /* A slightly darker gold/peach for light theme */
 }
 
 /* Accent Color Definitions (from landing, for general accent consistency) */
@@ -2495,116 +2511,122 @@ button {
    Filter Group Styles & noUiSlider Theming
    ======================================== */
 
-/* Container for the slider (if you want to add specific margins/padding around it) */
 .filter-group .noui-slider-container {
-  margin-top: 1rem; /* Space above the slider itself */
-  margin-bottom: 0.5rem; /* Space below the slider, before next element */
-  padding: 0 8px; /* Horizontal padding so handles don't touch edges visually */
+  margin-top: 1rem;
+  margin-bottom: 1.2rem; /* Added a bit more space below */
+  padding: 0 10px; /* Enough padding for larger handles */
 }
 
 /* The main slider track (target element) */
 .noUi-target {
   background: var(
-    --input-bg
-  ); /* Darker background for the track, from your theme */
-  border-radius: 4px;
-  border: 1px solid var(--border-color); /* Slightly more visible border */
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2); /* Inner shadow for depth */
-  height: 6px; /* Slightly thinner track */
-  position: relative; /* Keep this for noUiSlider's internal logic */
+    --slider-track-bg
+  ); /* Use the new track background variable */
+  border-radius: 5px; /* Slightly more rounded track ends */
+  border: none; /* Remove default border if you want a cleaner look */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); /* More pronounced inner shadow */
+  height: 8px; /* Track height */
+  position: relative;
 }
 
 /* The part of the track between the two handles (the selected range) */
 .noUi-connect {
-  background: var(--accent-primary); /* Your pink accent color */
-  border-radius: 4px; /* Match target if it fills the track */
+  /* Apply the gradient here */
+  background: linear-gradient(
+    to right,
+    var(--slider-gradient-start),
+    var(--slider-gradient-end)
+  );
+  border-radius: 5px; /* Match target */
   box-shadow: none;
-  /* height is determined by the library based on .noUi-target */
+  /* height is determined by the library */
 }
 
 /* The draggable handles */
 .noUi-handle {
-  height: 16px; /* Adjust size */
-  width: 16px; /* Adjust size */
-  top: -5px; /* Recalculate: (track_height - handle_height) / 2 = (6px - 16px) / 2 = -5px */
-  right: -8px; /* Recalculate: (handle_width / 2) */
-  border-radius: 50%; /* Keep them circular */
-  background: var(
-    --bg-primary
-  ); /* Match your page background for a "cut-out" look */
-  border: 2px solid var(--accent-primary); /* Pink border for the handles */
-  box-shadow: 0 0 0 3px var(--bg-primary), 0 1px 4px rgba(0, 0, 0, 0.3); /* Create a "floating" effect */
+  height: 20px; /* Larger handle */
+  width: 20px; /* Larger handle */
+  top: -6px; /* Recalculate: (track_height - handle_height) / 2 = (8px - 20px) / 2 = -6px */
+  right: -10px; /* Recalculate: (handle_width / 2) */
+  border-radius: 50%;
+  background: var(--slider-handle-bg); /* Center of handle matches page bg */
+  border: 3px solid var(--slider-handle-border-color); /* Thicker, new border color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35); /* Subtle drop shadow for the handle */
   cursor: grab;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
 .noUi-handle:focus,
 .noUi-handle:hover {
   outline: none;
-  border-color: var(--accent-secondary); /* Darker pink on hover/focus */
-  box-shadow: 0 0 0 3px var(--bg-primary),
-    0 2px 6px rgba(var(--accent-primary-rgb), 0.4);
+  border-color: var(
+    --slider-handle-border-color
+  ); /* Keep border color or make it brighter */
+  /* You could add a subtle glow or slightly more intense shadow on hover if desired */
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4),
+    0 0 0 2px rgba(var(--accent-primary-rgb), 0.2);
 }
 
 .noUi-handle:active {
   cursor: grabbing;
-  transform: scale(1.1);
-  border-color: var(--accent-secondary);
+  transform: scale(1.1); /* Slightly larger when dragging */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
 }
 
-/* Hide default noUiSlider ::before and ::after on handles if you don't need them */
 .noUi-handle::before,
 .noUi-handle::after {
   display: none;
 }
 
-/* Tooltips that show the current value on the handles (if enabled in JS) */
+/* Tooltips that show the current value on the handles */
 .noUi-tooltip {
   display: block;
   position: absolute;
-  bottom: 110%; /* Position above the handle */
+  bottom: 120%; /* Position further above the larger handle */
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--bg-tertiary); /* Dark background for tooltip */
-  color: var(--text-primary); /* Light text */
-  font-size: 0.75rem;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 0.8rem; /* Slightly larger tooltip text */
   font-weight: 500;
-  padding: 3px 6px;
+  padding: 4px 8px; /* More padding */
   border-radius: 4px;
   border: 1px solid var(--border-color);
   white-space: nowrap;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  opacity: 0; /* Hidden by default, noUiSlider controls visibility */
+  opacity: 0;
   transition: opacity 0.1s, transform 0.1s;
+  pointer-events: none; /* So tooltips don't interfere with handle dragging */
 }
 
+.noUi-handle:hover .noUi-tooltip, /* Show tooltip on handle hover */
 .noUi-active .noUi-tooltip {
-  /* Show when handle is active or tooltips are always on */
   opacity: 1;
+  transform: translateX(-50%) translateY(-2px); /* Slight upward movement */
 }
 
 /* Styles for the range header text (e.g., "Price Range", "$0 - $10000") */
 .filter-group .range-header {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Align items vertically */
-  margin-bottom: 0.5rem; /* Reduced margin as slider container has its own margin */
-  font-size: 0.9rem; /* Match other filter group text if needed */
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .filter-group .range-header label {
-  font-weight: 500; /* Make the "Price Range" label slightly bolder */
-  color: var(--text-primary); /* Ensure good contrast */
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .filter-group .range-header span {
   /* This is your #price-range-value-display */
   font-weight: 500;
   color: var(--text-secondary);
-  background-color: var(--input-bg); /* Match input field background */
+  background-color: var(--input-bg);
   padding: 0.2em 0.5em;
   border-radius: 4px;
-  font-size: 0.85em; /* Slightly smaller than the label */
+  font-size: 0.85em;
 }
 
 /* ========================================
