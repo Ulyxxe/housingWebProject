@@ -13,8 +13,7 @@
       name="description"
       content="Search and filter student accommodations in Paris with CROUS-X."
     />
-    <!-- <link rel="icon" href="assets/images/crous-x-icon.svg" type="image/svg+xml" /> -->
-    <link rel="stylesheet" href="style.css" /> <!-- NEW CSS FILENAME -->
+    <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,8 +24,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-    <!-- Removed your old style.css link, assuming crous-x-app-style.css replaces it -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- For chat markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/images/icon.png"> 
+
   </head>
 
   <body>
@@ -43,19 +43,31 @@
                 <div class="checkbox-item"><input type="checkbox" id="type-shared" class="filter-type" value="Shared Room"><label for="type-shared" data-lang-key="filter_type_shared">Shared Room</label></div>
                 <div class="checkbox-item"><input type="checkbox" id="type-house" class="filter-type" value="House"><label for="type-house" data-lang-key="filter_type_house">House</label></div>
               </section>
+
               <section class="filter-group">
                 <div class="range-header">
-                  <label for="price-range" data-lang-key="filter_max_price">Max Price</label>
-                  <span id="price-range-value">$10000</span>
+                  <label data-lang-key="filter_price_range">Price Range</label>
+                  <span id="price-range-value-display">$0 - $10000</span>
                 </div>
-                <input type="range" id="price-range" name="price-range" min="0" max="10000" value="10000" class="slider filter-range" />
+                <div class="dual-slider-group">
+                    <label for="price-range-min" class="slider-label-min" data-lang-key="filter_min">Min:</label>
+                    <input type="range" id="price-range-min" name="price-range-min" min="0" max="10000" value="0" class="slider filter-range filter-range-min" />
+                    <label for="price-range-max" class="slider-label-max" data-lang-key="filter_max">Max:</label>
+                    <input type="range" id="price-range-max" name="price-range-max" min="0" max="10000" value="10000" class="slider filter-range filter-range-max" />
+                </div>
               </section>
+
               <section class="filter-group">
                 <div class="range-header">
-                  <label for="size-range" data-lang-key="filter_max_size">Max Size</label>
-                  <span id="size-range-value">250 m²</span>
+                  <label data-lang-key="filter_size_range">Size Range</label>
+                  <span id="size-range-value-display">9 m² - 250 m²</span>
                 </div>
-                <input type="range" id="size-range" name="size-range" min="9" max="250" value="250" class="slider filter-range" />
+                 <div class="dual-slider-group">
+                    <label for="size-range-min" class="slider-label-min" data-lang-key="filter_min">Min:</label>
+                    <input type="range" id="size-range-min" name="size-range-min" min="9" max="250" value="9" class="slider filter-range filter-range-min" />
+                    <label for="size-range-max" class="slider-label-max" data-lang-key="filter_max">Max:</label>
+                    <input type="range" id="size-range-max" name="size-range-max" min="9" max="250" value="250" class="slider filter-range filter-range-max" />
+                </div>
               </section>
               <button id="clear-filters-btn" class="btn btn-secondary full-width" data-lang-key="filter_clear">Clear Filters</button>
             </aside>
@@ -81,10 +93,9 @@
                     <p data-lang-key="loading_listings_app">Loading listings...</p>
                   </div>
                 </div>
-                <div class="map-container-outer"> <!-- New wrapper for sticky positioning -->
-                    <div class="map-container" id="map-container-sticky"> <!-- ID for JS targeting -->
+                <div class="map-container-outer">
+                    <div class="map-container" id="map-container-sticky">
                         <div id="map"></div>
-                        <!-- Map resize handle removed for simplicity in this integration, can be added back if desired -->
                     </div>
                 </div>
               </div>
@@ -92,15 +103,11 @@
         </div>
     </div>
 
-    <!-- Chat Widget (using your existing structure) -->
     <?php require 'chat-widget.php';?>
-
-    <!-- No cursor-dot or background-light from landing page here for app simplicity -->
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="script.js"></script> 
     <script src="chatbot.js"></script>
-    <!-- chatbot.js should be integrated into crous-x-app-script.js or loaded after if it depends on elements created by the main script -->
   </body>
 </html>

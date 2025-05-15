@@ -2490,3 +2490,28 @@ button {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
+
+/*dual filtering bars*/
+.filter-group .dual-slider-group {
+  margin-top: 0.8rem; /* Add some space below the main range header */
+}
+
+.filter-group .dual-slider-group .slider {
+  width: 100%; /* Ensure sliders take full width within their context */
+  margin-bottom: 0.5rem; /* Space below each slider */
+}
+.filter-group .dual-slider-group .slider:last-of-type {
+  margin-bottom: 0;
+}
+
+.filter-group .slider-label-min,
+.filter-group .slider-label-max {
+  display: block; /* Or inline-block if you want them beside sliders, but stacking is simpler */
+  font-size: 0.8em;
+  color: var(--text-secondary);
+  margin-bottom: 0.2em;
+}
+.filter-group .range-header label {
+  /* The main label for "Price Range" or "Size Range" */
+  font-weight: 500; /* Make it slightly more prominent */
+}

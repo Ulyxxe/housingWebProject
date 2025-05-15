@@ -1,5 +1,3 @@
-// script.js (Main Application Script - Chat Toggle Logic REMOVED)
-
 (function () {
   // IIFE to encapsulate scope
 
@@ -24,13 +22,18 @@
         })
       : null;
 
+  const INITIAL_MIN_PRICE = 0;
+  const INITIAL_MAX_PRICE = 10000;
+  const INITIAL_MIN_SIZE = 9;
+  const INITIAL_MAX_SIZE = 250;
+
   // --- DOM Element Selection ---
   const selectors = {
     body: document.body,
     htmlElement: document.documentElement,
     siteHeader: document.querySelector(".site-header"),
-    hamburgerButton: document.querySelector(".hamburger"), // Keep for potential mobile nav
-    mainNav: document.querySelector(".main-nav"), // Keep for potential mobile nav
+    hamburgerButton: document.querySelector(".hamburger"),
+    mainNav: document.querySelector(".main-nav"),
     themeToggleButton: document.getElementById("theme-toggle"),
     languageSwitcherToggleButton: document.getElementById(
       "language-switcher-toggle"
@@ -38,12 +41,19 @@
     languageSwitcherDropdown: document.getElementById(
       "language-switcher-dropdown"
     ),
-    languageChoiceButtons: null, // Populated in setupLanguageSwitcher
+    languageChoiceButtons: null,
     filtersContainer: document.getElementById("filters-container"),
-    priceRangeSlider: document.getElementById("price-range"),
-    sizeRangeSlider: document.getElementById("size-range"),
-    priceRangeValueSpan: document.getElementById("price-range-value"),
-    sizeRangeValueSpan: document.getElementById("size-range-value"),
+
+    // Dual sliders and display spans:
+    priceRangeMinSlider: document.getElementById("price-range-min"),
+    priceRangeMaxSlider: document.getElementById("price-range-max"),
+    priceRangeValueDisplay: document.getElementById(
+      "price-range-value-display"
+    ),
+    sizeRangeMinSlider: document.getElementById("size-range-min"),
+    sizeRangeMaxSlider: document.getElementById("size-range-max"),
+    sizeRangeValueDisplay: document.getElementById("size-range-value-display"),
+
     typeCheckboxes: document.querySelectorAll(".filter-type"),
     clearFiltersButton: document.getElementById("clear-filters-btn"),
     resultsGrid: document.getElementById("results-grid"),
@@ -53,20 +63,25 @@
     mapElement: document.getElementById("map"),
     resultsLayout: document.getElementById("results-layout"),
     mapContainerSticky: document.getElementById("map-container-sticky"),
-    // Chat-related selectors are REMOVED from this main script
   };
 
   // --- State Management ---
   let currentLanguageData = {};
   let currentLangCode = DEFAULT_LANG;
-  let isLanguageDropdownVisible = false; // For the language dropdown in the header
+  let isLanguageDropdownVisible = false;
   let activeFilters = {
-    maxPrice: selectors.priceRangeSlider
-      ? parseInt(selectors.priceRangeSlider.max, 10)
-      : 10000,
-    maxSize: selectors.sizeRangeSlider
-      ? parseInt(selectors.sizeRangeSlider.max, 10)
-      : 250,
+    minPrice: selectors.priceRangeMinSlider
+      ? parseInt(selectors.priceRangeMinSlider.value, 10)
+      : INITIAL_MIN_PRICE,
+    maxPrice: selectors.priceRangeMaxSlider
+      ? parseInt(selectors.priceRangeMaxSlider.value, 10)
+      : INITIAL_MAX_PRICE,
+    minSize: selectors.sizeRangeMinSlider
+      ? parseInt(selectors.sizeRangeMinSlider.value, 10)
+      : INITIAL_MIN_SIZE,
+    maxSize: selectors.sizeRangeMaxSlider
+      ? parseInt(selectors.sizeRangeMaxSlider.value, 10)
+      : INITIAL_MAX_SIZE,
     types: [],
     searchTerm: "",
   };
@@ -78,13 +93,17 @@
   // --- Data Fetching ---
   async function fetchHousingData() {
     try {
-      const res = await fetch("./api/getHousing.php");
+      const res = await fetch("./api/getHousing.php"); // Ensure this API endpoint is correct
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       window.allHousingData = data;
     } catch (e) {
       console.error("Error loading housing data:", e);
-      window.allHousingData = [];
+      if (selectors.resultsGrid) {
+        selectors.resultsGrid.innerHTML = `<p data-lang-key="error_loading_listings_app">Error loading listings. Please try again later.</p>`;
+        applyTranslations(); // Apply translation to the error message
+      }
+      window.allHousingData = []; // Set to empty array on error
     }
     updateDisplay(); // Call updateDisplay after fetching or on error
   }
@@ -128,6 +147,7 @@
       const key = el.dataset.langKey;
       let translation = currentLanguageData[key] || `[${key}]`;
       if (key === "footer_copyright_main")
+        // Example of dynamic content in translation
         translation = translation.replace("{year}", new Date().getFullYear());
       el.textContent = translation;
     });
@@ -207,15 +227,21 @@
         });
         const typeText =
           currentLanguageData[
-            `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
+            `filter_type_${item.property_type
+              ?.toLowerCase()
+              .replace(/\s+/g, "_")}` // Handle spaces in type
           ] || item.property_type;
         const ratingText = currentLanguageData?.rating_prefix || "Rating";
         const priceText = currentLanguageData?.price_prefix || "Price";
-        const perMonthText = currentLanguageData?.per_month_suffix || "/month";
+        const perMonthText = currentLanguageData?.per_month_suffix || "/month"; // or use item.rent_frequency
         marker.bindPopup(
           `<b>${item.title}</b><br>${typeText}<br>${priceText}: $${
             item.rent_amount
-          }${perMonthText}<br>${ratingText}: ${item.rating ?? "N/A"} ★`
+          } ${
+            item.rent_frequency === "monthly"
+              ? perMonthText
+              : "/" + item.rent_frequency
+          }<br>${ratingText}: ${item.rating ?? "N/A"} ★`
         );
         markersLayer.addLayer(marker);
       }
@@ -242,7 +268,7 @@
       const noResultsMessage = document.createElement("p");
       noResultsMessage.setAttribute("data-lang-key", "no_results_app");
       selectors.resultsGrid.appendChild(noResultsMessage);
-      applyTranslations();
+      applyTranslations(); // Translate the "no results" message
       return;
     }
     housingToDisplay.forEach((item) => {
@@ -256,19 +282,25 @@
       const perMonthText = currentLanguageData?.per_month_suffix || "/month";
       const propertyTypeText =
         currentLanguageData[
-          `filter_type_${item.property_type?.toLowerCase().replace(" ", "_")}`
+          `filter_type_${item.property_type
+            ?.toLowerCase()
+            .replace(/\s+/g, "_")}` // Handle multi-word types like "Shared Room"
         ] || item.property_type;
       card.innerHTML = `
         <div class="card-image-placeholder">
           ${
-            item.image
-              ? `<img src="${item.image}" alt="${item.title}" loading="lazy">`
+            item.primary_image // Use primary_image from your API
+              ? `<img src="${item.primary_image}" alt="${item.title}" loading="lazy">`
               : `<i class="far fa-image"></i>`
           }
         </div>
         <div class="card-content">
           <h4 class="card-title">${item.title} (${propertyTypeText})</h4>
-          <p class="card-price">$${item.rent_amount}${perMonthText}</p>
+          <p class="card-price">$${item.rent_amount} ${
+        item.rent_frequency === "monthly"
+          ? perMonthText
+          : "/" + item.rent_frequency
+      }</p>
           <p class="card-size">${sizeText}: ${item.square_footage} m²</p>
           <p class="card-rating">${ratingText}: ${
         item.rating ?? "N/A"
@@ -279,24 +311,42 @@
     });
   }
 
-  function updateSliderValueDisplay(slider, span, prefix = "", suffix = "") {
-    if (slider && span) span.textContent = `${prefix}${slider.value}${suffix}`;
+  function updateRangeValueDisplay(
+    minSlider,
+    maxSlider,
+    displaySpan,
+    prefix = "",
+    suffix = ""
+  ) {
+    if (minSlider && maxSlider && displaySpan) {
+      const minValue = parseInt(minSlider.value, 10);
+      const maxValue = parseInt(maxSlider.value, 10);
+      displaySpan.textContent = `${prefix}${minValue}${suffix} - ${prefix}${maxValue}${suffix}`;
+    }
   }
 
   // --- Filtering & Sorting ---
   function filterHousing() {
-    const { maxPrice, maxSize, types, searchTerm } = activeFilters;
+    const { minPrice, maxPrice, minSize, maxSize, types, searchTerm } =
+      activeFilters;
     const term = searchTerm.toLowerCase().trim();
     if (!Array.isArray(window.allHousingData)) return [];
+
     return window.allHousingData.filter((item) => {
-      const priceMatch = item.rent_amount <= maxPrice;
-      const sizeMatch = item.square_footage <= maxSize;
+      const priceMatch =
+        parseFloat(item.rent_amount) >= minPrice &&
+        parseFloat(item.rent_amount) <= maxPrice;
+      const sizeMatch =
+        parseInt(item.square_footage) >= minSize &&
+        parseInt(item.square_footage) <= maxSize;
       const typeMatch =
         types.length === 0 || types.includes(item.property_type);
       const searchMatch =
         !term ||
         item.title.toLowerCase().includes(term) ||
-        (item.address && item.address.toLowerCase().includes(term));
+        (item.address_street &&
+          item.address_street.toLowerCase().includes(term)) ||
+        (item.address_city && item.address_city.toLowerCase().includes(term));
       return priceMatch && sizeMatch && typeMatch && searchMatch;
     });
   }
@@ -305,16 +355,25 @@
     const sorted = [...housingList];
     switch (sortBy) {
       case "price-asc":
-        sorted.sort((a, b) => a.rent_amount - b.rent_amount);
+        sorted.sort(
+          (a, b) => parseFloat(a.rent_amount) - parseFloat(b.rent_amount)
+        );
         break;
       case "price-desc":
-        sorted.sort((a, b) => b.rent_amount - a.rent_amount);
+        sorted.sort(
+          (a, b) => parseFloat(b.rent_amount) - parseFloat(a.rent_amount)
+        );
         break;
       case "rating":
-        sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        sorted.sort(
+          (a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0)
+        );
         break;
-      default:
-        sorted.sort((a, b) => (b.listing_id || 0) - (a.listing_id || 0));
+      default: // 'new' or any other
+        sorted.sort(
+          (a, b) =>
+            (parseInt(b.listing_id) || 0) - (parseInt(a.listing_id) || 0)
+        ); // Assuming newer items have higher IDs
     }
     return sorted;
   }
@@ -326,7 +385,7 @@
       const filtered = filterHousing();
       const sortedFiltered = sortHousing(filtered, activeSort);
       if (selectors.resultsGrid) renderHousing(sortedFiltered);
-      if (map && markersLayer) renderMapMarkers(filtered);
+      if (map && markersLayer) renderMapMarkers(filtered); // Render markers based on filtered data only for map
     } catch (error) {
       console.error("Error during updateDisplay:", error);
     }
@@ -339,28 +398,73 @@
     const targetTheme = currentTheme === "dark" ? "light" : "dark";
     selectors.htmlElement.setAttribute("data-theme", targetTheme);
     localStorage.setItem("crousXAppTheme", targetTheme);
-    if (map) invalidateMapSize();
+    if (map) invalidateMapSize(); // Invalidate map if theme changes
   }
 
-  function handleFilterChange() {
-    if (selectors.priceRangeSlider)
-      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.value, 10);
-    if (selectors.sizeRangeSlider)
-      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.value, 10);
+  function handleFilterChange(event) {
+    if (selectors.priceRangeMinSlider && selectors.priceRangeMaxSlider) {
+      let minPriceVal = parseInt(selectors.priceRangeMinSlider.value, 10);
+      let maxPriceVal = parseInt(selectors.priceRangeMaxSlider.value, 10);
+
+      if (
+        event &&
+        event.target === selectors.priceRangeMinSlider &&
+        minPriceVal > maxPriceVal
+      ) {
+        selectors.priceRangeMaxSlider.value = minPriceVal;
+        maxPriceVal = minPriceVal;
+      } else if (
+        event &&
+        event.target === selectors.priceRangeMaxSlider &&
+        maxPriceVal < minPriceVal
+      ) {
+        selectors.priceRangeMinSlider.value = maxPriceVal;
+        minPriceVal = maxPriceVal;
+      }
+      activeFilters.minPrice = minPriceVal;
+      activeFilters.maxPrice = maxPriceVal;
+    }
+
+    if (selectors.sizeRangeMinSlider && selectors.sizeRangeMaxSlider) {
+      let minSizeVal = parseInt(selectors.sizeRangeMinSlider.value, 10);
+      let maxSizeVal = parseInt(selectors.sizeRangeMaxSlider.value, 10);
+
+      if (
+        event &&
+        event.target === selectors.sizeRangeMinSlider &&
+        minSizeVal > maxSizeVal
+      ) {
+        selectors.sizeRangeMaxSlider.value = minSizeVal;
+        maxSizeVal = minSizeVal;
+      } else if (
+        event &&
+        event.target === selectors.sizeRangeMaxSlider &&
+        maxSizeVal < minSizeVal
+      ) {
+        selectors.sizeRangeMinSlider.value = maxSizeVal;
+        minSizeVal = maxSizeVal;
+      }
+      activeFilters.minSize = minSizeVal;
+      activeFilters.maxSize = maxSizeVal;
+    }
+
     activeFilters.types = [];
     if (selectors.typeCheckboxes) {
       selectors.typeCheckboxes.forEach((cb) => {
         if (cb.checked) activeFilters.types.push(cb.value);
       });
     }
-    updateSliderValueDisplay(
-      selectors.priceRangeSlider,
-      selectors.priceRangeValueSpan,
+
+    updateRangeValueDisplay(
+      selectors.priceRangeMinSlider,
+      selectors.priceRangeMaxSlider,
+      selectors.priceRangeValueDisplay,
       "$"
     );
-    updateSliderValueDisplay(
-      selectors.sizeRangeSlider,
-      selectors.sizeRangeValueSpan,
+    updateRangeValueDisplay(
+      selectors.sizeRangeMinSlider,
+      selectors.sizeRangeMaxSlider,
+      selectors.sizeRangeValueDisplay,
       "",
       " m²"
     );
@@ -387,31 +491,43 @@
   }
 
   function clearAllFilters() {
-    if (selectors.priceRangeSlider) {
-      selectors.priceRangeSlider.value = selectors.priceRangeSlider.max;
-      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.max, 10);
-      updateSliderValueDisplay(
-        selectors.priceRangeSlider,
-        selectors.priceRangeValueSpan,
-        "$"
-      );
+    if (selectors.priceRangeMinSlider) {
+      selectors.priceRangeMinSlider.value = selectors.priceRangeMinSlider.min;
+      activeFilters.minPrice = parseInt(selectors.priceRangeMinSlider.min, 10);
     }
-    if (selectors.sizeRangeSlider) {
-      selectors.sizeRangeSlider.value = selectors.sizeRangeSlider.max;
-      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.max, 10);
-      updateSliderValueDisplay(
-        selectors.sizeRangeSlider,
-        selectors.sizeRangeValueSpan,
-        "",
-        " m²"
-      );
+    if (selectors.priceRangeMaxSlider) {
+      selectors.priceRangeMaxSlider.value = selectors.priceRangeMaxSlider.max;
+      activeFilters.maxPrice = parseInt(selectors.priceRangeMaxSlider.max, 10);
     }
+    updateRangeValueDisplay(
+      selectors.priceRangeMinSlider,
+      selectors.priceRangeMaxSlider,
+      selectors.priceRangeValueDisplay,
+      "$"
+    );
+
+    if (selectors.sizeRangeMinSlider) {
+      selectors.sizeRangeMinSlider.value = selectors.sizeRangeMinSlider.min;
+      activeFilters.minSize = parseInt(selectors.sizeRangeMinSlider.min, 10);
+    }
+    if (selectors.sizeRangeMaxSlider) {
+      selectors.sizeRangeMaxSlider.value = selectors.sizeRangeMaxSlider.max;
+      activeFilters.maxSize = parseInt(selectors.sizeRangeMaxSlider.max, 10);
+    }
+    updateRangeValueDisplay(
+      selectors.sizeRangeMinSlider,
+      selectors.sizeRangeMaxSlider,
+      selectors.sizeRangeValueDisplay,
+      "",
+      " m²"
+    );
+
     if (selectors.typeCheckboxes)
       selectors.typeCheckboxes.forEach((cb) => (cb.checked = false));
     activeFilters.types = [];
     if (selectors.searchInput) selectors.searchInput.value = "";
     activeFilters.searchTerm = "";
-    activeSort = "new";
+    activeSort = "new"; // Reset sort to default
     if (selectors.sortButtons) {
       selectors.sortButtons.forEach((btn) =>
         btn.classList.toggle("active", btn.dataset.sort === "new")
@@ -429,11 +545,11 @@
     );
     selectors.languageSwitcherToggleButton?.setAttribute(
       "aria-expanded",
-      isLanguageDropdownVisible
+      isLanguageDropdownVisible.toString()
     );
     selectors.languageSwitcherDropdown?.setAttribute(
       "aria-hidden",
-      !isLanguageDropdownVisible
+      (!isLanguageDropdownVisible).toString()
     );
   }
 
@@ -456,10 +572,10 @@
     if (chosenLang && chosenLang !== currentLangCode) {
       loadLanguage(chosenLang).then(() => {
         closeLanguageDropdown();
-        updateDisplay();
+        updateDisplay(); // Re-render with new language strings
       });
     } else if (chosenLang) {
-      closeLanguageDropdown();
+      closeLanguageDropdown(); // Close even if same language clicked
     }
   }
 
@@ -511,8 +627,10 @@
         });
       document.addEventListener("click", (event) => {
         if (
+          selectors.mainNav && // Check if mainNav exists
           selectors.mainNav.classList.contains("active") &&
           !selectors.mainNav.contains(event.target) &&
+          selectors.hamburgerButton && // Check if hamburgerButton exists
           !selectors.hamburgerButton.contains(event.target)
         ) {
           selectors.mainNav.classList.remove("active");
@@ -538,7 +656,7 @@
       selectors.languageSwitcherToggleButton &&
       selectors.languageSwitcherDropdown
     ) {
-      selectors.languageChoiceButtons =
+      selectors.languageChoiceButtons = // Ensure this is populated
         selectors.languageSwitcherDropdown.querySelectorAll(
           ".language-choice-button"
         );
@@ -551,7 +669,6 @@
         handleLanguageChoice
       );
       document.addEventListener("click", (event) => {
-        // Close dropdown on outside click
         if (
           isLanguageDropdownVisible &&
           selectors.languageSwitcherToggleButton &&
@@ -565,10 +682,14 @@
     }
     if (selectors.filtersContainer) {
       selectors.filtersContainer.addEventListener("input", (e) => {
-        if (e.target.matches("#price-range, #size-range")) handleFilterChange();
+        if (e.target.matches(".filter-range")) {
+          handleFilterChange(e);
+        }
       });
       selectors.filtersContainer.addEventListener("change", (e) => {
-        if (e.target.matches(".filter-type")) handleFilterChange();
+        if (e.target.matches(".filter-type")) {
+          handleFilterChange(e);
+        }
       });
     }
     if (selectors.clearFiltersButton)
@@ -581,8 +702,7 @@
     if (selectors.searchInput)
       selectors.searchInput.addEventListener("input", handleSearchInput);
 
-    setupHamburger(); // Setup hamburger menu
-    // Chat toggle listeners are NOT set up here; they are in chatbot.js
+    setupHamburger();
   }
 
   function applyPersistedTheme() {
@@ -600,22 +720,69 @@
     const initialLang = getInitialLanguage();
     await loadLanguage(initialLang);
 
-    if (selectors.priceRangeSlider && selectors.priceRangeValueSpan) {
-      activeFilters.maxPrice = parseInt(selectors.priceRangeSlider.value, 10);
-      updateSliderValueDisplay(
-        selectors.priceRangeSlider,
-        selectors.priceRangeValueSpan,
+    // Initialize activeFilters and display for dual sliders
+    if (
+      selectors.priceRangeMinSlider &&
+      selectors.priceRangeMaxSlider &&
+      selectors.priceRangeValueDisplay
+    ) {
+      // Set slider initial values from constants if DOM values are default max/max (or min/min)
+      if (
+        parseInt(selectors.priceRangeMinSlider.value) ===
+          parseInt(selectors.priceRangeMinSlider.max) &&
+        parseInt(selectors.priceRangeMaxSlider.value) ===
+          parseInt(selectors.priceRangeMaxSlider.max)
+      ) {
+        selectors.priceRangeMinSlider.value = INITIAL_MIN_PRICE;
+        selectors.priceRangeMaxSlider.value = INITIAL_MAX_PRICE;
+      }
+      activeFilters.minPrice = parseInt(
+        selectors.priceRangeMinSlider.value,
+        10
+      );
+      activeFilters.maxPrice = parseInt(
+        selectors.priceRangeMaxSlider.value,
+        10
+      );
+      updateRangeValueDisplay(
+        selectors.priceRangeMinSlider,
+        selectors.priceRangeMaxSlider,
+        selectors.priceRangeValueDisplay,
         "$"
       );
+    } else {
+      // Fallback if sliders are not found
+      activeFilters.minPrice = INITIAL_MIN_PRICE;
+      activeFilters.maxPrice = INITIAL_MAX_PRICE;
     }
-    if (selectors.sizeRangeSlider && selectors.sizeRangeValueSpan) {
-      activeFilters.maxSize = parseInt(selectors.sizeRangeSlider.value, 10);
-      updateSliderValueDisplay(
-        selectors.sizeRangeSlider,
-        selectors.sizeRangeValueSpan,
+
+    if (
+      selectors.sizeRangeMinSlider &&
+      selectors.sizeRangeMaxSlider &&
+      selectors.sizeRangeValueDisplay
+    ) {
+      if (
+        parseInt(selectors.sizeRangeMinSlider.value) ===
+          parseInt(selectors.sizeRangeMinSlider.max) &&
+        parseInt(selectors.sizeRangeMaxSlider.value) ===
+          parseInt(selectors.sizeRangeMaxSlider.max)
+      ) {
+        selectors.sizeRangeMinSlider.value = INITIAL_MIN_SIZE;
+        selectors.sizeRangeMaxSlider.value = INITIAL_MAX_SIZE;
+      }
+      activeFilters.minSize = parseInt(selectors.sizeRangeMinSlider.value, 10);
+      activeFilters.maxSize = parseInt(selectors.sizeRangeMaxSlider.value, 10);
+      updateRangeValueDisplay(
+        selectors.sizeRangeMinSlider,
+        selectors.sizeRangeMaxSlider,
+        selectors.sizeRangeValueDisplay,
         "",
         " m²"
       );
+    } else {
+      // Fallback
+      activeFilters.minSize = INITIAL_MIN_SIZE;
+      activeFilters.maxSize = INITIAL_MAX_SIZE;
     }
 
     let mapInitialized = false;
@@ -624,12 +791,12 @@
     }
 
     setupEventListeners();
-    await fetchHousingData();
+    await fetchHousingData(); // This will call updateDisplay which uses activeFilters
 
     if (selectors.mapContainerSticky && mapInitialized) {
       const resizeObserver = new ResizeObserver(() => invalidateMapSize());
       resizeObserver.observe(selectors.mapContainerSticky);
-      setTimeout(invalidateMapSize, 300); // Initial invalidate after layout settles
+      setTimeout(invalidateMapSize, 300);
     }
   }
 
