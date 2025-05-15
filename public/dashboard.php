@@ -78,7 +78,7 @@ $userID = $_SESSION['user_id'];
                             <i class="fas fa-search"></i>
                             <span data-i18n-key="dashboard_quick_action_find_housing">Find Housing</span>
                         </a>
-                        <a href="#" class="quick-action-item">
+                        <a href="add-housing.php" class="quick-action-item">
                             <i class="fas fa-plus-circle"></i>
                             <span data-i18n-key="dashboard_quick_action_add_listing">Add New Listing</span> <!-- If applicable -->
                         </a>
