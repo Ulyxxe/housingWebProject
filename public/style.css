@@ -1571,3 +1571,111 @@ button {
   color: var(--text-secondary);
   display: block;
 }
+
+/* ========================================
+   General Page Styling Components (if not already defined elsewhere)
+   ======================================== */
+.page-main-heading {
+  font-size: 2.2rem; /* Adjust as needed */
+  font-weight: 700;
+  color: var(--text-headings);
+  margin-bottom: 2.5rem; /* Space below the main title */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color-subtle);
+  text-align: center; /* Or text-align: left; if you prefer */
+}
+[data-theme="light"] .page-main-heading {
+  color: var(--text-headings); /* Ensure it uses the theme's heading color */
+}
+
+/* ========================================
+   FAQ Page Specific Styles
+   ======================================== */
+.faq-page-wrapper {
+  /* .app-container already provides top padding */
+}
+
+.faq-content-area {
+  max-width: 900px; /* Controls the width of the FAQ content */
+  margin: 2rem auto 3rem auto; /* Top/bottom margin, auto for left/right centering */
+  padding: 0 1rem; /* Horizontal padding for smaller screens */
+}
+
+.faq-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Space between individual FAQ items */
+}
+
+.faq-item {
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 10px; /* Rounded corners for the item box */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Subtle shadow */
+  transition: transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+  overflow: hidden; /* Ensures border-radius applies to children if they have backgrounds */
+}
+
+[data-theme="dark"] .faq-item {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for dark theme */
+}
+
+.faq-item:hover {
+  transform: translateY(-4px); /* Slight lift on hover */
+  box-shadow: 0 7px 20px rgba(var(--accent-primary-rgb), 0.08); /* Accent shadow on hover */
+}
+
+[data-theme="dark"] .faq-item:hover {
+  box-shadow: 0 7px 22px rgba(var(--accent-primary-rgb), 0.12);
+}
+
+.faq-question {
+  font-size: 1.2rem; /* Size for the question text */
+  font-weight: 600;
+  color: var(--text-headings);
+  padding: 1.2rem 1.5rem;
+  margin: 0; /* Reset default h2 margin */
+  border-bottom: 1px solid var(--border-color-subtle); /* Separator line */
+  /* background-color: var(--bg-tertiary); /* Optional: slightly different bg for question */
+}
+
+[data-theme="light"] .faq-question {
+  color: var(--text-headings);
+  /* background-color: var(--bg-secondary); /* Optional for light theme */
+}
+
+.faq-answer-content {
+  padding: 1.2rem 1.5rem;
+  font-size: 0.95rem; /* Size for the answer text */
+  color: var(--text-secondary);
+  line-height: 1.7; /* Improved readability for answer text */
+}
+
+.faq-answer-content p {
+  margin: 0; /* Remove default p margin if it conflicts */
+}
+
+.faq-answer-content p + p {
+  margin-top: 1em; /* Adds space if an answer has multiple paragraphs */
+}
+
+/* Responsive adjustments for FAQ if needed */
+@media screen and (max-width: 768px) {
+  .page-main-heading {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  .faq-content-area {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .faq-question {
+    font-size: 1.1rem;
+    padding: 1rem 1.2rem;
+  }
+  .faq-answer-content {
+    font-size: 0.9rem;
+    padding: 1rem 1.2rem;
+  }
+}

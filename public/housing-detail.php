@@ -254,7 +254,7 @@ SQL
     </div>
   </main>
 
-  <?php require 'chat-widget.php'; // Or require_once if you prefer ?>
+  <?php require 'chat-widget.php'; ?>
   
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
