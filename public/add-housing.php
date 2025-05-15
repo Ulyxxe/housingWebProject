@@ -1,6 +1,6 @@
 <?php
 // housing-detail.php
-require_once 'config.php'; // Contains PDO/DB connection info
+require_once './config/config.php'; // Contains PDO/DB connection info
 
 // Validate GET parameter
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
