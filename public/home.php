@@ -53,7 +53,7 @@
                   <span id="price-range-value-display">$0 - $10000</span>
                 </div>
                 <div class="noui-slider-container">
-                    <div id="price-slider"></div> {/* This div will become the noUiSlider for price */}
+                    <div id="price-slider"></div>
                 </div>
               </section>
 
@@ -63,14 +63,13 @@
                   <span id="size-range-value-display">9 m² - 250 m²</span>
                 </div>
                 <div class="noui-slider-container">
-                    <div id="size-slider"></div> {/* This div will become the noUiSlider for size */}
+                    <div id="size-slider"></div>
                 </div>
               </section>
               <button id="clear-filters-btn" class="btn btn-secondary full-width" data-lang-key="filter_clear">Clear Filters</button>
             </aside>
 
             <main class="results-area">
-              {/* ... rest of your results-area HTML ... */}
               <div class="search-and-sort">
                 <div class="search-container">
                   <input type="search" id="search-input" placeholder="Search by name..." data-lang-key-placeholder="search_placeholder_app" />
