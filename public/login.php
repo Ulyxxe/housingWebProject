@@ -89,12 +89,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
             </div>
           </div>
           <div class="form-group form-options">
-            {/* Optional: Remember me checkbox
+            
             <label class="checkbox-item-inline">
               <input type="checkbox" name="remember_me">
               <span data-i18n-key="login_label_remember_me">Remember me</span>
             </label>
-            */}
+            
             <a href="#" class="forgot-password-link" data-i18n-key="login_link_forgot_password">Forgot Password?</a>
           </div>
           <button type="submit" class="btn-auth primary-auth-button" data-i18n-key="login_button_signin">

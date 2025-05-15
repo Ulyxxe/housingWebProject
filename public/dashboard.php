@@ -10,79 +10,127 @@ if (!isset($_SESSION['user_id'])) {
 
 // The user is authenticated. Get user info safely.
 // Use htmlspecialchars to prevent XSS when echoing data later.
+$firstName = isset($_SESSION['first_name']) ? htmlspecialchars($_SESSION['first_name']) : 'User';
+$lastName = isset($_SESSION['last_name']) ? htmlspecialchars($_SESSION['last_name']) : '';
+$userFullName = trim($firstName . ' ' . $lastName);
 $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'N/A';
-$userType = isset($_SESSION['user_type']) ? htmlspecialchars($_SESSION['user_type']) : 'N/A';
-$userID = $_SESSION['user_id']; // Assuming you might use this later
+$userType = isset($_SESSION['user_type']) ? htmlspecialchars(ucfirst($_SESSION['user_type'])) : 'N/A'; // Capitalize first letter
+$userID = $_SESSION['user_id'];
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Dashboard - CROUS-X</title> <!-- Updated Title -->
+    <title data-i18n-key="dashboard_page_title_document">Your Dashboard - CROUS-X</title>
 
-    <!-- Leaflet CSS (Optional, keep if header needs it or for consistency) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
          crossorigin=""/>
-    <!-- Marker Cluster CSS (Optional) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css"> <!-- Link your existing CSS -->
-
-    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="icon" type="assets/images/png" href="icon.png"> <!-- Your favicon -->
+    <link rel="icon" type="image/png" href="assets/images/icon.png"> <!-- Corrected path -->
 </head>
 <body>
 
-    <?php require 'header.php'; // Or require_once if you prefer ?>
+    <?php require 'header.php'; ?>
 
-    <!-- Use the main content wrapper for consistent padding/layout -->
-    <div class="main-content-wrapper dashboard-page-wrapper"> <!-- Added dashboard-page-wrapper class -->
+    <main class="app-container dashboard-page-wrapper">
+        <div class="dashboard-header-bar">
+            <h1 class="page-main-heading" data-i18n-key="dashboard_main_heading">Welcome Back, <?php echo $userFullName; ?>!</h1>
+            <a href="logout.php" class="btn-auth btn-logout-dashboard" data-i18n-key="dashboard_button_logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
 
-        <div class="dashboard-container"> <!-- New container for dashboard content -->
-            <h1>Welcome Back!</h1>
-            <p class="user-info">
-                You are logged in as: <strong><?= $userEmail ?></strong> <br>
-                Account Type: <strong><?= $userType ?></strong>
-            </p>
-
-            <div class="dashboard-actions">
-                <!-- Add more dashboard links/actions here later -->
-                <a href="profile.php" class="btn btn-register">View Profile</a> <!-- Example action -->
-                <a href="logout.php" class="btn btn-signin btn-logout">Logout</a> <!-- Styled logout button -->
-            </div>
-
-            <div class="dashboard-content">
-                <h2>Your Dashboard</h2>
-                <p>This is where your personalized information will appear, such as saved listings, application status, etc.</p>
-                <!-- Add more dashboard sections/content here -->
-                <div class="placeholder-section">
-                    <i class="fas fa-clipboard-list"></i>
-                    <p>My Applications (Coming Soon)</p>
+        <div class="dashboard-content-grid">
+            
+            <aside class="dashboard-sidebar">
+                <div class="profile-summary-card">
+                    <div class="profile-avatar-placeholder">
+                        <i class="fas fa-user-circle"></i>
+                        <!-- Or <img src="path/to/user-avatar.jpg" alt="User Avatar"> if you have avatars -->
+                    </div>
+                    <h3 class="profile-name"><?php echo $userFullName; ?></h3>
+                    <p class="profile-email"><?php echo $userEmail; ?></p>
+                    <p class="profile-type" data-i18n-key="dashboard_profile_account_type">Account Type: <strong><?php echo $userType; ?></strong></p>
+                    <a href="profile-edit.php" class="btn-profile-edit" data-i18n-key="dashboard_button_edit_profile">
+                        <i class="fas fa-pencil-alt"></i> Edit Profile
+                    </a>
                 </div>
-                 <div class="placeholder-section">
-                    <i class="fas fa-heart"></i>
-                    <p>Saved Listings (Coming Soon)</p>
+                <nav class="dashboard-nav">
+                    <a href="dashboard.php" class="dashboard-nav-link active" data-i18n-key="dashboard_nav_overview"><i class="fas fa-tachometer-alt"></i> Overview</a>
+                    <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_my_listings"><i class="fas fa-home"></i> My Listings</a> <!-- If applicable -->
+                    <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_my_applications"><i class="fas fa-clipboard-list"></i> My Applications</a>
+                    <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_saved_listings"><i class="fas fa-heart"></i> Saved Listings</a>
+                    <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_settings"><i class="fas fa-cog"></i> Account Settings</a>
+                </nav>
+            </aside>
+
+            <section class="dashboard-main-content">
+                <div class="dashboard-section-card">
+                    <h2 class="dashboard-section-title" data-i18n-key="dashboard_section_quick_actions">Quick Actions</h2>
+                    <div class="quick-actions-grid">
+                        <a href="home.php" class="quick-action-item">
+                            <i class="fas fa-search"></i>
+                            <span data-i18n-key="dashboard_quick_action_find_housing">Find Housing</span>
+                        </a>
+                        <a href="#" class="quick-action-item">
+                            <i class="fas fa-plus-circle"></i>
+                            <span data-i18n-key="dashboard_quick_action_add_listing">Add New Listing</span> <!-- If applicable -->
+                        </a>
+                         <a href="#" class="quick-action-item">
+                            <i class="fas fa-envelope"></i>
+                            <span data-i18n-key="dashboard_quick_action_messages">Messages <span class="badge">3</span></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dashboard-section-card">
+                    <h2 class="dashboard-section-title" data-i18n-key="dashboard_section_recent_activity">Recent Activity / Notifications</h2>
+                    <div class="activity-feed">
+                        <div class="activity-item">
+                            <i class="fas fa-file-alt activity-icon"></i>
+                            <p><strong data-i18n-key="dashboard_activity_app_submitted">Application Submitted:</strong> Studio Apartment near Campus - <span class="activity-time">2 hours ago</span></p>
+                        </div>
+                        <div class="activity-item">
+                            <i class="fas fa-heart activity-icon saved"></i>
+                             <p><strong data-i18n-key="dashboard_activity_listing_saved">New Listing Saved:</strong> Shared Room Downtown - <span class="activity-time">1 day ago</span></p>
+                        </div>
+                        <div class="activity-item">
+                            <i class="fas fa-comment-dots activity-icon message"></i>
+                            <p><strong data-i18n-key="dashboard_activity_new_message">New Message:</strong> From Landlord A - <span class="activity-time">3 days ago</span></p>
+                        </div>
+                        <!-- Add more activity items here -->
+                    </div>
+                </div>
+
+                 <div class="dashboard-placeholder-section">
+                    <h3 data-i18n-key="dashboard_placeholder_my_applications_title">My Applications</h3>
+                    <div class="placeholder-content">
+                        <i class="fas fa-folder-open"></i>
+                        <p data-i18n-key="dashboard_placeholder_no_applications">No active applications yet. Start searching!</p>
+                    </div>
+                </div>
+                 <div class="dashboard-placeholder-section">
+                    <h3 data-i18n-key="dashboard_placeholder_saved_listings_title">Saved Listings</h3>
+                    <div class="placeholder-content">
+                        <i class="fas fa-heart-broken"></i>
+                        <p data-i18n-key="dashboard_placeholder_no_saved_listings">You haven't saved any listings. Browse now!</p>
+                    </div>
                  </div>
 
-            </div>
+            </section>
+        </div>
+    </main>
 
-        </div> <!-- End dashboard-container -->
-
-    </div> <!-- End main-content-wrapper -->
-
-    <!-- Include Leaflet JS if needed by header/other elements -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-    <!-- Your script.js for dark mode toggle and potentially other interactions -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
