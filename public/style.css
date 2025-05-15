@@ -1269,3 +1269,305 @@ button {
     margin-right: 0;
   }
 }
+
+/* ========================================
+   Housing Details Page (New)
+   ======================================== */
+.detail-page-wrapper .detail-content-area {
+  max-width: 1100px; /* Adjust as needed for overall content width */
+  margin: 0 auto;
+  padding: 2rem 1rem; /* Add some padding */
+}
+
+.housing-gallery-column .main-image-wrapper {
+  position: relative;
+  background-color: #f0f0f0; /* Light grey background for placeholder area */
+  border-radius: 8px; /* Match mockup's rounded corners for image */
+  overflow: hidden; /* Ensure image stays within bounds */
+  aspect-ratio: 4 / 3; /* Adjust as needed, mockup is somewhat squarish */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.housing-gallery-column .current-gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.housing-gallery-column .image-placeholder-large {
+  font-size: 5rem; /* Make icon larger */
+  color: #d0d0d0; /* Lighter icon color */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0; /* Match wrapper */
+}
+.housing-gallery-column .favorite-toggle-button {
+  position: absolute;
+  top: 1rem;
+  left: 1rem; /* Mockup shows top-left */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); /* Semi-transparent white background */
+  color: #e91e63; /* Pink heart icon by default */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.housing-gallery-column .favorite-toggle-button:hover {
+  background-color: white;
+}
+.housing-gallery-column .favorite-toggle-button.active {
+  color: #e91e63; /* Solid pink when active */
+}
+.housing-gallery-column .favorite-toggle-button.active i.fas {
+  color: #e91e63;
+}
+
+/* Info Column Styling */
+.housing-info-column .housing-main-title {
+  font-size: 1.8rem; /* Mockup title size */
+  font-weight: 600;
+  color: var(--text-headings); /* Use theme variable */
+  margin-bottom: 0.5rem;
+}
+[data-theme="light"] .housing-info-column .housing-main-title {
+  color: #333; /* Darker text for light theme if needed */
+}
+
+.housing-info-column .housing-top-meta {
+  display: flex;
+  flex-direction: column; /* Stack tag and price */
+  align-items: flex-start; /* Align items to the start */
+  margin-bottom: 1rem;
+}
+.housing-info-column .status-indicator-tag.mockup-style {
+  background-color: #e0f2f1; /* Light green/teal from mockup */
+  color: #00796b; /* Darker green/teal text */
+  padding: 0.3em 0.8em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin-bottom: 0.75rem; /* Space between tag and price */
+}
+[data-theme="dark"] .housing-info-column .status-indicator-tag.mockup-style {
+  background-color: rgba(0, 121, 107, 0.3);
+  color: #80cbc4;
+}
+
+.housing-info-column .price-display-area .amount {
+  font-size: 2.2rem; /* Large price like mockup */
+  font-weight: 700;
+  color: var(--text-headings); /* Black or very dark grey in mockup */
+}
+[data-theme="light"] .housing-info-column .price-display-area .amount {
+  color: #111;
+}
+.housing-info-column .price-display-area .frequency {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-left: 0.25rem;
+}
+
+.housing-info-column .location-address-text.detail-page-address-mockup {
+  font-size: 0.9rem;
+  color: var(--text-secondary); /* Greyish text like mockup */
+  margin-bottom: 1.5rem;
+}
+.housing-info-column .location-address-text.detail-page-address-mockup i {
+  margin-right: 0.3rem;
+  color: var(--text-secondary);
+}
+
+/* Key Info Block - "Label/Value" pairs styling */
+.key-info-block-mockup-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 1rem; /* Gap between items */
+  margin-bottom: 1.5rem;
+}
+.info-item-mockup {
+  display: flex;
+  flex-direction: column;
+}
+.info-label-mockup {
+  font-size: 0.8rem;
+  color: var(--text-secondary); /* Small grey label text */
+  margin-bottom: 0.3rem;
+  display: block; /* Ensure it takes its own line */
+}
+.info-value-wrapper-mockup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background-color: var(--input-bg); /* Match general input background */
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.info-value-wrapper-mockup .info-value {
+  flex-grow: 1;
+}
+.mockup-dropdown-arrow {
+  color: var(--text-secondary);
+  font-size: 0.8em;
+  margin-left: 0.5rem;
+}
+[data-theme="light"] .info-value-wrapper-mockup {
+  background-color: #f9f9f9; /* Lighter bg for light theme inputs */
+  border-color: #e0e0e0;
+}
+
+.cta-button.primary-cta-button.mockup-style {
+  background-color: var(--primary-pink); /* Pink from mockup */
+  color: white;
+  text-align: center;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  display: block; /* Make it full width of its container if needed */
+  width: 100%;
+  margin-bottom: 1.5rem; /* Space before accordion */
+  border: none;
+}
+.cta-button.primary-cta-button.mockup-style:hover {
+  filter: brightness(0.9);
+}
+
+/* Accordion Styling */
+.content-accordion-item.mockup-style {
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  overflow: hidden; /* To contain panel */
+}
+.content-accordion-item.mockup-style .accordion-trigger-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background-color: transparent; /*var(--bg-tertiary) if a slight bg is desired */
+  border: none;
+  /* border-bottom: 1px solid var(--grey-border); remove if panel has its own border */
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-headings);
+}
+.content-accordion-item.mockup-style .accordion-trigger-button:hover {
+  background-color: rgba(var(--accent-primary-rgb), 0.05);
+}
+.content-accordion-item.mockup-style .accordion-trigger-button .accordion-icon {
+  font-size: 0.9em;
+  transition: transform 0.3s ease;
+}
+.content-accordion-item.mockup-style
+  .accordion-trigger-button[aria-expanded="true"]
+  .accordion-icon {
+  transform: rotate(180deg);
+}
+.content-accordion-item.mockup-style .accordion-panel-content {
+  padding: 0 1rem; /* Initially no top/bottom padding, JS adds it */
+  background-color: var(--input-bg); /* Slightly different bg for panel */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+.content-accordion-item.mockup-style .accordion-panel-content p,
+.content-accordion-item.mockup-style .accordion-panel-content ul {
+  padding-bottom: 0.8rem; /* Ensure content inside has padding */
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+[data-theme="light"]
+  .content-accordion-item.mockup-style
+  .accordion-panel-content {
+  background-color: #fdfdfd;
+}
+
+/* Reviews Section Styling */
+.reviews-container-section.mockup-style .section-title-styled {
+  font-size: 1.5rem; /* Larger title */
+  font-weight: 600;
+  color: var(--primary-pink); /* Pink title as in mockup */
+  margin-bottom: 1.5rem;
+  text-align: left; /* Mockup title is left aligned */
+}
+.reviews-grid-layout.mockup-style {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(280px, 1fr)
+  ); /* Adjust minmax for card size */
+  gap: 1.5rem;
+}
+.review-card-item {
+  /* Existing class, ensure it matches mockup */
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+[data-theme="dark"] .review-card-item {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.review-card-stars {
+  margin-bottom: 0.5rem;
+  color: #ffb300; /* Yellow for stars */
+}
+.review-card-stars .far.fa-star {
+  /* Empty star */
+  color: #d0d0d0; /* Grey for empty star */
+}
+.review-card-heading {
+  /* "Review title" */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-headings);
+  margin-bottom: 0.4rem;
+}
+.review-card-text {
+  /* "Review body" */
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.review-card-author-area {
+  display: flex;
+  align-items: center;
+}
+.author-avatar-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+  border: 1px solid var(--grey-border);
+}
+.author-name-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: block;
+}
+.review-date-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: block;
+}
