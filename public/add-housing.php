@@ -4,7 +4,7 @@ session_start();
 
 // 1. Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI']; // Redirect back here after login
+    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
     header("Location: login.php");
     exit;
 }
@@ -12,20 +12,26 @@ if (!isset($_SESSION['user_id'])) {
 // 2. Include Database Configuration
 require_once __DIR__ . '/../config/config.php'; // Defines $pdo
 
+// --- Configuration for Image Uploads ---
+define('UPLOAD_DIR_BASE', __DIR__ . '/assets/uploads/housing_images/'); // Base directory for uploads
+define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5 MB
+$allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+$allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+
 // Initialize variables
 $errors = [];
 $success_message = '';
 
-// Define options for select fields
 $property_types = ['Studio', 'Apartment', 'Shared Room', 'House', 'Other'];
 $rent_frequencies = ['monthly', 'weekly', 'annually'];
-$listing_statuses = ['available', 'pending_approval', 'unavailable']; // Example statuses
+$listing_statuses = ['available', 'pending_approval', 'unavailable'];
 
-// 3. Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // --- Retrieve and Sanitize Form Data ---
+    // --- Form Data Retrieval ---
     $user_id = $_SESSION['user_id'];
     $title = trim($_POST['title'] ?? '');
+    // ... (all other $_POST retrievals from your previous add-housing.php version)
     $description = trim($_POST['description'] ?? '');
     $address_street = trim($_POST['address_street'] ?? '');
     $address_city = trim($_POST['address_city'] ?? '');
@@ -41,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rent_frequency = in_array($_POST['rent_frequency'] ?? '', $rent_frequencies) ? $_POST['rent_frequency'] : null;
     
     $num_bedrooms = filter_input(INPUT_POST, 'num_bedrooms', FILTER_VALIDATE_INT, ['flags' => FILTER_NULL_ON_FAILURE, 'options' => ['min_range' => 0]]);
-    $num_bathrooms = filter_input(INPUT_POST, 'num_bathrooms', FILTER_VALIDATE_FLOAT, ['flags' => FILTER_NULL_ON_FAILURE, 'options' => ['min_range' => 0]]); // Allow 0.5
+    $num_bathrooms = filter_input(INPUT_POST, 'num_bathrooms', FILTER_VALIDATE_FLOAT, ['flags' => FILTER_NULL_ON_FAILURE, 'options' => ['min_range' => 0]]);
     $square_footage = filter_input(INPUT_POST, 'square_footage', FILTER_VALIDATE_INT, ['flags' => FILTER_NULL_ON_FAILURE, 'options' => ['min_range' => 1]]);
     
     $availability_date_str = trim($_POST['availability_date'] ?? '');
@@ -54,16 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contact_phone = trim($_POST['contact_phone'] ?? '');
     $status = in_array($_POST['status'] ?? '', $listing_statuses) ? $_POST['status'] : 'pending_approval';
 
-
-    // --- Basic Validations ---
+    // --- Basic Validations (Keep your existing ones) ---
     if (empty($title)) $errors['title'] = "Title is required.";
+    // ... (all other validations from your previous add-housing.php version)
     if (empty($description)) $errors['description'] = "Description is required.";
     if (empty($address_street)) $errors['address_street'] = "Street address is required.";
     if (empty($address_city)) $errors['address_city'] = "City is required.";
     if (empty($address_country)) $errors['address_country'] = "Country is required.";
 
-    if ($latitude === null || $latitude < -90 || $latitude > 90) $errors['latitude'] = "Valid latitude is required.";
-    if ($longitude === null || $longitude < -180 || $longitude > 180) $errors['longitude'] = "Valid longitude is required.";
+    if ($latitude === null || $latitude < -90 || $latitude > 90) $errors['latitude'] = "Valid latitude (-90 to 90) is required.";
+    if ($longitude === null || $longitude < -180 || $longitude > 180) $errors['longitude'] = "Valid longitude (-180 to 180) is required.";
     
     if (empty($property_type)) $errors['property_type'] = "Property type is required.";
     if ($rent_amount === null || $rent_amount <= 0) $errors['rent_amount'] = "Valid rent amount is required.";
@@ -88,58 +94,159 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['lease_term_months']) && $lease_term_months === null) $errors['lease_term_months'] = "Lease term must be a valid number if provided.";
     
     if ($contact_email === false) $errors['contact_email'] = "A valid contact email is required.";
-    // Basic phone validation (can be improved)
     if (!empty($contact_phone) && !preg_match('/^[0-9\s\+\-\(\)]+$/', $contact_phone)) $errors['contact_phone'] = "Invalid contact phone format.";
+
+
+    // --- Image Validation ---
+    $uploaded_primary_image_path = null;
+    $uploaded_other_image_paths = [];
+
+    // Validate Primary Image
+    if (isset($_FILES['primary_image']) && $_FILES['primary_image']['error'] === UPLOAD_ERR_OK) {
+        $file_tmp_path = $_FILES['primary_image']['tmp_name'];
+        $file_name = $_FILES['primary_image']['name'];
+        $file_size = $_FILES['primary_image']['size'];
+        $file_type = mime_content_type($file_tmp_path); // More reliable than $_FILES['primary_image']['type']
+        $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
+            $errors['primary_image'] = "Invalid file type for primary image. Allowed: " . implode(', ', $allowed_extensions);
+        } elseif ($file_size > MAX_FILE_SIZE) {
+            $errors['primary_image'] = "Primary image exceeds maximum size of " . (MAX_FILE_SIZE / 1024 / 1024) . "MB.";
+        }
+    } elseif (isset($_FILES['primary_image']) && $_FILES['primary_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $errors['primary_image'] = "Error uploading primary image. Code: " . $_FILES['primary_image']['error'];
+    }
+
+
+    // Validate Other Images (if any)
+    if (isset($_FILES['other_images'])) {
+        foreach ($_FILES['other_images']['name'] as $key => $name) {
+            if ($_FILES['other_images']['error'][$key] === UPLOAD_ERR_OK) {
+                $file_tmp_path = $_FILES['other_images']['tmp_name'][$key];
+                $file_name = $name;
+                $file_size = $_FILES['other_images']['size'][$key];
+                $file_type = mime_content_type($file_tmp_path);
+                $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+                if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
+                    $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions);
+                } elseif ($file_size > MAX_FILE_SIZE) {
+                    $errors['other_images_' . $key] = "Image '{$file_name}' exceeds maximum size of " . (MAX_FILE_SIZE / 1024 / 1024) . "MB.";
+                }
+            } elseif ($_FILES['other_images']['error'][$key] !== UPLOAD_ERR_NO_FILE) {
+                 $errors['other_images_' . $key] = "Error uploading image '{$name}'. Code: " . $_FILES['other_images']['error'][$key];
+            }
+        }
+    }
 
 
     // --- If no errors, insert into database ---
     if (empty($errors)) {
+        $pdo->beginTransaction(); // Start transaction
         try {
-            $sql = "INSERT INTO housings (user_id, title, description, address_street, address_city, address_state, address_zipcode, address_country, latitude, longitude, property_type, rent_amount, rent_frequency, num_bedrooms, num_bathrooms, square_footage, availability_date, lease_term_months, is_furnished, allows_pets, contact_email, contact_phone, status, created_at, updated_at) 
-                    VALUES (:user_id, :title, :description, :address_street, :address_city, :address_state, :address_zipcode, :address_country, :latitude, :longitude, :property_type, :rent_amount, :rent_frequency, :num_bedrooms, :num_bathrooms, :square_footage, :availability_date, :lease_term_months, :is_furnished, :allows_pets, :contact_email, :contact_phone, :status, NOW(), NOW())";
+            $sql_housing = "INSERT INTO housings (user_id, title, description, address_street, address_city, address_state, address_zipcode, address_country, latitude, longitude, property_type, rent_amount, rent_frequency, num_bedrooms, num_bathrooms, square_footage, availability_date, lease_term_months, is_furnished, allows_pets, contact_email, contact_phone, status, created_at, updated_at) 
+                            VALUES (:user_id, :title, :description, :address_street, :address_city, :address_state, :address_zipcode, :address_country, :latitude, :longitude, :property_type, :rent_amount, :rent_frequency, :num_bedrooms, :num_bathrooms, :square_footage, :availability_date, :lease_term_months, :is_furnished, :allows_pets, :contact_email, :contact_phone, :status, NOW(), NOW())";
             
-            $stmt = $pdo->prepare($sql);
-            
-            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':address_street', $address_street);
-            $stmt->bindParam(':address_city', $address_city);
-            $stmt->bindParam(':address_state', $address_state);
-            $stmt->bindParam(':address_zipcode', $address_zipcode);
-            $stmt->bindParam(':address_country', $address_country);
-            $stmt->bindParam(':latitude', $latitude);
-            $stmt->bindParam(':longitude', $longitude);
-            $stmt->bindParam(':property_type', $property_type);
-            $stmt->bindParam(':rent_amount', $rent_amount);
-            $stmt->bindParam(':rent_frequency', $rent_frequency);
-            $stmt->bindParam(':num_bedrooms', $num_bedrooms, PDO::PARAM_INT);
-            $stmt->bindParam(':num_bathrooms', $num_bathrooms);
-            $stmt->bindParam(':square_footage', $square_footage, PDO::PARAM_INT);
-            $stmt->bindParam(':availability_date', $availability_date);
-            $stmt->bindParam(':lease_term_months', $lease_term_months, PDO::PARAM_INT); // Bind as INT, allow NULL
-            $stmt->bindParam(':is_furnished', $is_furnished, PDO::PARAM_INT);
-            $stmt->bindParam(':allows_pets', $allows_pets, PDO::PARAM_INT);
-            $stmt->bindParam(':contact_email', $contact_email);
-            $stmt->bindParam(':contact_phone', $contact_phone);
-            $stmt->bindParam(':status', $status);
+            $stmt_housing = $pdo->prepare($sql_housing);
+            // Bind all parameters for housings table... (same as your previous version)
+            $stmt_housing->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':title', $title);
+            $stmt_housing->bindParam(':description', $description);
+            $stmt_housing->bindParam(':address_street', $address_street);
+            $stmt_housing->bindParam(':address_city', $address_city);
+            $stmt_housing->bindParam(':address_state', $address_state);
+            $stmt_housing->bindParam(':address_zipcode', $address_zipcode);
+            $stmt_housing->bindParam(':address_country', $address_country);
+            $stmt_housing->bindParam(':latitude', $latitude);
+            $stmt_housing->bindParam(':longitude', $longitude);
+            $stmt_housing->bindParam(':property_type', $property_type);
+            $stmt_housing->bindParam(':rent_amount', $rent_amount);
+            $stmt_housing->bindParam(':rent_frequency', $rent_frequency);
+            $stmt_housing->bindParam(':num_bedrooms', $num_bedrooms, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':num_bathrooms', $num_bathrooms);
+            $stmt_housing->bindParam(':square_footage', $square_footage, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':availability_date', $availability_date);
+            $stmt_housing->bindParam(':lease_term_months', $lease_term_months, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':is_furnished', $is_furnished, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':allows_pets', $allows_pets, PDO::PARAM_INT);
+            $stmt_housing->bindParam(':contact_email', $contact_email);
+            $stmt_housing->bindParam(':contact_phone', $contact_phone);
+            $stmt_housing->bindParam(':status', $status);
 
-            if ($stmt->execute()) {
-                $success_message = "Housing listing added successfully! It may be pending approval.";
-                // Clear POST data to prevent form resubmission issues if user refreshes
-                $_POST = []; 
-            } else {
-                $errors['database'] = "Failed to add listing. Please try again.";
+            if ($stmt_housing->execute()) {
+                $listing_id = $pdo->lastInsertId();
+
+                // --- Handle Primary Image Upload ---
+                if (isset($_FILES['primary_image']) && $_FILES['primary_image']['error'] === UPLOAD_ERR_OK) {
+                    $file_extension = strtolower(pathinfo($_FILES['primary_image']['name'], PATHINFO_EXTENSION));
+                    $new_filename = uniqid('primary_', true) . '.' . $file_extension;
+                    $destination_path = UPLOAD_DIR_BASE . $new_filename;
+                    $relative_path = 'assets/uploads/housing_images/' . $new_filename; // Path to store in DB
+
+                    if (move_uploaded_file($_FILES['primary_image']['tmp_name'], $destination_path)) {
+                        $sql_image = "INSERT INTO housing_images (listing_id, image_url, is_primary, uploaded_at) VALUES (:listing_id, :image_url, 1, NOW())";
+                        $stmt_image = $pdo->prepare($sql_image);
+                        $stmt_image->bindParam(':listing_id', $listing_id, PDO::PARAM_INT);
+                        $stmt_image->bindParam(':image_url', $relative_path);
+                        $stmt_image->execute();
+                    } else {
+                        $errors['primary_image_move'] = "Failed to move primary uploaded image.";
+                        $pdo->rollBack(); // Rollback if image move fails
+                    }
+                }
+                
+                // --- Handle Other Images Upload ---
+                if (empty($errors) && isset($_FILES['other_images'])) { // Proceed only if no prior errors
+                    foreach ($_FILES['other_images']['name'] as $key => $name) {
+                        if ($_FILES['other_images']['error'][$key] === UPLOAD_ERR_OK) {
+                            $file_extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                            $new_filename = uniqid('other_', true) . '_' . $key . '.' . $file_extension;
+                            $destination_path = UPLOAD_DIR_BASE . $new_filename;
+                            $relative_path = 'assets/uploads/housing_images/' . $new_filename;
+
+                            if (move_uploaded_file($_FILES['other_images']['tmp_name'][$key], $destination_path)) {
+                                $sql_image = "INSERT INTO housing_images (listing_id, image_url, is_primary, uploaded_at) VALUES (:listing_id, :image_url, 0, NOW())";
+                                $stmt_image = $pdo->prepare($sql_image);
+                                $stmt_image->bindParam(':listing_id', $listing_id, PDO::PARAM_INT);
+                                $stmt_image->bindParam(':image_url', $relative_path);
+                                $stmt_image->execute();
+                            } else {
+                                $errors['other_images_move_' . $key] = "Failed to move uploaded image '{$name}'.";
+                                $pdo->rollBack(); // Rollback if any image move fails
+                                break; // Exit loop
+                            }
+                        }
+                    }
+                }
+
+                if (empty($errors)) {
+                    $pdo->commit(); // Commit transaction
+                    $success_message = "Housing listing added successfully! It may be pending approval.";
+                    $_POST = [];
+                } else {
+                    // Errors occurred during image processing after housing insert
+                    // The rollback should have handled the housing insert, but good to be explicit
+                    if (!$pdo->inTransaction()) $pdo->beginTransaction(); // Should not happen if rollback was called
+                    $pdo->rollBack();
+                    $errors['database'] = "Failed to add listing due to image processing errors. Please try again.";
+                }
+
+            } else { // Housing insert failed
+                $pdo->rollBack();
+                $errors['database'] = "Failed to add listing details. Please try again.";
             }
 
         } catch (PDOException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             error_log("Add Housing DB Error: " . $e->getMessage());
-            $errors['database'] = "A database error occurred: " . $e->getMessage(); // Show detailed error for dev
-            // $errors['database'] = "A database error occurred. Please try again later."; // For production
+            $errors['database'] = "A database error occurred: " . $e->getMessage();
         }
     }
 }
-$isLoggedIn = true; // For header.php
+$isLoggedIn = true;
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
@@ -151,63 +258,10 @@ $isLoggedIn = true; // For header.php
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- Assuming you've added the CSS from previous step here -->
     <link rel="icon" type="image/png" href="assets/images/icon.png">
-    <style>
-        /* Minimal additional styles for add-housing form */
-        .add-housing-form-container {
-            background-color: var(--container-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--grey-border);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 800px; /* Wider form for more fields */
-            margin: 2rem auto;
-        }
-        [data-theme="dark"] .add-housing-form-container {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-        .add-housing-form-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--text-headings);
-            margin-bottom: 1.8rem;
-            text-align: center;
-        }
-        .add-housing-form .form-group { margin-bottom: 1.2rem; text-align: left; }
-        .add-housing-form label { display: block; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.5rem; }
-        .add-housing-form input[type="text"],
-        .add-housing-form input[type="email"],
-        .add-housing-form input[type="tel"],
-        .add-housing-form input[type="number"],
-        .add-housing-form input[type="date"],
-        .add-housing-form textarea,
-        .add-housing-form select {
-            width: 100%;
-            padding: 0.75rem 0.8rem;
-            background-color: var(--input-bg);
-            border: 1px solid var(--grey-border);
-            border-radius: 8px;
-            color: var(--text-color);
-            font-size: 0.95rem;
-            transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-        }
-        .add-housing-form input:focus, 
-        .add-housing-form textarea:focus, 
-        .add-housing-form select:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb),0.2); }
-        .add-housing-form textarea { min-height: 100px; resize: vertical; }
-        .add-housing-form .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
-        .add-housing-form .checkbox-group input[type="checkbox"] { width: auto; margin-right: 0.3rem; accent-color: var(--accent-primary); }
-        .add-housing-form .form-row { display: flex; gap: 1rem; }
-        .add-housing-form .form-row .form-group { flex: 1; }
-        .btn-submit-listing { width: 100%; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 8px; border: none; cursor: pointer; transition: background-color var(--transition-smooth), transform var(--transition-smooth); background-color: var(--accent-primary); color: var(--bg-primary); }
-        [data-theme="dark"] .btn-submit-listing { color: #000; }
-        .btn-submit-listing:hover { filter: brightness(0.9); transform: translateY(-2px); }
-        .form-error { color: #d9534f; font-size: 0.85em; margin-top: 0.2em; }
-        .form-message.error-message ul { list-style-type: disc; padding-left: 20px; }
-        @media (max-width: 600px) { .add-housing-form .form-row { flex-direction: column; gap: 0; } }
-    </style>
+    <!-- If you created a separate CSS file like add-housing-style.css, link it here: -->
+    <!-- <link rel="stylesheet" href="add-housing-style.css"> -->
 </head>
 <body>
 
@@ -243,61 +297,81 @@ $isLoggedIn = true; // For header.php
             <?php endif; ?>
 
 
-            <?php if (empty($success_message)): // Only show form if not successful ?>
-            <form action="add-housing.php" method="post" id="addHousingForm" class="add-housing-form">
+            <?php if (empty($success_message)): ?>
+            <form action="add-housing.php" method="post" id="addHousingForm" class="add-housing-form" enctype="multipart/form-data">
                 
                 <div class="form-group">
                     <label for="title" data-i18n-key="add_housing_label_title">Title *</label>
                     <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" required>
-                    <?php if (isset($errors['title'])): ?><div class="form-error"><?php echo $errors['title']; ?></div><?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label for="description" data-i18n-key="add_housing_label_description">Description *</label>
                     <textarea id="description" name="description" required><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
-                    <?php if (isset($errors['description'])): ?><div class="form-error"><?php echo $errors['description']; ?></div><?php endif; ?>
                 </div>
 
                 <h3 data-i18n-key="add_housing_subtitle_address" style="font-size:1.2em; margin:1.5rem 0 0.8rem; color: var(--text-headings);">Address Details</h3>
+                <div class="form-group">
+                    <label for="address_street_autocomplete" data-i18n-key="add_housing_label_street_search">Search Address (Street, City) *</label>
+                    <input type="text" id="address_street_autocomplete" placeholder="Start typing your address...">
+                    <small>Select an address from suggestions to auto-fill fields below.</small>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="address_street" data-i18n-key="add_housing_label_street">Street Address *</label>
-                        <input type="text" id="address_street" name="address_street" value="<?php echo htmlspecialchars($_POST['address_street'] ?? ''); ?>" required>
-                        <?php if (isset($errors['address_street'])): ?><div class="form-error"><?php echo $errors['address_street']; ?></div><?php endif; ?>
+                        <label for="address_street" data-i18n-key="add_housing_label_street_confirm">Street Address (Confirmed) *</label>
+                        <input type="text" id="address_street" name="address_street" value="<?php echo htmlspecialchars($_POST['address_street'] ?? ''); ?>" required readonly>
                     </div>
                     <div class="form-group">
-                        <label for="address_city" data-i18n-key="add_housing_label_city">City *</label>
-                        <input type="text" id="address_city" name="address_city" value="<?php echo htmlspecialchars($_POST['address_city'] ?? ''); ?>" required>
-                        <?php if (isset($errors['address_city'])): ?><div class="form-error"><?php echo $errors['address_city']; ?></div><?php endif; ?>
+                        <label for="address_city" data-i18n-key="add_housing_label_city_confirm">City (Confirmed) *</label>
+                        <input type="text" id="address_city" name="address_city" value="<?php echo htmlspecialchars($_POST['address_city'] ?? ''); ?>" required readonly>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="address_state" data-i18n-key="add_housing_label_state">State/Province</label>
-                        <input type="text" id="address_state" name="address_state" value="<?php echo htmlspecialchars($_POST['address_state'] ?? ''); ?>">
+                        <label for="address_state" data-i18n-key="add_housing_label_state_confirm">State/Province (Confirmed)</label>
+                        <input type="text" id="address_state" name="address_state" value="<?php echo htmlspecialchars($_POST['address_state'] ?? ''); ?>" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="address_zipcode" data-i18n-key="add_housing_label_zip">Zip/Postal Code</label>
-                        <input type="text" id="address_zipcode" name="address_zipcode" value="<?php echo htmlspecialchars($_POST['address_zipcode'] ?? ''); ?>">
+                        <label for="address_zipcode" data-i18n-key="add_housing_label_zip_confirm">Zip/Postal Code (Confirmed)</label>
+                        <input type="text" id="address_zipcode" name="address_zipcode" value="<?php echo htmlspecialchars($_POST['address_zipcode'] ?? ''); ?>" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="address_country" data-i18n-key="add_housing_label_country">Country *</label>
-                        <input type="text" id="address_country" name="address_country" value="<?php echo htmlspecialchars($_POST['address_country'] ?? ''); ?>" required>
-                        <?php if (isset($errors['address_country'])): ?><div class="form-error"><?php echo $errors['address_country']; ?></div><?php endif; ?>
+                        <label for="address_country" data-i18n-key="add_housing_label_country_confirm">Country (Confirmed) *</label>
+                        <input type="text" id="address_country" name="address_country" value="<?php echo htmlspecialchars($_POST['address_country'] ?? ''); ?>" required readonly>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="latitude" data-i18n-key="add_housing_label_lat">Latitude *</label>
-                        <input type="number" id="latitude" name="latitude" step="any" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="e.g., 48.8566" required>
-                         <?php if (isset($errors['latitude'])): ?><div class="form-error"><?php echo $errors['latitude']; ?></div><?php endif; ?>
+                        <input type="number" id="latitude" name="latitude" step="any" value="<?php echo htmlspecialchars($_POST['latitude'] ?? ''); ?>" placeholder="e.g., 48.8566" required readonly>
                     </div>
                     <div class="form-group">
                         <label for="longitude" data-i18n-key="add_housing_label_lon">Longitude *</label>
-                        <input type="number" id="longitude" name="longitude" step="any" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="e.g., 2.3522" required>
-                        <?php if (isset($errors['longitude'])): ?><div class="form-error"><?php echo $errors['longitude']; ?></div><?php endif; ?>
+                        <input type="number" id="longitude" name="longitude" step="any" value="<?php echo htmlspecialchars($_POST['longitude'] ?? ''); ?>" placeholder="e.g., 2.3522" required readonly>
                     </div>
                 </div>
+                
+                <h3 data-i18n-key="add_housing_subtitle_images" style="font-size:1.2em; margin:1.5rem 0 0.8rem; color: var(--text-headings);">Images</h3>
+                <div class="form-group">
+                    <label for="primary_image" data-i18n-key="add_housing_label_primary_image">Primary Image (Displayed First)</label>
+                    <input type="file" id="primary_image" name="primary_image" accept="image/*">
+                    <?php if (isset($errors['primary_image'])): ?><div class="form-error"><?php echo $errors['primary_image']; ?></div><?php endif; ?>
+                    <?php if (isset($errors['primary_image_move'])): ?><div class="form-error"><?php echo $errors['primary_image_move']; ?></div><?php endif; ?>
+                </div>
+                <div class="form-group">
+                    <label for="other_images" data-i18n-key="add_housing_label_other_images">Other Images (Max 4, optional)</label>
+                    <input type="file" id="other_images" name="other_images[]" multiple accept="image/*">
+                    <?php 
+                    // Display errors for other images
+                    foreach ($errors as $key => $error_msg) {
+                        if (strpos($key, 'other_images_') === 0) {
+                            echo '<div class="form-error">' . htmlspecialchars($error_msg) . '</div>';
+                        }
+                    }
+                    ?>
+                </div>
+
 
                 <h3 data-i18n-key="add_housing_subtitle_property" style="font-size:1.2em; margin:1.5rem 0 0.8rem; color: var(--text-headings);">Property Details</h3>
                  <div class="form-row">
@@ -311,24 +385,20 @@ $isLoggedIn = true; // For header.php
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <?php if (isset($errors['property_type'])): ?><div class="form-error"><?php echo $errors['property_type']; ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="square_footage" data-i18n-key="add_housing_label_sqft">Square Footage (m²) *</label>
                         <input type="number" id="square_footage" name="square_footage" min="1" value="<?php echo htmlspecialchars($_POST['square_footage'] ?? ''); ?>" required>
-                        <?php if (isset($errors['square_footage'])): ?><div class="form-error"><?php echo $errors['square_footage']; ?></div><?php endif; ?>
                     </div>
                 </div>
                  <div class="form-row">
                     <div class="form-group">
                         <label for="num_bedrooms" data-i18n-key="add_housing_label_beds">Number of Bedrooms *</label>
                         <input type="number" id="num_bedrooms" name="num_bedrooms" min="0" value="<?php echo htmlspecialchars($_POST['num_bedrooms'] ?? '1'); ?>" required>
-                        <?php if (isset($errors['num_bedrooms'])): ?><div class="form-error"><?php echo $errors['num_bedrooms']; ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="num_bathrooms" data-i18n-key="add_housing_label_baths">Number of Bathrooms *</label>
                         <input type="number" id="num_bathrooms" name="num_bathrooms" min="0" step="0.5" value="<?php echo htmlspecialchars($_POST['num_bathrooms'] ?? '1'); ?>" required>
-                        <?php if (isset($errors['num_bathrooms'])): ?><div class="form-error"><?php echo $errors['num_bathrooms']; ?></div><?php endif; ?>
                     </div>
                 </div>
 
@@ -337,7 +407,6 @@ $isLoggedIn = true; // For header.php
                     <div class="form-group">
                         <label for="rent_amount" data-i18n-key="add_housing_label_rent">Rent Amount *</label>
                         <input type="number" id="rent_amount" name="rent_amount" min="0.01" step="0.01" value="<?php echo htmlspecialchars($_POST['rent_amount'] ?? ''); ?>" required>
-                        <?php if (isset($errors['rent_amount'])): ?><div class="form-error"><?php echo $errors['rent_amount']; ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="rent_frequency" data-i18n-key="add_housing_label_rentfreq">Rent Frequency *</label>
@@ -349,19 +418,16 @@ $isLoggedIn = true; // For header.php
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                         <?php if (isset($errors['rent_frequency'])): ?><div class="form-error"><?php echo $errors['rent_frequency']; ?></div><?php endif; ?>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="availability_date" data-i18n-key="add_housing_label_availdate">Availability Date *</label>
                         <input type="date" id="availability_date" name="availability_date" value="<?php echo htmlspecialchars($_POST['availability_date'] ?? ''); ?>" required>
-                        <?php if (isset($errors['availability_date'])): ?><div class="form-error"><?php echo $errors['availability_date']; ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="lease_term_months" data-i18n-key="add_housing_label_lease">Lease Term (Months, optional)</label>
                         <input type="number" id="lease_term_months" name="lease_term_months" min="1" value="<?php echo htmlspecialchars($_POST['lease_term_months'] ?? ''); ?>">
-                         <?php if (isset($errors['lease_term_months'])): ?><div class="form-error"><?php echo $errors['lease_term_months']; ?></div><?php endif; ?>
                     </div>
                 </div>
 
@@ -384,12 +450,10 @@ $isLoggedIn = true; // For header.php
                     <div class="form-group">
                         <label for="contact_email" data-i18n-key="add_housing_label_contactemail">Contact Email *</label>
                         <input type="email" id="contact_email" name="contact_email" value="<?php echo htmlspecialchars($_POST['contact_email'] ?? $_SESSION['email'] ?? ''); ?>" required>
-                         <?php if (isset($errors['contact_email'])): ?><div class="form-error"><?php echo $errors['contact_email']; ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="contact_phone" data-i18n-key="add_housing_label_contactphone">Contact Phone (optional)</label>
                         <input type="tel" id="contact_phone" name="contact_phone" value="<?php echo htmlspecialchars($_POST['contact_phone'] ?? ''); ?>">
-                        <?php if (isset($errors['contact_phone'])): ?><div class="form-error"><?php echo $errors['contact_phone']; ?></div><?php endif; ?>
                     </div>
                 </div>
                 
@@ -402,9 +466,7 @@ $isLoggedIn = true; // For header.php
                             </option>
                         <?php endforeach; ?>
                     </select>
-                     <?php if (isset($errors['status'])): ?><div class="form-error"><?php echo $errors['status']; ?></div><?php endif; ?>
                 </div>
-
 
                 <button type="submit" class="btn-submit-listing" data-i18n-key="add_housing_button_submit">Add Listing</button>
             </form>
@@ -415,17 +477,92 @@ $isLoggedIn = true; // For header.php
     <?php require 'chat-widget.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- IMPORTANT: Replace YOUR_GOOGLE_API_KEY with your actual Google Maps JavaScript API Key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initAutocomplete"></script>
+    
     <script src="script.js" defer></script>
     <script src="chatbot.js" defer></script>
     <script>
+        let autocomplete;
+
+        function initAutocomplete() {
+            const addressInput = document.getElementById('address_street_autocomplete');
+            if (!addressInput) {
+                console.error("Address autocomplete input field not found.");
+                return;
+            }
+
+            autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                // types: ['address'], // You can restrict to addresses
+                componentRestrictions: { country: [] }, // No country restriction by default, or set e.g. 'fr' for France
+                fields: ['address_components', 'geometry', 'name', 'formatted_address']
+            });
+
+            autocomplete.addListener('place_changed', fillInAddress);
+        }
+
+        function fillInAddress() {
+            const place = autocomplete.getPlace();
+            if (!place || !place.geometry) {
+                // User entered the name of a Place that was not suggested and
+                // pressed the Enter key, or the Place Details request failed.
+                console.warn("No details available for input: '" + place.name + "' or geocoding failed.");
+                return;
+            }
+
+            // Clear previous values
+            document.getElementById('address_street').value = '';
+            document.getElementById('address_city').value = '';
+            document.getElementById('address_state').value = '';
+            document.getElementById('address_zipcode').value = '';
+            document.getElementById('address_country').value = '';
+
+            let streetNumber = '';
+            let route = '';
+
+            // Get each component of the address from the place details,
+            // and then fill-in the corresponding field on the form.
+            for (const component of place.address_components) {
+                const componentType = component.types[0];
+                switch (componentType) {
+                    case 'street_number':
+                        streetNumber = component.long_name;
+                        break;
+                    case 'route': // Street name
+                        route = component.long_name;
+                        break;
+                    case 'locality': // City
+                    case 'postal_town': // City for UK
+                        document.getElementById('address_city').value = component.long_name;
+                        break;
+                    case 'administrative_area_level_1': // State or Province
+                        document.getElementById('address_state').value = component.short_name;
+                        break;
+                    case 'postal_code':
+                        document.getElementById('address_zipcode').value = component.long_name;
+                        break;
+                    case 'country':
+                        document.getElementById('address_country').value = component.long_name;
+                        break;
+                }
+            }
+            
+            document.getElementById('address_street').value = (streetNumber + ' ' + route).trim();
+
+
+            // Fill latitude and longitude
+            if (place.geometry.location) {
+                document.getElementById('latitude').value = place.geometry.location.lat();
+                document.getElementById('longitude').value = place.geometry.location.lng();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             flatpickr("#availability_date", {
                 dateFormat: "Y-m-d",
                 minDate: "today"
             });
-
-            // Add i18n attributes for dynamic text based on your existing script.js if needed
-            // e.g., for select options placeholders if your script handles that.
+            // The initAutocomplete function will be called by the Google Maps API script load (callback=initAutocomplete)
         });
     </script>
 </body>
