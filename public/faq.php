@@ -71,7 +71,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     </div> 
   </main>
 
-  <?php require 'chat-widget.php'>
+  <?php require 'chat-widget.php';?>
 
   <script src="script.js" defer></script>
   <script src="chatbot.js" defer></script>
