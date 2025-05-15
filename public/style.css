@@ -1679,3 +1679,146 @@ button {
     padding: 1rem 1.2rem;
   }
 }
+
+/* ========================================
+   Help Page Specific Styles
+   ======================================== */
+.help-page-wrapper {
+  /* .app-container already provides top padding */
+}
+
+.help-content-area {
+  max-width: 900px; /* Controls the width of the help content */
+  margin: 2rem auto 3rem auto; /* Top/bottom margin, auto for left/right centering */
+  padding: 0 1rem; /* Horizontal padding for smaller screens */
+}
+
+/* .page-main-heading can be reused if defined from FAQ styling */
+/* If not, define it here or ensure it's globally available:
+.page-main-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-headings);
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color-subtle);
+  text-align: center;
+}
+[data-theme="light"] .page-main-heading {
+  color: var(--text-headings);
+}
+*/
+
+.help-sections-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Space between individual help sections */
+}
+
+.help-section-item {
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 10px; /* Rounded corners for the item box */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Subtle shadow, same as faq-item */
+  transition: transform var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+  overflow: hidden;
+}
+
+[data-theme="dark"] .help-section-item {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Stronger shadow for dark theme */
+}
+
+.help-section-item:hover {
+  transform: translateY(-4px); /* Slight lift on hover */
+  box-shadow: 0 7px 20px rgba(var(--accent-primary-rgb), 0.08); /* Accent shadow on hover */
+}
+
+[data-theme="dark"] .help-section-item:hover {
+  box-shadow: 0 7px 22px rgba(var(--accent-primary-rgb), 0.12);
+}
+
+.help-section-title {
+  font-size: 1.2rem; /* Size for the section title text */
+  font-weight: 600;
+  color: var(--text-headings);
+  padding: 1.2rem 1.5rem;
+  margin: 0; /* Reset default h2 margin */
+  border-bottom: 1px solid var(--border-color-subtle); /* Separator line */
+}
+
+[data-theme="light"] .help-section-title {
+  color: var(--text-headings);
+}
+
+.help-section-content {
+  padding: 1.2rem 1.5rem;
+  font-size: 0.95rem; /* Size for the content text */
+  color: var(--text-secondary);
+  line-height: 1.7; /* Improved readability */
+}
+
+.help-section-content p {
+  margin: 0 0 0.8em 0; /* Add some bottom margin to paragraphs */
+}
+.help-section-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Styling for lists within help sections */
+.styled-list-help {
+  list-style: none; /* Remove default bullets */
+  padding-left: 0; /* Remove default padding */
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+.styled-list-help li {
+  position: relative;
+  padding-left: 1.8em; /* Space for custom bullet/icon */
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+
+.styled-list-help li::before {
+  content: "\f058"; /* FontAwesome check-circle or similar. Use \f101 for right arrow */
+  font-family: "Font Awesome 6 Free"; /* Or "Font Awesome 6 Solid" */
+  font-weight: 900; /* For solid icons */
+  position: absolute;
+  left: 0;
+  top: 1px; /* Adjust vertical alignment */
+  color: var(--accent-primary); /* Use accent color for the bullet */
+  font-size: 0.9em;
+}
+
+.help-section-content strong {
+  color: var(--text-primary); /* Make strong text stand out a bit more */
+  font-weight: 600;
+}
+.help-section-content em {
+  color: var(--accent-secondary); /* Use accent for emphasized text */
+  font-style: italic;
+}
+.help-section-content a {
+  font-weight: 500; /* Make links slightly bolder */
+}
+
+/* Responsive adjustments for Help page if needed */
+@media screen and (max-width: 768px) {
+  /* .page-main-heading styles from FAQ should apply here too if global */
+  .help-content-area {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .help-section-title {
+    font-size: 1.1rem;
+    padding: 1rem 1.2rem;
+  }
+  .help-section-content {
+    font-size: 0.9rem;
+    padding: 1rem 1.2rem;
+  }
+  .styled-list-help li {
+    padding-left: 1.6em;
+  }
+}
