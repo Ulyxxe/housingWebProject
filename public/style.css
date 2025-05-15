@@ -2513,96 +2513,91 @@ button {
 
 .filter-group .noui-slider-container {
   margin-top: 1rem;
-  margin-bottom: 1.2rem; /* Added a bit more space below */
-  padding: 0 10px; /* Enough padding for larger handles */
+  margin-bottom: 1.2rem;
+  padding: 0 8px; /* Padding so handles don't clip at edges */
 }
 
 /* The main slider track (target element) */
 .noUi-target {
   background: var(
-    --slider-track-bg
-  ); /* Use the new track background variable */
-  border-radius: 5px; /* Slightly more rounded track ends */
-  border: none; /* Remove default border if you want a cleaner look */
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4); /* More pronounced inner shadow */
-  height: 8px; /* Track height */
+    --input-bg
+  ); /* Darker background for the track, from your theme */
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1); /* Softer inner shadow */
+  height: 6px; /* Thin track */
   position: relative;
 }
 
 /* The part of the track between the two handles (the selected range) */
 .noUi-connect {
-  /* Apply the gradient here */
-  background: linear-gradient(
-    to right,
-    var(--slider-gradient-start),
-    var(--slider-gradient-end)
-  );
-  border-radius: 5px; /* Match target */
+  background: var(--accent-primary); /* Your pink accent color */
   box-shadow: none;
-  /* height is determined by the library */
+  /* Height and border-radius will be handled by noUiSlider to match the track */
 }
 
 /* The draggable handles */
 .noUi-handle {
-  height: 20px; /* Larger handle */
-  width: 20px; /* Larger handle */
-  top: -6px; /* Recalculate: (track_height - handle_height) / 2 = (8px - 20px) / 2 = -6px */
-  right: -10px; /* Recalculate: (handle_width / 2) */
-  border-radius: 50%;
-  background: var(--slider-handle-bg); /* Center of handle matches page bg */
-  border: 3px solid var(--slider-handle-border-color); /* Thicker, new border color */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35); /* Subtle drop shadow for the handle */
+  /* noUiSlider default handles are usually rectangular or square with pseudo-elements for grips */
+  /* We will mainly adjust colors and borders, and let noUiSlider define basic shape/size */
+  background: var(
+    --bg-tertiary
+  ); /* A slightly lighter dark color for the handle body */
+  border: 1px solid var(--border-color-subtle);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1); /* Subtle shadow for definition */
+  /* Default handle size from noUiSlider is usually fine, but you can override width/height if needed */
+  /* width: 24px; */
+  /* height: 20px; */
+  /* border-radius: 3px; */ /* Default is slightly rounded corners */
   cursor: grab;
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
-.noUi-handle:focus,
-.noUi-handle:hover {
-  outline: none;
-  border-color: var(
-    --slider-handle-border-color
-  ); /* Keep border color or make it brighter */
-  /* You could add a subtle glow or slightly more intense shadow on hover if desired */
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4),
-    0 0 0 2px rgba(var(--accent-primary-rgb), 0.2);
-}
-
-.noUi-handle:active {
-  cursor: grabbing;
-  transform: scale(1.1); /* Slightly larger when dragging */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
-}
-
+/* The vertical "grip" lines inside the default noUiSlider handles */
 .noUi-handle::before,
 .noUi-handle::after {
-  display: none;
+  /* These create the two vertical lines inside the handle */
+  background: var(--text-secondary); /* Color for the grip lines */
+  /* Default positioning and size by noUiSlider should be okay */
+}
+
+.noUi-handle:focus {
+  outline: none;
+  border-color: var(--accent-primary); /* Highlight border on focus */
+}
+.noUi-handle:hover {
+  border-color: var(--text-primary); /* Lighter border on hover */
+}
+.noUi-handle:active {
+  cursor: grabbing;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(var(--accent-primary-rgb), 0.3);
 }
 
 /* Tooltips that show the current value on the handles */
 .noUi-tooltip {
   display: block;
   position: absolute;
-  bottom: 120%; /* Position further above the larger handle */
+  bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
-  font-size: 0.8rem; /* Slightly larger tooltip text */
+  font-size: 0.75rem;
   font-weight: 500;
-  padding: 4px 8px; /* More padding */
+  padding: 3px 7px;
   border-radius: 4px;
   border: 1px solid var(--border-color);
   white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   opacity: 0;
   transition: opacity 0.1s, transform 0.1s;
-  pointer-events: none; /* So tooltips don't interfere with handle dragging */
+  pointer-events: none;
 }
 
-.noUi-handle:hover .noUi-tooltip, /* Show tooltip on handle hover */
+.noUi-handle:hover .noUi-tooltip,
 .noUi-active .noUi-tooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(-2px); /* Slight upward movement */
+  transform: translateX(-50%) translateY(-2px);
 }
 
 /* Styles for the range header text (e.g., "Price Range", "$0 - $10000") */
