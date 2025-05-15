@@ -1,7 +1,6 @@
 <?php
 // housing-detail.php
-require_once './config/config.php'; // Contains PDO/DB connection info
-
+require_once __DIR__ . '/../config/config.php';
 // Validate GET parameter
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die('Invalid housing ID.');
