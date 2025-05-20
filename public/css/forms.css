@@ -1,0 +1,416 @@
+/* public/css/forms.css */
+
+/* ========================================
+   General Form Structure & Groups
+   ======================================== */
+.form-group {
+  margin-bottom: 1.2rem; /* Default spacing between form groups */
+  text-align: left; /* Ensure labels and inputs align left by default */
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem; /* Space between fields in a row */
+  margin-bottom: 1.2rem; /* Consistent bottom margin for rows */
+}
+
+.form-row .form-group {
+  flex: 1; /* Each group in a row takes equal space */
+  margin-bottom: 0; /* Remove individual bottom margin as row handles it */
+}
+
+/* Responsive stacking for form rows */
+@media screen and (max-width: 576px) { /* Adjust breakpoint as needed */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
+  }
+  .form-row .form-group {
+    margin-bottom: 1.2rem;
+  }
+}
+
+/* ========================================
+   Labels
+   ======================================== */
+label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   Input Fields (Text, Email, Password, Number, Tel, Date, File)
+   ======================================== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="search"], /* For search inputs like in listings page */
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem 0.8rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  line-height: 1.5; /* Ensure text is vertically centered */
+  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+/* Specific padding for inputs with icons if .input-group is used */
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"],
+.input-group input[type="tel"] {
+  padding-left: 2.5rem; /* Make space for the icon */
+}
+
+textarea {
+  min-height: 100px; /* Default min height for textareas */
+  resize: vertical; /* Allow vertical resizing */
+}
+
+select {
+  appearance: none; /* Remove default browser styling for select */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 2.5rem; /* Space for custom dropdown arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 0.8em auto;
+  /* Adjust fill color of SVG arrow to match theme */
+}
+[data-theme="dark"] select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23A0A0C0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+}
+
+/* Focus States */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.2);
+}
+
+/* Placeholder Styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* File Input - Basic Styling (more specific styling in add-housing.css) */
+input[type="file"] {
+  padding: 0.5rem;
+  border: 1px solid var(--grey-border);
+  border-radius: 6px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+/* Custom button style for file inputs */
+input[type="file"]::file-selector-button {
+  padding: 0.6rem 1rem;
+  margin-right: 0.8rem;
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-smooth);
+}
+[data-theme="dark"] input[type="file"]::file-selector-button {
+    color: #000;
+}
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--accent-secondary);
+}
+
+/* Readonly input fields */
+input[readonly] {
+    background-color: var(--bg-tertiary); /* Slightly different for readonly */
+    opacity: 0.7;
+    cursor: not-allowed;
+    /* border-style: dashed; Optional: to indicate it's auto-filled */
+}
+[data-theme="light"] input[readonly] {
+    background-color: var(--bg-secondary);
+}
+
+
+/* ========================================
+   Input Group with Icons (e.g., for Auth Forms)
+   ======================================== */
+.input-group {
+  position: relative;
+  display: flex; /* Can be useful if you ever add button addons */
+  align-items: center;
+}
+
+.input-group-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  opacity: 0.7;
+  pointer-events: none; /* Allow click-through to input */
+  font-size: 0.9em;
+  line-height: 1; /* Ensure icon doesn't affect line height */
+  z-index: 2; /* Ensure icon is above input background */
+}
+
+/* ========================================
+   Checkboxes & Radio Buttons (General Styling)
+   ======================================== */
+
+/* For filter checkboxes and general purpose checkboxes (e.g. "Is Furnished?") */
+.checkbox-item, /* For filter sidebar, likely display: flex from listings.css */
+.checkbox-group, /* For add-housing.php "Is Furnished?" etc. */
+.checkbox-item-inline /* For login "Remember me" / register "Terms" */
+{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-secondary); /* Default label color */
+}
+
+.checkbox-item input[type="checkbox"],
+.checkbox-group input[type="checkbox"],
+.checkbox-item-inline input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
+  position: relative;
+  margin-right: 0.7rem;
+  flex-shrink: 0; /* Prevent shrinking if label is long */
+  cursor: pointer;
+  transition: all var(--transition-speed) var(--transition-timing);
+  background-color: var(--input-bg); /* Match input backgrounds */
+}
+
+.checkbox-item input[type="checkbox"]:hover,
+.checkbox-group input[type="checkbox"]:hover,
+.checkbox-item-inline input[type="checkbox"]:hover {
+  border-color: var(--accent-primary);
+}
+
+.checkbox-item input[type="checkbox"]:checked,
+.checkbox-group input[type="checkbox"]:checked,
+.checkbox-item-inline input[type="checkbox"]:checked {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.checkbox-item input[type="checkbox"]:checked::after,
+.checkbox-group input[type="checkbox"]:checked::after,
+.checkbox-item-inline input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: var(--bg-primary); /* Checkmark color on accent background */
+  font-size: 13px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+[data-theme="dark"] .checkbox-item input[type="checkbox"]:checked::after,
+[data-theme="dark"] .checkbox-group input[type="checkbox"]:checked::after,
+[data-theme="dark"] .checkbox-item-inline input[type="checkbox"]:checked::after {
+  color: #000; /* Ensure contrast for checkmark */
+}
+
+.checkbox-item label,
+.checkbox-group label,
+.checkbox-item-inline label,
+.checkbox-item-inline span /* For "Remember me" or "I agree to..." text */
+ {
+  color: var(--text-secondary);
+  line-height: 1.4;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 0; /* Reset if label has global margin */
+}
+
+/* Specifics for inline checkboxes like "Terms" or "Remember Me" */
+.checkbox-item-inline {
+  font-size: 0.85rem;
+}
+.checkbox-item-inline input[type="checkbox"] {
+  margin-right: 0.5em;
+  width: 15px;
+  height: 15px;
+}
+.terms-agreement-group .checkbox-item-inline { /* From register.php */
+  align-items: flex-start; /* Align checkbox with start of text line */
+  line-height: 1.4;
+}
+.terms-agreement-group .checkbox-item-inline input[type="checkbox"] {
+  margin-top: 0.2em; /* Align checkbox better with multi-line text */
+}
+.terms-agreement-group .checkbox-item-inline a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+.terms-agreement-group .checkbox-item-inline a:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   Form Buttons (General, can be overridden by page-specific)
+   ======================================== */
+.btn-form-submit, /* A generic class for form submit buttons */
+.btn-auth, /* From auth.css, if used more generally */
+.btn-submit-listing /* From add-housing.css, if used more generally */
+ {
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.btn-form-submit:hover,
+.btn-auth:hover,
+.btn-submit-listing:hover {
+  transform: translateY(-2px);
+}
+.btn-form-submit:active,
+.btn-auth:active,
+.btn-submit-listing:active {
+  transform: translateY(0);
+}
+
+/* Primary action button for forms */
+.btn-form-submit.primary,
+.primary-auth-button, /* From auth.css */
+.btn-submit-listing /* From add-housing.css, styled as primary there */
+ {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+}
+[data-theme="dark"] .btn-form-submit.primary,
+[data-theme="dark"] .primary-auth-button,
+[data-theme="dark"] .btn-submit-listing {
+  color: #000;
+}
+
+.btn-form-submit.primary:hover,
+.primary-auth-button:hover,
+.btn-submit-listing:hover {
+  background-color: var(--accent-secondary);
+}
+
+/* Secondary action button for forms (e.g., "Cancel", "Clear") */
+.btn-form-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+.btn-form-secondary:hover {
+    background-color: var(--border-color-subtle);
+    color: var(--text-primary);
+}
+
+
+/* ========================================
+   Form Messages (Errors, Success)
+   ======================================== */
+.form-message {
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.form-message i { /* Icon within the message box */
+  margin-right: 0.6rem;
+  font-size: 1.1em;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.error-message {
+  background-color: rgba(217, 83, 79, 0.15); /* Light red */
+  border: 1px solid rgba(217, 83, 79, 0.3);
+  color: #d9534f; /* Darker red text */
+}
+[data-theme="dark"] .error-message {
+  background-color: rgba(217, 83, 79, 0.25);
+  border: 1px solid rgba(217, 83, 79, 0.5);
+  color: #e7726e; /* Lighter red for dark theme text */
+}
+
+.success-message {
+  background-color: rgba(92, 184, 92, 0.15); /* Light green */
+  border: 1px solid rgba(92, 184, 92, 0.3);
+  color: #5cb85c; /* Darker green text */
+}
+[data-theme="dark"] .success-message {
+  background-color: rgba(92, 184, 92, 0.25);
+  border: 1px solid rgba(92, 184, 92, 0.5);
+  color: #79c779; /* Lighter green for dark theme text */
+}
+
+/* Styling for error list within error message (from auth.css) */
+.error-message .error-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 0.85rem;
+}
+.error-message .error-list li {
+  margin-bottom: 0.3rem;
+}
+.error-message .error-list li:last-child {
+  margin-bottom: 0;
+}
+.error-message > div:not(i) { /* The container for text if icon is sibling */
+  display: flex;
+  flex-direction: column;
+}
+.error-message strong { /* e.g., "Please correct the following errors:" */
+  font-weight: 500;
+  margin-bottom: 0.3em;
+  display: block;
+}
+
+
+/* Form specific error display (e.g., under an input field) */
+.form-error { /* From add-housing for primary_image error */
+    font-size: 0.85rem;
+    color: #d9534f; /* Match general error color */
+    margin-top: 0.3rem;
+    display: block; /* Ensure it takes its own line */
+}
+[data-theme="dark"] .form-error {
+    color: #e7726e;
+}

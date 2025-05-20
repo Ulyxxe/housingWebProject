@@ -1,0 +1,203 @@
+/* public/css/add-housing.css */
+
+/* Main container for the add housing form page */
+/* .app-container is likely in global.css, so we style the specific inner container */
+.add-housing-form-container {
+    max-width: 800px; /* Or your preferred max width for forms */
+    margin: 2rem auto; /* Center it on the page with some top/bottom margin */
+    padding: 2rem;
+    background-color: var(--container-bg);
+    border: 1px solid var(--grey-border);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .add-housing-form-container {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.add-housing-form-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-headings);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color-subtle);
+    text-align: center;
+}
+
+/* Styling for the form itself */
+.add-housing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Spacing between form groups/sections */
+}
+
+/* General .form-group styling should come from forms.css */
+/* If you need specific spacing for THIS form's groups: */
+/*
+.add-housing-form .form-group {
+    margin-bottom: 1.2rem;
+}
+*/
+
+/* Section Headings within the form (e.g., "Address Details", "Images") */
+.add-housing-form h3 {
+    font-size: 1.3rem; /* Use your existing h3 style or adjust */
+    font-weight: 500;
+    color: var(--text-headings);
+    margin-top: 1rem; /* Space above section titles */
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+.add-housing-form h3:first-of-type {
+    margin-top: 0; /* No top margin for the very first h3 if it follows title directly */
+}
+
+/* Small helper text */
+.add-housing-form .form-group small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.3rem;
+}
+
+/* Readonly input fields (for confirmed address parts) */
+.add-housing-form input[readonly] {
+    background-color: var(--input-bg); /* Match normal input for dark theme */
+    opacity: 0.7;
+    cursor: not-allowed;
+    border-style: dashed; /* Optional: to indicate it's auto-filled */
+}
+[data-theme="light"] .add-housing-form input[readonly] {
+    background-color: var(--bg-tertiary); /* Slightly different for light theme */
+}
+
+
+/* File input styling (basic, can be enhanced significantly) */
+.add-housing-form input[type="file"] {
+    padding: 0.5rem; /* Some padding for file inputs */
+    border: 1px solid var(--grey-border);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    line-height: 1.5; /* Ensure text is vertically centered if browser adds some */
+}
+.add-housing-form input[type="file"]::file-selector-button {
+    padding: 0.5rem 0.8rem;
+    margin-right: 0.8rem;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary); /* Text on accent button */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color var(--transition-smooth);
+}
+[data-theme="dark"] .add-housing-form input[type="file"]::file-selector-button {
+    color: #000;
+}
+.add-housing-form input[type="file"]::file-selector-button:hover {
+    background-color: var(--accent-secondary);
+}
+
+/* Specific error display for image fields (if the PHP generates .form-error) */
+.add-housing-form .form-group .form-error {
+    font-size: 0.85rem;
+    color: #d9534f; /* Match general error color */
+    margin-top: 0.3rem;
+}
+[data-theme="dark"] .add-housing-form .form-group .form-error {
+    color: #e7726e;
+}
+
+
+/* Checkbox group styling (for "Is Furnished?", "Allows Pets?") */
+.add-housing-form .checkbox-group {
+    display: flex;
+    align-items: center;
+    /* Use styles from forms.css for .checkbox-item-inline or define similar here */
+}
+.add-housing-form .checkbox-group input[type="checkbox"] {
+    margin-right: 0.5em;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent-primary);
+}
+.add-housing-form .checkbox-group label {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 0; /* Override default label margin if any */
+    cursor: pointer;
+}
+
+
+/* Submit Button Styling */
+.btn-submit-listing {
+    /* Leverage existing button styles from components.css or forms.css if possible */
+    /* Example of making it full width and accent colored: */
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary); /* Text color on accent */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color var(--transition-smooth), transform var(--transition-smooth);
+    margin-top: 1rem; /* Space above the button */
+}
+[data-theme="dark"] .btn-submit-listing {
+    color: #000; /* Ensure contrast */
+}
+
+.btn-submit-listing:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px);
+}
+.btn-submit-listing:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments for the add-housing form */
+@media screen and (max-width: 768px) {
+    .add-housing-form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    .add-housing-form-title {
+        font-size: 1.6rem;
+    }
+    .add-housing-form h3 {
+        font-size: 1.2rem;
+    }
+
+    /* Stack .form-row elements if they are side-by-side by default */
+    /* Assuming .form-row is defined in forms.css to be display: flex; gap: 1rem; */
+    .add-housing-form .form-row {
+        flex-direction: column;
+        gap: 0; /* Remove gap when stacked */
+    }
+    .add-housing-form .form-row .form-group {
+         margin-bottom: 1.5rem; /* Add back spacing for stacked items */
+    }
+    .add-housing-form .form-row .form-group:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .add-housing-form-container {
+        margin: 0.5rem;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    .add-housing-form-title {
+        font-size: 1.4rem;
+    }
+    .add-housing-form h3 {
+        font-size: 1.1rem;
+    }
+}

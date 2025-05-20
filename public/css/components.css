@@ -1,0 +1,418 @@
+/* public/css/components.css */
+
+/* ========================================
+   Buttons (Generic Reusable Styles)
+   ======================================== */
+
+/* Base button style - can be extended */
+.btn {
+  display: inline-block; /* Or inline-flex for icon alignment */
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--transition-smooth), color var(--transition-smooth),
+              border-color var(--transition-smooth), transform var(--transition-smooth),
+              box-shadow var(--transition-smooth);
+  line-height: 1.5; /* Ensure consistent line height */
+}
+
+.btn:hover {
+  transform: translateY(var(--hover-lift, -2px));
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Primary Button Style */
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary); /* Text color on accent */
+  border-color: var(--accent-primary);
+}
+[data-theme="dark"] .btn-primary {
+  color: #000; /* Ensure contrast on dark theme */
+}
+.btn-primary:hover {
+  background-color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.15);
+}
+
+/* Secondary Button Style */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+.btn-secondary:hover {
+  background-color: var(--border-color-subtle);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Link-style Button (looks like a link but behaves like a button) */
+.btn-link {
+  background-color: transparent;
+  color: var(--text-link);
+  border-color: transparent;
+  padding: 0.4rem 0.8rem; /* Smaller padding for link-like buttons */
+  text-decoration: none;
+}
+.btn-link:hover {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+  background-color: rgba(var(--accent-primary-rgb), 0.05);
+}
+
+/* Button with Icon */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.btn-icon i,
+.btn-icon svg {
+  font-size: 1.1em; /* Slightly larger icon relative to button text */
+  /* vertical-align: middle; Can help with alignment */
+}
+
+
+/* ========================================
+   Cards (Generic Card Structure)
+   ======================================== */
+.card {
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 12px;
+  overflow: hidden; /* Ensures child elements respect border-radius */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  display: flex;
+  flex-direction: column; /* Default to column layout */
+  height: 100%; /* For consistent height in grids if needed */
+}
+
+.card:hover {
+  transform: translateY(var(--hover-lift, -4px)) scale(var(--hover-scale, 1.01));
+  box-shadow: 0 8px 20px rgba(var(--accent-primary-rgb), 0.1);
+}
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 8px 25px rgba(var(--accent-primary-rgb), 0.15);
+}
+
+.card-header,
+.card-footer {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--grey-border); /* For header */
+}
+.card-footer {
+  border-top: 1px solid var(--grey-border); /* For footer */
+  border-bottom: none;
+  margin-top: auto; /* Push footer to bottom if card content is short */
+  background-color: var(--input-bg); /* Slightly different background for footer */
+}
+
+.card-body {
+  padding: 1.2rem;
+  flex-grow: 1; /* Allow body to take available space */
+}
+
+.card-title { /* Assumes h3, h4, etc. inside the card */
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-headings);
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+}
+.card-text:last-child {
+    margin-bottom: 0;
+}
+
+.card-image-top {
+  width: 100%;
+  height: 180px; /* Or use aspect-ratio */
+  object-fit: cover;
+  background-color: var(--placeholder-bg); /* Placeholder color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border-color-subtle);
+  font-size: 3em; /* For placeholder icon */
+}
+.card-image-top i { /* Example placeholder icon */
+    opacity: 0.5;
+}
+
+
+/* ========================================
+   Badges (e.g., for notification counts)
+   ======================================== */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 10rem; /* Pill shape */
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+}
+[data-theme="dark"] .badge {
+  color: #000; /* Ensure contrast */
+}
+
+/* Badge variants (optional) */
+.badge-secondary {
+  background-color: var(--text-secondary);
+  color: var(--bg-primary);
+}
+[data-theme="dark"] .badge-secondary {
+  color: #000;
+}
+
+.badge-success {
+  background-color: #5cb85c; /* Green for success */
+  color: var(--bg-primary);
+}
+[data-theme="dark"] .badge-success {
+  color: #000;
+}
+
+.badge-danger {
+  background-color: #d9534f; /* Red for danger/error */
+  color: var(--bg-primary);
+}
+[data-theme="dark"] .badge-danger {
+  color: #000;
+}
+
+
+/* ========================================
+   Chat Widget Styles
+   ======================================== */
+#chat-widget {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000; /* Below header, above most content */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+#chat-toggle-button {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.8rem; /* If chat container is visible */
+  transition: background-color var(--transition-smooth), transform var(--transition-smooth),
+              box-shadow var(--transition-smooth);
+}
+[data-theme="dark"] #chat-toggle-button {
+  color: #000;
+}
+
+#chat-toggle-button:hover {
+  filter: brightness(0.92);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+#chat-container {
+  width: 340px;
+  max-height: 480px; /* Max height of the chat window */
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease,
+              margin-bottom 0.3s ease, visibility 0.3s ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+}
+[data-theme="dark"] #chat-container {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+#chat-container.chat-hidden {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  height: 0 !important; /* Force height to 0 when hidden */
+  border: none;
+  margin-bottom: -10px; /* To help with smooth collapse */
+  visibility: hidden;
+}
+
+#chat-header {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  padding: 0.7rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+[data-theme="dark"] #chat-header {
+  color: #000;
+}
+
+#chat-header span { /* Title */
+  font-size: 1.05em;
+}
+
+#chat-close-button {
+  background: none;
+  border: none;
+  color: inherit; /* Inherits from #chat-header */
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0 0.3rem;
+  line-height: 1;
+}
+#chat-close-button:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+#chat-messages {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto; /* Enable scrolling for messages */
+  background-color: var(--input-bg); /* Slightly different bg for message area */
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem; /* Space between messages */
+}
+
+.message { /* Individual chat message bubble */
+  padding: 0.6rem 0.9rem;
+  border-radius: 18px;
+  max-width: 85%;
+  line-height: 1.45;
+  word-wrap: break-word; /* Break long words */
+  font-size: 0.9rem;
+}
+
+.message.user {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-bottom-right-radius: 5px; /* "Tail" effect */
+  align-self: flex-end; /* Align user messages to the right */
+}
+[data-theme="dark"] .message.user {
+  color: #000;
+}
+
+.message.bot {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-bottom-left-radius: 5px; /* "Tail" effect */
+  align-self: flex-start; /* Align bot messages to the left */
+}
+.message.bot a { /* Styling for links within bot messages */
+    color: var(--text-link);
+    text-decoration: underline;
+}
+.message.bot a:hover {
+    filter: brightness(1.1);
+}
+
+#chat-input-area {
+  display: flex;
+  padding: 0.8rem;
+  border-top: 1px solid var(--grey-border);
+  background-color: var(--container-bg); /* Match chat container background */
+  flex-shrink: 0; /* Prevent input area from shrinking */
+}
+
+#chat-input {
+  flex-grow: 1;
+  border: 1px solid var(--grey-border);
+  border-radius: 20px; /* Pill shape */
+  padding: 0.6rem 1rem;
+  margin-right: 0.6rem;
+  outline: none;
+  font-size: 0.9rem;
+  background-color: var(--input-bg); /* Match general input fields */
+  color: var(--text-color);
+  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+#chat-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2.5px rgba(var(--accent-primary-rgb), 0.25);
+}
+
+#chat-send-button {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 50%; /* Circular button */
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-size: 0.9rem; /* Size of the send icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+[data-theme="dark"] #chat-send-button {
+  color: #000;
+}
+
+#chat-send-button:hover {
+  filter: brightness(0.92);
+}
+#chat-send-button:disabled {
+  background-color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+#chat-loading {
+  padding: 0.7rem 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  background-color: var(--input-bg);
+  border-top: 1px solid var(--grey-border);
+  font-style: italic;
+  flex-shrink: 0;
+  /* display: none; Handled by .chat-hidden class in JS */
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+#chat-loading.chat-hidden { /* To explicitly hide it */
+    display: none;
+}
+#chat-loading i.fa-spinner { /* Target the FontAwesome spinner */
+  margin-right: 0.5rem;
+  animation: spin 1.5s linear infinite; /* Use spin animation from global.css */
+}

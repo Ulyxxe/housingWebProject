@@ -258,10 +258,18 @@ $isLoggedIn = true;
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="style.css"> <!-- Assuming you've added the CSS from previous step here -->
+  
     <link rel="icon" type="image/png" href="assets/images/icon.png">
-    <!-- If you created a separate CSS file like add-housing-style.css, link it here: -->
-    <!-- <link rel="stylesheet" href="add-housing-style.css"> -->
+    <link rel="stylesheet" href="css/global.css">   <!-- General styles, variables -->
+    <link rel="stylesheet" href="css/header.css">   <!-- Header styling -->
+    <link rel="stylesheet" href="css/components.css"> <!-- Chat widget, common buttons -->
+    <link rel="stylesheet" href="css/forms.css"> 
+       <!-- General form styling -->
+
+    <!-- Page-Specific CSS -->
+
+    <link rel="stylesheet" href="css/add-housing.css"> <!-- Styles ONLY for this page -->
+    
 </head>
 <body>
 

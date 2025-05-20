@@ -1,0 +1,282 @@
+/* public/css/global.css */
+
+/* ========================================
+   Base Styles & CSS Variables
+   ======================================== */
+:root {
+  /* Base Dark Theme Colors */
+  --bg-primary: #14121f;
+  --bg-secondary: #1e1a2e;
+  --bg-tertiary: #2a263e;
+  --bg-overlay: rgba(20, 18, 31, 0.96);
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0c0;
+  --text-headings: #ffffff;
+  --border-color: #4a445e;
+  --border-color-subtle: #3a364a;
+  --noise-opacity: 0.02;
+
+  --header-height: 65px;
+  --header-bg-rgb: 30, 26, 46;
+  --header-bg-opacity: 0.7;
+  --header-border-rgb: 240, 240, 245;
+  --header-border-opacity: 0.1;
+  --header-blur: 8px;
+  --header-text-primary: #ffffff; /* Used by header.css */
+  --header-text-secondary: rgba(240, 240, 245, 0.75); /* Used by header.css */
+
+  /* Accent Colors - Default to CROUS Pink Primary */
+  --accent-primary: #e91e63; /* CROUS Pink */
+  --accent-primary-rgb: 233, 30, 99;
+  --accent-secondary: #c2185b; /* Darker CROUS Pink */
+  --text-link: #e91e63;
+  --shadow-light: rgba(var(--accent-primary-rgb), 0.18);
+
+  /* App-Specific Variables using the new system */
+  --primary-pink: var(--accent-primary);
+  --light-pink: #ffe3f2; /* For specific highlights if needed */
+  --keywords-txt-color: var(--accent-primary);
+  --grey-border: var(--border-color-subtle);
+  --grey-background: var(--bg-tertiary);
+  --text-color: var(--text-primary); /* Alias for general text */
+  --light-text: var(--text-secondary); /* Alias for secondary text */
+  --placeholder-bg: var(--bg-secondary);
+  --container-bg: var(--bg-secondary); /* Default background for card-like containers */
+  --input-bg: var(--bg-tertiary); /* Default background for input fields */
+  --body-bg: var(--bg-primary); /* Main page background */
+
+  --hover-lift: -2px;
+  --hover-scale: 1.03;
+  --transition-speed: 0.2s;
+  --transition-timing: ease-in-out;
+
+  --font-primary: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+  --transition-smooth: all 0.3s ease-in-out;
+}
+
+[data-theme="light"] {
+  /* Base Light Theme Colors */
+  --bg-primary: #fdfbff;
+  --bg-secondary: #f5f3f9;
+  --bg-tertiary: #edeaf3;
+  --bg-overlay: rgba(253, 251, 255, 0.95);
+  --text-primary: #3c3258;
+  --text-secondary: #6a5f8a;
+  --text-headings: #2a2244;
+  --border-color: #dcd5e9;
+  --border-color-subtle: #eae5f1;
+
+  --header-bg-rgb: 253, 251, 255;
+  --header-bg-opacity: 0.75;
+  --header-border-rgb: 42, 34, 68;
+  --header-border-opacity: 0.08;
+  --header-text-primary: #2a2244; /* Used by header.css */
+  --header-text-secondary: rgba(42, 34, 68, 0.75); /* Used by header.css */
+
+  /* App-Specific Light Variables */
+  --keywords-txt-color: #c2185b;
+  --grey-border: var(--border-color-subtle);
+  --grey-background: var(--bg-tertiary);
+  --text-color: var(--text-primary);
+  --light-text: var(--text-secondary);
+  --placeholder-bg: var(--bg-secondary);
+  --container-bg: #ffffff; /* White cards on light theme */
+  --input-bg: var(--bg-tertiary);
+  --body-bg: var(--bg-primary);
+
+  --lang-hover-bg: rgba(233, 30, 99, 0.08);
+  --lang-hover-text: var(--accent-secondary);
+
+  --slider-track-bg: #d1d1e0;
+  --slider-gradient-start: var(--accent-primary);
+  --slider-gradient-end: #7f00ff;
+  --slider-handle-bg: var(--bg-primary);
+  --slider-handle-border-color: #e6a157;
+}
+
+/* Accent Color Theme Definitions */
+html[data-accent-color="crous-pink-primary"] {
+  --accent-primary: #e91e63;
+  --accent-primary-rgb: 233, 30, 99;
+  --accent-secondary: #c2185b;
+  --text-link: #e91e63;
+  --shadow-light: rgba(var(--accent-primary-rgb), 0.2);
+}
+[data-theme="light"][data-accent-color="crous-pink-primary"] {
+  --text-link: #c2185b;
+}
+
+html[data-accent-color="crous-purple-deep"] {
+  --accent-primary: #ad1457;
+  --accent-primary-rgb: 173, 20, 87;
+  --accent-secondary: #880e4f;
+  --text-link: #ad1457;
+  --shadow-light: rgba(var(--accent-primary-rgb), 0.18);
+}
+[data-theme="light"][data-accent-color="crous-purple-deep"] {
+  --text-link: #880e4f;
+}
+
+html[data-accent-color="crous-accent-gold"] {
+  --accent-primary: #ffc107;
+  --accent-primary-rgb: 255, 193, 7;
+  --accent-secondary: #ffa000;
+  --text-link: #ffc107;
+  --shadow-light: rgba(var(--accent-primary-rgb), 0.22);
+}
+[data-theme="light"][data-accent-color="crous-accent-gold"] {
+  --text-link: #ffa000;
+}
+
+/* ========================================
+   Minimal Reset
+   ======================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px; /* Base font size for rem units */
+  line-height: 1.15; /* From original style.css */
+  -webkit-text-size-adjust: 100%; /* From original style.css */
+}
+
+body {
+  font-family: var(--font-primary);
+  line-height: 1.6; /* More common default line-height */
+  color: var(--text-color);
+  background-color: var(--body-bg);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh; /* Ensure body takes at least full viewport height */
+  display: flex; /* Helps with footer sticking if content is short */
+  flex-direction: column; /* Helps with footer sticking */
+}
+
+/* Ensure main content area can grow to push footer down */
+main {
+  flex-grow: 1;
+}
+
+/* ========================================
+   Basic Element Styling
+   ======================================== */
+a {
+  text-decoration: none;
+  color: var(--text-link);
+  transition: color var(--transition-speed) var(--transition-timing), filter var(--transition-speed) var(--transition-timing);
+}
+
+a:hover {
+  filter: brightness(1.15); /* General hover for links */
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  background: none; /* Reset button background */
+  border: none; /* Reset button border */
+  padding: 0; /* Reset button padding */
+  color: inherit; /* Inherit text color */
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-headings);
+  line-height: 1.3;
+  font-weight: 600; /* A sensible default weight for headings */
+}
+/* You can add default margins for headings if desired, e.g.:
+h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+h2 { font-size: 2rem;   margin-bottom: 1.25rem; }
+h3 { font-size: 1.75rem; margin-bottom: 1rem; }
+*/
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+p:last-child {
+  margin-bottom: 0;
+}
+
+ul, ol {
+  list-style-position: outside;
+  padding-left: 1.5em; /* Indent list items */
+  margin-bottom: 1rem;
+}
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   Custom Font Declaration
+   ======================================== */
+@font-face {
+  font-family: "Title font";
+  src: url("../assets/fonts/AnkhSanctuary-PVK0B.ttf") format("truetype");
+  /* Ensure this path is correct. It's relative to where this CSS file is loaded from.
+     If global.css is in public/css/, then assets/ should be public/assets/ */
+}
+
+/* ========================================
+   General App Container (if applicable)
+   ======================================== */
+.app-container {
+  /* This class is used in add-housing.php, dashboard.php, faq.php, help.php, login.php, register.php */
+  /* It likely provides padding for the sticky header and perhaps some horizontal constraints */
+  padding-top: var(--header-height); /* Space for sticky header, adjust if header isn't always sticky */
+  /* You might want a max-width and margin: auto here if it's a content wrapper,
+     but individual pages like add-housing-form-container seem to handle their own max-width.
+     If it's just for header padding, the above is fine. */
+  /* Example:
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  */
+}
+
+
+/* ========================================
+   Accessibility & Utilities (Optional)
+   ======================================== */
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap; /* For text content */
+}
+
+/* Keyframes used by other components (e.g., chat loading) */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
