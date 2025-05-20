@@ -9,9 +9,9 @@
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
-  font-size: 16px;
+  font-size: 16px; /* Base font size */
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; /* Prevents scrollbar on html */
   box-sizing: border-box;
   background-color: var(--bg-primary);
   transition: var(--transition-theme);
@@ -25,7 +25,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden; /* Prevents scrollbar on body */
   position: relative;
 }
 main,
@@ -101,7 +101,9 @@ ol {
   --shadow-medium: rgba(0, 0, 0, 0.5);
   --shadow-dark: rgba(0, 0, 0, 0.7);
 
-  --header-height: 65px;
+  --header-height-val: 65px; /* Explicit value for header height */
+  --header-top-offset: 1.5rem; /* Explicit value for header top offset */
+
   --header-bg-rgb: 30, 26, 46; /* Corresponds to --bg-secondary */
   --header-bg-opacity: 0.7;
   --header-border-rgb: 240, 240, 245; /* Corresponds to --text-primary */
@@ -111,8 +113,6 @@ ol {
   --header-text-secondary: rgba(240, 240, 245, 0.75);
   --header-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 
-  /* Accent Colors - Default to CROUS Pink Primary */
-  /* This data-accent-color is still used for the background light and other general accents */
   --accent-primary: #e91e63; /* CROUS Pink */
   --accent-primary-rgb: 233, 30, 99;
   --accent-secondary: #c2185b; /* Darker CROUS Pink */
@@ -184,9 +184,7 @@ ol {
   --cursor-dot-bg: rgba(var(--cursor-dot-color-rgb), 0.5);
 }
 
-/* Accent Color Definitions (Still used for general accenting, not by the language dropdown) */
 html[data-accent-color="crous-pink-primary"] {
-  /* This is the default */
   --accent-primary: #e91e63;
   --accent-primary-rgb: 233, 30, 99;
   --accent-secondary: #c2185b;
@@ -225,7 +223,6 @@ html[data-accent-color="crous-accent-gold"] {
   --text-link: #ffa000;
 }
 
-/* --- Cursor & Background Light --- */
 @media (min-width: 769px) {
   body.custom-cursor-active {
     cursor: none;
@@ -311,28 +308,32 @@ html[data-accent-color="crous-accent-gold"] {
   }
 }
 
-/* --- Scroll & Section Base --- */
 .scroll-container {
-  height: 100vh;
-  overflow-y: scroll;
+  height: 100vh; /* Takes full viewport height */
+  overflow-y: scroll; /* Enables vertical scrolling for content within */
   position: relative;
-  scroll-behavior: auto; /* Keep auto for JS controlled scroll */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scroll-behavior: auto; /* Important: if JS handles smooth scroll, this avoids conflict. If not, 'smooth' can be set here. */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
   width: 100%;
+  /* === FOOTER FIX: Add padding to bottom of scroll container === */
+  /* This ensures there's space for the footer's own padding to be visible */
+  padding-bottom: 4rem; /* Adjust as needed, should be at least footer's bottom padding */
+  box-sizing: border-box; /* Ensure padding doesn't add to height if 100vh is strict */
 }
 .scroll-container::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome, Safari, Opera */
 }
+
 .scroll-section {
   height: 100vh;
-  min-height: 100vh;
+  min-height: 100vh; /* Ensure sections take at least full viewport height */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 9rem 2rem 4rem 2rem;
+  padding: 9rem 2rem 4rem 2rem; /* Original padding */
   overflow: hidden;
   background-color: transparent;
   background-image: radial-gradient(
@@ -346,18 +347,20 @@ html[data-accent-color="crous-accent-gold"] {
     background-color 0.3s ease, padding 0.3s ease;
 }
 
-/* === CORRECTION 1: Prevent header overlap on anchor navigation === */
+/* === HEADER OVERLAP FIX: Apply scroll-margin-top to sections with an ID === */
 .scroll-section[id] {
-  scroll-margin-top: calc(
-    3rem + var(--header-height) + 2px
-  ); /* 1.5rem header top + header height + 2px border + 1.5rem desired gap */
+  /*
+    Header is fixed at `top: 1.5rem`. Height of header-inner is `var(--header-height-val)` (65px).
+    Approximate total header height: 1.5rem (24px) + 65px + 2px border = 91px.
+    Add ~20px for visual spacing. Total offset needed ~110-120px.
+    Using a direct pixel value for robust testing.
+  */
+  scroll-margin-top: 120px !important; /* Use !important ONLY for testing this specific issue */
+  /* If 120px works, you can try refining it with calc(var(--header-top-offset) + var(--header-height-val) + 20px)
+     and remove !important.
+     The 20px is extra visual padding below the header.
+  */
 }
-/*
-   Note on scroll-section padding-top: The existing padding-top (e.g., 9rem)
-   will apply *after* scroll-margin-top has positioned the section below the header.
-   If this results in too much space, you can reduce the padding-top in .scroll-section
-   and its responsive variants. For now, it's kept as per your original CSS.
-*/
 
 .alternate-bg {
   background-color: var(--bg-secondary);
@@ -460,6 +463,7 @@ html[data-accent-color="crous-accent-gold"] {
   opacity: 0;
   animation-play-state: paused;
 }
+
 .section-content {
   max-width: 1100px;
   width: 100%;
@@ -506,10 +510,9 @@ html[data-accent-color="crous-accent-gold"] {
   transition: opacity 0.3s ease;
 }
 
-/* --- Header --- */
 .site-header {
   position: fixed;
-  top: 1.5rem;
+  top: var(--header-top-offset); /* Using variable */
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 3rem);
@@ -523,7 +526,7 @@ html[data-accent-color="crous-accent-gold"] {
   backdrop-filter: blur(var(--header-blur));
   box-shadow: none;
   transition: transform 0.4s ease, background-color 0.3s ease,
-    border-color 0.3s ease, backdrop-filter 0.3s ease, max-width 0.3s ease; /* Added max-width transition */
+    border-color 0.3s ease, backdrop-filter 0.3s ease, max-width 0.3s ease;
 }
 .header-inner {
   display: flex;
@@ -533,7 +536,7 @@ html[data-accent-color="crous-accent-gold"] {
   max-width: 100%;
   margin: 0 auto;
   position: relative;
-  height: var(--header-height);
+  height: var(--header-height-val); /* Using variable */
 }
 .header-group-left {
   display: flex;
@@ -553,7 +556,7 @@ html[data-accent-color="crous-accent-gold"] {
   text-decoration: none;
   transition: color 0.3s ease, transform 0.3s ease;
   display: block;
-  white-space: nowrap; /* Ensures CROUS-X is on one line */
+  white-space: nowrap;
 }
 .logo a:hover {
   filter: brightness(1.1);
@@ -648,11 +651,8 @@ html[data-accent-color="crous-accent-gold"] {
   box-shadow: 0 2px 8px rgba(var(--accent-primary-rgb), 0.3);
 }
 .listings-button:hover i {
-  color: var(
-    --bg-primary
-  ); /* This might conflict with your .header-button i { color: var(--bg-primary); } if that's intended globally on hover for this button type */
+  color: var(--bg-primary);
 }
-/* Styles for language switcher toggle (was color-palette-toggle) */
 #language-switcher-toggle i {
   color: var(--header-text-secondary);
 }
@@ -681,17 +681,16 @@ html[data-accent-color="crous-accent-gold"] {
   display: block;
 }
 
-/* Language Switcher Dropdown (was color-palette-dropdown) */
 .language-switcher-dropdown {
   position: absolute;
-  top: calc(var(--header-height) / 2 + 1rem);
+  top: calc(var(--header-height-val) / 2 + 1rem);
   right: 0;
   background-color: rgba(var(--header-bg-rgb), 0.9);
   border-radius: 8px;
   padding: 0.6rem;
   display: flex;
-  flex-direction: column; /* Stack language buttons vertically */
-  gap: 0.3rem; /* Reduced gap for text buttons */
+  flex-direction: column;
+  gap: 0.3rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(var(--header-border-rgb), var(--header-border-opacity));
   -webkit-backdrop-filter: blur(var(--header-blur));
@@ -703,7 +702,7 @@ html[data-accent-color="crous-accent-gold"] {
     background-color 0.3s ease, border-color 0.3s ease,
     backdrop-filter 0.3s ease;
   z-index: 1051;
-  min-width: 100px; /* Ensure some width for text */
+  min-width: 100px;
 }
 .site-header.language-dropdown-visible .language-switcher-dropdown {
   opacity: 1;
@@ -714,9 +713,9 @@ html[data-accent-color="crous-accent-gold"] {
     backdrop-filter 0.3s ease;
 }
 .language-choice-button {
-  width: 100%; /* Full width within dropdown */
-  padding: 0.5rem 0.8rem; /* Padding for text */
-  border-radius: 6px; /* Slightly less rounded for text buttons */
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
   border: 1px solid transparent;
   font-size: 0.9rem;
   font-family: var(--font-mono);
@@ -734,14 +733,13 @@ html[data-accent-color="crous-accent-gold"] {
 }
 .language-choice-button.active {
   background-color: var(--accent-primary);
-  color: var(--bg-primary); /* Text color for active lang button */
+  color: var(--bg-primary);
   font-weight: 500;
 }
 [data-theme="dark"] .language-choice-button.active {
-  color: #000; /* Ensure contrast on dark theme */
+  color: #000;
 }
 
-/* --- Hero Section --- */
 .hero-content {
   max-width: 900px;
 }
@@ -818,7 +816,6 @@ body.has-scrolled .scroll-indicator {
   pointer-events: none;
 }
 
-/* --- Features Section --- */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -858,7 +855,6 @@ body.has-scrolled .scroll-indicator {
   line-height: 1.6;
 }
 
-/* --- How It Works Section --- */
 .process-steps {
   display: flex;
   justify-content: space-around;
@@ -905,7 +901,6 @@ body.has-scrolled .scroll-indicator {
   line-height: 1.5;
 }
 
-/* --- Contact Section --- */
 .contact-section .section-title {
   margin-bottom: 1em;
 }
@@ -963,17 +958,16 @@ body.has-scrolled .scroll-indicator {
   color: var(--accent-secondary);
 }
 
-/* --- Main Footer --- */
 .site-footer-main {
   text-align: center;
-  /* === CORRECTION 2: Ensure footer has enough bottom padding === */
+  /* === FOOTER FIX: Increased bottom padding on the footer itself === */
   padding-top: 2rem;
   padding-right: 1rem;
-  padding-bottom: 4rem; /* Increased from original implicit 2rem */
+  padding-bottom: 4rem; /* Ensure footer has its own internal spacing */
   padding-left: 1rem;
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color-subtle);
-  position: relative;
+  position: relative; /* Stays relative within scroll-container */
   z-index: 5;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -1047,8 +1041,8 @@ body.has-scrolled .scroll-indicator {
   .language-switcher-dropdown {
     padding: 0.5rem;
     gap: 0.2rem;
-    top: calc(var(--header-height) / 2 + 0.8rem);
-  } /* Adjusted for text buttons */
+    top: calc(var(--header-height-val) / 2 + 0.8rem);
+  }
   .language-choice-button {
     padding: 0.4rem 0.7rem;
     font-size: 0.85rem;
@@ -1173,59 +1167,48 @@ body.has-scrolled .scroll-indicator {
   }
 }
 
-/* --- Larger Desktop Adjustments --- */
 @media (min-width: 1440px) {
-  /* Optionally, increase base font size for very large screens for better physical text size */
-  /* html {
-    font-size: 17px; 
-  } */
-
   .site-header,
   .section-content {
     max-width: 1280px;
   }
   .hero-content {
-    max-width: 1000px; /* Was 900px */
+    max-width: 1000px;
   }
   .features-grid,
   .process-steps {
-    max-width: 1100px; /* Was 1000px */
+    max-width: 1100px;
   }
   .contact-content {
-    max-width: 750px; /* Was 700px, modest increase for readability */
+    max-width: 750px;
   }
   .hero-description {
-    max-width: 800px; /* Was 750px */
+    max-width: 800px;
   }
 }
 
 @media (min-width: 1800px) {
-  /* Optionally, further increase base font size */
-  /* html {
-    font-size: 18px;
-  } */
-
   .site-header,
   .section-content {
-    max-width: 1360px; /* Or 1400px if preferred */
+    max-width: 1360px;
   }
   .hero-content {
-    max-width: 1100px; /* Was 1000px at 1440px breakpoint */
+    max-width: 1100px;
   }
   .features-grid,
   .process-steps {
-    max-width: 1200px; /* Was 1100px at 1440px breakpoint */
+    max-width: 1200px;
   }
   .contact-content {
-    max-width: 800px; /* Was 750px at 1440px breakpoint */
+    max-width: 800px;
   }
   .hero-description {
-    max-width: 850px; /* Was 800px */
+    max-width: 850px;
   }
 }
 
 .header-button i {
-  font-size: 1em; /* This means the icon size will be relative to the font-size of the button itself */
-  width: auto; /* Allow intrinsic width of the icon character */
-  height: auto; /* Allow intrinsic height of the icon character */
+  font-size: 1em;
+  width: auto;
+  height: auto;
 }
