@@ -486,7 +486,7 @@ $isLoggedIn = true;
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!-- IMPORTANT: Replace YOUR_GOOGLE_API_KEY with your actual Google Maps JavaScript API Key -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initAutocomplete"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGnyXt9y762yqiQmuSnUo5ffAp5GAWWL4&libraries=places&callback=initAutocomplete"></script>
     
     <script src="script.js" defer></script>
     <script src="chatbot.js" defer></script>
