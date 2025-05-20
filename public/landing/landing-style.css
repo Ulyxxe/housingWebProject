@@ -1,4 +1,4 @@
-/* Reset (Keep minimal reset from example or use your own) */
+/* Reset */
 *,
 *::before,
 *::after {
@@ -9,15 +9,14 @@
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
-  font-size: 16px; /* Base font size */
+  font-size: 16px;
   height: 100%;
-  overflow: hidden; /* Prevents scrollbar on html */
-  box-sizing: border-box;
+  overflow: hidden;
   background-color: var(--bg-primary);
   transition: var(--transition-theme);
+  scroll-behavior: smooth; /* Enable native smooth scroll for non-JS scenarios */
 }
 body {
-  margin: 0;
   font-family: var(--font-primary);
   color: var(--text-primary);
   background-color: var(--bg-primary);
@@ -25,8 +24,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  overflow: hidden; /* Prevents scrollbar on body */
+  overflow: hidden;
   position: relative;
+  margin: 0;
 }
 main,
 section {
@@ -85,13 +85,12 @@ ol {
 
 /* CROUS-X Variables & Theme Adaptation */
 :root {
-  /* Base Dark Theme Colors */
-  --bg-primary: #14121f; /* Dark Purple/Blue */
-  --bg-secondary: #1e1a2e; /* Slightly Lighter Dark Purple/Blue */
+  --bg-primary: #14121f;
+  --bg-secondary: #1e1a2e;
   --bg-tertiary: #2a263e;
   --bg-overlay: rgba(20, 18, 31, 0.96);
-  --text-primary: #f0f0f5; /* Off-white */
-  --text-secondary: #a0a0c0; /* Light Grey/Lavender */
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0c0;
   --text-headings: #ffffff;
   --border-color: #4a445e;
   --border-color-subtle: #3a364a;
@@ -101,21 +100,29 @@ ol {
   --shadow-medium: rgba(0, 0, 0, 0.5);
   --shadow-dark: rgba(0, 0, 0, 0.7);
 
-  --header-height-val: 65px; /* Explicit value for header height */
-  --header-top-offset: 1.5rem; /* Explicit value for header top offset */
+  --header-element-height: 65px; /* Actual height of header's main content box */
+  --header-position-top: 1.5rem; /* CSS 'top' value for the fixed header */
+  --header-visual-gap: 25px; /* Desired visual space below header before section title */
 
-  --header-bg-rgb: 30, 26, 46; /* Corresponds to --bg-secondary */
+  /* Calculated total clearance needed for the header + gap */
+  /* This CSS variable is for reference; JS will calculate its own pixel value. */
+  /* For CSS scroll-margin-top, we need a pixel value or a calc that resolves to pixels. */
+  /* Approximate pixel value for 1.5rem assuming 16px root: 24px. */
+  /* So, 24px (top) + 65px (height) + 25px (gap) = 114px */
+  --calculated-header-clearance-px: 114px; /* Adjust if root font size or other values change significantly */
+
+  --header-bg-rgb: 30, 26, 46;
   --header-bg-opacity: 0.7;
-  --header-border-rgb: 240, 240, 245; /* Corresponds to --text-primary */
+  --header-border-rgb: 240, 240, 245;
   --header-border-opacity: 0.1;
   --header-blur: 8px;
   --header-text-primary: #ffffff;
   --header-text-secondary: rgba(240, 240, 245, 0.75);
   --header-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 
-  --accent-primary: #e91e63; /* CROUS Pink */
+  --accent-primary: #e91e63;
   --accent-primary-rgb: 233, 30, 99;
-  --accent-secondary: #c2185b; /* Darker CROUS Pink */
+  --accent-secondary: #c2185b;
   --text-link: #e91e63;
   --shadow-light: rgba(var(--accent-primary-rgb), 0.18);
   --animated-shape-color: rgba(var(--accent-primary-rgb), 0.06);
@@ -170,7 +177,6 @@ ol {
   --noise-opacity: 0.03;
   --shadow-medium: rgba(100, 90, 130, 0.15);
   --shadow-dark: rgba(50, 40, 80, 0.2);
-
   --header-bg-rgb: 253, 251, 255;
   --header-bg-opacity: 0.75;
   --header-border-rgb: 42, 34, 68;
@@ -178,12 +184,10 @@ ol {
   --header-text-primary: #2a2244;
   --header-text-secondary: rgba(42, 34, 68, 0.75);
   --header-shadow: 0 4px 15px rgba(100, 90, 130, 0.08);
-
   --cursor-dot-color: #3c3258;
   --cursor-dot-color-rgb: 60, 50, 88;
   --cursor-dot-bg: rgba(var(--cursor-dot-color-rgb), 0.5);
 }
-
 html[data-accent-color="crous-pink-primary"] {
   --accent-primary: #e91e63;
   --accent-primary-rgb: 233, 30, 99;
@@ -196,7 +200,6 @@ html[data-accent-color="crous-pink-primary"] {
 [data-theme="light"][data-accent-color="crous-pink-primary"] {
   --text-link: #c2185b;
 }
-
 html[data-accent-color="crous-purple-deep"] {
   --accent-primary: #ad1457;
   --accent-primary-rgb: 173, 20, 87;
@@ -209,7 +212,6 @@ html[data-accent-color="crous-purple-deep"] {
 [data-theme="light"][data-accent-color="crous-purple-deep"] {
   --text-link: #880e4f;
 }
-
 html[data-accent-color="crous-accent-gold"] {
   --accent-primary: #ffc107;
   --accent-primary-rgb: 255, 193, 7;
@@ -223,6 +225,11 @@ html[data-accent-color="crous-accent-gold"] {
   --text-link: #ffa000;
 }
 
+/* --- Cursor & Background Light (Keep as is) --- */
+@media (min-width: 769px) {
+  /* ... your existing cursor and light styles ... */
+}
+/* Add all your existing cursor and background light styles here */
 @media (min-width: 769px) {
   body.custom-cursor-active {
     cursor: none;
@@ -308,68 +315,67 @@ html[data-accent-color="crous-accent-gold"] {
   }
 }
 
+/* --- Scroll & Section Base --- */
 .scroll-container {
-  height: 100vh; /* Takes full viewport height */
-  overflow-y: scroll; /* Enables vertical scrolling for content within */
+  height: 100vh;
+  overflow-y: scroll;
   position: relative;
-  scroll-behavior: auto; /* Important: if JS handles smooth scroll, this avoids conflict. If not, 'smooth' can be set here. */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  /* scroll-behavior: auto; Let JS manage for consistency */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   width: 100%;
-  /* === FOOTER FIX: Add padding to bottom of scroll container === */
-  /* This ensures there's space for the footer's own padding to be visible */
-  padding-bottom: 4rem; /* Adjust as needed, should be at least footer's bottom padding */
-  box-sizing: border-box; /* Ensure padding doesn't add to height if 100vh is strict */
+  box-sizing: border-box;
+  /* CRITICAL FOR FOOTER VISIBILITY: Add substantial padding to the bottom */
+  padding-bottom: 6rem; /* Adjust this value as needed for your footer height + desired spacing */
 }
 .scroll-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
 .scroll-section {
-  height: 100vh;
-  min-height: 100vh; /* Ensure sections take at least full viewport height */
+  min-height: 100vh; /* Section attempts to fill viewport height */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; /* Comment out to allow content to flow from top (after padding) */
+  align-items: center; /* Center content horizontally */
   position: relative;
-  padding: 9rem 2rem 4rem 2rem; /* Original padding */
-  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent section content from causing double scrollbars */
   background-color: transparent;
   background-image: radial-gradient(
     ellipse at 50% 40%,
     rgba(var(--accent-primary-rgb), 0.08) 0%,
     transparent 65%
   );
-  width: 100%;
   z-index: 2;
   transition: background-image var(--transition-theme),
     background-color 0.3s ease, padding 0.3s ease;
+
+  /* Horizontal and bottom padding for content within the section */
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 4rem; /* Space at the bottom of section content */
+
+  /* DYNAMIC PADDING TOP TO CLEAR HEADER: JS will calculate the precise value for scrolling,
+     but this CSS variable `--calculated-header-clearance-px` provides a fallback/initial state
+     and is used by scroll-margin-top.
+  */
+  padding-top: var(--calculated-header-clearance-px);
 }
 
-/* === HEADER OVERLAP FIX: Apply scroll-margin-top to sections with an ID === */
+/* For native browser anchor scrolling (e.g., if JS is disabled or for direct URL hash) */
 .scroll-section[id] {
-  /*
-    Header is fixed at `top: 1.5rem`. Height of header-inner is `var(--header-height-val)` (65px).
-    Approximate total header height: 1.5rem (24px) + 65px + 2px border = 91px.
-    Add ~20px for visual spacing. Total offset needed ~110-120px.
-    Using a direct pixel value for robust testing.
-  */
-  scroll-margin-top: 120px !important; /* Use !important ONLY for testing this specific issue */
-  /* If 120px works, you can try refining it with calc(var(--header-top-offset) + var(--header-height-val) + 20px)
-     and remove !important.
-     The 20px is extra visual padding below the header.
-  */
+  scroll-margin-top: var(--calculated-header-clearance-px);
 }
 
 .alternate-bg {
-  background-color: var(--bg-secondary);
-  background-image: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(var(--accent-primary-rgb), 0.08) 0%,
-    transparent 65%
-  );
+  /* Keep as is */
 }
+.animated-shapes, .shape, .shape-1 /* ...through shape-6... */, @keyframes drift {
+  /* Keep as is */
+}
+/* ... Add your existing animated shapes styles here ... */
 .animated-shapes {
   position: absolute;
   inset: 0;
@@ -465,6 +471,7 @@ html[data-accent-color="crous-accent-gold"] {
 }
 
 .section-content {
+  /* Keep as is, but ensure its margin-top doesn't fight padding-top */
   max-width: 1100px;
   width: 100%;
   text-align: center;
@@ -474,12 +481,14 @@ html[data-accent-color="crous-accent-gold"] {
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   will-change: opacity, transform;
+  margin-top: 0; /* Ensure it doesn't add extra margin above the title */
 }
 .scroll-section.is-visible .section-content {
   opacity: 1;
   transform: translateY(0);
 }
 .section-title {
+  /* Ensure it appears after the section's padding-top */
   font-size: clamp(2.2rem, 5vw, 3.2rem);
   color: var(--text-headings);
   margin-bottom: 1.5em;
@@ -487,32 +496,19 @@ html[data-accent-color="crous-accent-gold"] {
   position: relative;
   display: inline-block;
   letter-spacing: -0.02em;
+  margin-top: 0; /* Explicitly set, respecting padding-top of section */
 }
 .section-title::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 25%;
-  width: 50%;
-  height: 3px;
-  background: var(--accent-primary);
-  border-radius: 1px;
-  opacity: 0.8;
-  transition: var(--transition-smooth);
+  /* Keep as is */
 }
 .noise-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: var(--noise-opacity);
-  z-index: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  /* Keep as is */
 }
 
+/* --- Header --- */
 .site-header {
   position: fixed;
-  top: var(--header-top-offset); /* Using variable */
+  top: var(--header-position-top);
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 3rem);
@@ -536,8 +532,10 @@ html[data-accent-color="crous-accent-gold"] {
   max-width: 100%;
   margin: 0 auto;
   position: relative;
-  height: var(--header-height-val); /* Using variable */
+  height: var(--header-element-height); /* Use specific height variable */
 }
+/* ... (Rest of your .header-group-left, .logo, .main-nav, .header-actions, etc. styles - KEEP AS IS) ... */
+/* Add all your existing header styles here, no changes needed unless specified for other reasons */
 .header-group-left {
   display: flex;
   align-items: center;
@@ -680,10 +678,9 @@ html[data-accent-color="crous-accent-gold"] {
 [data-theme="light"] .theme-toggle-button .moon-icon {
   display: block;
 }
-
 .language-switcher-dropdown {
   position: absolute;
-  top: calc(var(--header-height-val) / 2 + 1rem);
+  top: calc(var(--header-element-height) / 2 + 1rem);
   right: 0;
   background-color: rgba(var(--header-bg-rgb), 0.9);
   border-radius: 8px;
@@ -740,6 +737,11 @@ html[data-accent-color="crous-accent-gold"] {
   color: #000;
 }
 
+/* --- Hero Section (Keep as is, it's a .scroll-section) --- */
+/* --- Features Section (Keep as is, it's a .scroll-section) --- */
+/* --- How It Works Section (Keep as is, it's a .scroll-section) --- */
+/* --- Contact Section (Keep as is, it's a .scroll-section) --- */
+/* Add all your existing section-specific styles here (hero, features, process, contact) */
 .hero-content {
   max-width: 900px;
 }
@@ -815,19 +817,19 @@ body.has-scrolled .scroll-indicator {
   opacity: 0;
   pointer-events: none;
 }
-
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2.5rem;
+  gap: 2rem;
   max-width: 1000px;
   margin: 0 auto;
+  width: 100%;
 }
 .feature-card {
   background-color: rgba(var(--header-bg-rgb), 0.5);
   border: 1px solid rgba(var(--header-border-rgb), var(--header-border-opacity));
   border-radius: 12px;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.25rem;
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -844,17 +846,16 @@ body.has-scrolled .scroll-indicator {
   transition: color 0.3s ease;
 }
 .feature-card h3 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-headings);
   margin-bottom: 0.7rem;
 }
 .feature-card p {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.6;
 }
-
 .process-steps {
   display: flex;
   justify-content: space-around;
@@ -900,7 +901,6 @@ body.has-scrolled .scroll-indicator {
   color: var(--text-secondary);
   line-height: 1.5;
 }
-
 .contact-section .section-title {
   margin-bottom: 1em;
 }
@@ -958,16 +958,16 @@ body.has-scrolled .scroll-indicator {
   color: var(--accent-secondary);
 }
 
+/* --- Main Footer --- */
 .site-footer-main {
   text-align: center;
-  /* === FOOTER FIX: Increased bottom padding on the footer itself === */
   padding-top: 2rem;
   padding-right: 1rem;
-  padding-bottom: 4rem; /* Ensure footer has its own internal spacing */
+  padding-bottom: 3rem; /* Footer's own internal bottom padding */
   padding-left: 1rem;
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color-subtle);
-  position: relative; /* Stays relative within scroll-container */
+  position: relative;
   z-index: 5;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -987,6 +987,10 @@ body.has-scrolled .scroll-indicator {
 
 /* Responsive Adjustments */
 @media (max-width: 900px) {
+  /* Keep as is */
+}
+/* ... Add your existing @media (max-width: 900px) styles ... */
+@media (max-width: 900px) {
   .features-grid {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
@@ -1004,12 +1008,26 @@ body.has-scrolled .scroll-indicator {
 }
 
 @media (max-width: 768px) {
+  :root {
+    /* Example: If header is smaller/differently positioned on mobile */
+    /* --header-element-height: 55px; */
+    /* --header-position-top: 1rem; */
+    --header-visual-gap: 15px;
+    /* Recalculate approx pixel clearance for mobile if values change */
+    /* Assuming 1rem=15px here: 15px (top) + 55px (height) + 15px (gap) = 85px */
+    /* --calculated-header-clearance-px: 85px; */ /* Update this if mobile vars change */
+    /* If header vars don't change, this can be omitted and desktop value will be used by default */
+  }
   html {
     font-size: 15px;
   }
   .scroll-section {
-    padding: 5rem 1rem 2rem 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 2rem;
+    /* padding-top will use the (potentially updated) --calculated-header-clearance-px */
   }
+  /* ... (Rest of your existing @media (max-width: 768px) styles) ... */
   .site-header {
     top: 1rem;
     width: calc(100% - 2rem);
@@ -1041,7 +1059,7 @@ body.has-scrolled .scroll-indicator {
   .language-switcher-dropdown {
     padding: 0.5rem;
     gap: 0.2rem;
-    top: calc(var(--header-height-val) / 2 + 0.8rem);
+    top: calc(var(--header-element-height) / 2 + 0.8rem);
   }
   .language-choice-button {
     padding: 0.4rem 0.7rem;
@@ -1106,12 +1124,14 @@ body.has-scrolled .scroll-indicator {
 }
 
 @media (max-width: 480px) {
+  /* Keep as is, padding-top will inherit or use updated var */
+}
+/* ... Add your existing @media (max-width: 480px) styles ... */
+@media (max-width: 480px) {
   html {
     font-size: 14px;
   }
-  .scroll-section {
-    padding: 4rem 0.8rem 2rem 0.8rem;
-  }
+  /* .scroll-section { padding: 4rem 0.8rem 2rem 0.8rem; } /* padding-top will be handled by var */
   .site-header {
     border-radius: 12px;
     width: calc(100% - 1.6rem);
@@ -1167,6 +1187,14 @@ body.has-scrolled .scroll-indicator {
   }
 }
 
+/* Larger Desktop Adjustments (Keep as is) */
+@media (min-width: 1440px) {
+  /* ... */
+}
+@media (min-width: 1800px) {
+  /* ... */
+}
+/* ... Add your existing larger desktop styles ... */
 @media (min-width: 1440px) {
   .site-header,
   .section-content {
@@ -1186,7 +1214,6 @@ body.has-scrolled .scroll-indicator {
     max-width: 800px;
   }
 }
-
 @media (min-width: 1800px) {
   .site-header,
   .section-content {
