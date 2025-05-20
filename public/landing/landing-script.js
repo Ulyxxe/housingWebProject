@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouseX = 0;
   let mouseY = 0;
   let rafIdCursor = null;
-  // let isPaletteVisible = false; // Renamed to isLanguageDropdownVisible
   let isLanguageDropdownVisible = false;
   let lastScrollInitiationTime = 0;
 
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     3: { shapeTimeoutId: null },
   };
 
-  const SCROLL_ANIMATION_DURATION = 700;
+  const SCROLL_ANIMATION_DURATION = 700; // Duration for smooth scroll
 
   const selectors = {
     body: document.body,
@@ -40,14 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
     scrollIndicator: document.querySelector(".scroll-indicator"),
     themeToggleButton: document.getElementById("theme-toggle"),
-    // Language Switcher selectors
     languageSwitcherToggleButton: document.getElementById(
       "language-switcher-toggle"
     ),
     languageSwitcherDropdown: document.getElementById(
       "language-switcher-dropdown"
     ),
-    languageChoiceButtons: null, // Will be populated in setupLanguageSwitcher
+    languageChoiceButtons: null,
     cursorDot: document.getElementById("cursor-dot"),
     backgroundLight: document.getElementById("background-light"),
     interactiveElements: document.querySelectorAll(
@@ -55,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
   };
 
-  // Basic translation object (can be expanded or moved to a separate JSON file)
   const translations = {
     en: {
       nav_features: "Features",
@@ -210,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initializeApp() {
     setupThemeSwitcher();
-    // setupColorChooser(); // Replaced with setupLanguageSwitcher
     setupLanguageSwitcher();
     setupScrollManager();
     setupCursorAndLight();
@@ -243,7 +239,50 @@ document.addEventListener("DOMContentLoaded", () => {
             );
           else selectors.siteHeader?.style.removeProperty("animation");
         }
-        updateScrollVisibility();
+        // Recalculate current section visibility and potentially adjust scroll on resize
+        // This is important if sections have dynamic heights or if viewport changes significantly
+        if (!isScrollAnimating) {
+          const currentSectionElement = selectors.sections[currentScrollIndex];
+          if (currentSectionElement) {
+            // Re-calculate offset for the current section and gently scroll to it
+            // This avoids jumps if the layout changed due to resize
+            let headerOffset = 0;
+            if (
+              selectors.siteHeader &&
+              getComputedStyle(selectors.siteHeader).position === "fixed"
+            ) {
+              headerOffset = selectors.siteHeader.offsetHeight;
+              const headerTopStyle = getComputedStyle(selectors.siteHeader).top;
+              if (
+                headerTopStyle &&
+                headerTopStyle !== "auto" &&
+                headerTopStyle !== "0px"
+              ) {
+                // Attempt to parse rem/px. For simplicity, assuming 1rem = 16px for this calculation if needed.
+                // A more robust solution would convert rem to px dynamically.
+                const rootFontSize = parseFloat(
+                  getComputedStyle(document.documentElement).fontSize
+                );
+                if (headerTopStyle.includes("rem")) {
+                  headerOffset += parseFloat(headerTopStyle) * rootFontSize;
+                } else {
+                  headerOffset += parseFloat(headerTopStyle);
+                }
+              }
+              headerOffset += 20; // Visual padding
+            }
+            const targetScrollTop =
+              currentSectionElement.offsetTop - headerOffset;
+            // Only adjust if significantly different to avoid jitter
+            if (
+              Math.abs(selectors.scrollContainer.scrollTop - targetScrollTop) >
+              5
+            ) {
+              selectors.scrollContainer.scrollTop = targetScrollTop;
+            }
+          }
+        }
+        updateScrollVisibility(); // Always update visibility states
       }, 200);
     });
 
@@ -294,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("crousXTheme", targetTheme);
   }
 
-  // --- Language Switcher ---
   function setupLanguageSwitcher() {
     if (
       !selectors.languageSwitcherToggleButton ||
@@ -350,18 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyLanguage(lang) {
     if (!lang || !translations[lang]) return;
     selectors.htmlElement.setAttribute("lang", lang);
-    // Update text content
     document.querySelectorAll("[data-lang-key]").forEach((el) => {
       const key = el.dataset.langKey;
       let translation =
-        translations[lang][key] || translations.en[key] || el.textContent; // Fallback
+        translations[lang][key] || translations.en[key] || el.textContent;
       if (key === "footer_copyright") {
         translation = translation.replace("{year}", new Date().getFullYear());
       }
       el.textContent = translation;
     });
-
-    // Update active button state
     selectors.languageChoiceButtons?.forEach((button) => {
       button.classList.toggle("active", button.dataset.lang === lang);
     });
@@ -371,9 +406,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyInitialLanguage() {
     const storedLang = localStorage.getItem("crousXLang");
     const validLangs = ["en", "fr", "es"];
-    const browserLang = navigator.language.split("-")[0]; // Get 'en' from 'en-US'
-    let initialLang = "en"; // Default
-
+    const browserLang = navigator.language.split("-")[0];
+    let initialLang = "en";
     if (storedLang && validLangs.includes(storedLang)) {
       initialLang = storedLang;
     } else if (validLangs.includes(browserLang)) {
@@ -392,7 +426,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Cursor and Light (Same as before, no changes needed for language switcher)
   function setupCursorAndLight() {
     const customCursorActive =
       !isMobile() && selectors.cursorDot && selectors.backgroundLight;
@@ -416,7 +449,6 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelAnimationFrame(rafIdCursor);
       rafIdCursor = null;
     }
-
     currentLightScale = 1.0;
     targetLightScale = 1.0;
     scaleAnimationStartTime = null;
@@ -552,7 +584,6 @@ document.addEventListener("DOMContentLoaded", () => {
       rafIdCursor = requestAnimationFrame(updateCursorAndLightPosition);
   }
 
-  // Scroll Management (Same as before)
   function setupScrollManager() {
     if (!selectors.scrollContainer || selectors.sections.length === 0) {
       selectors.sections.forEach((sec) => sec.classList.add("is-visible"));
@@ -569,7 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectors.htmlElement.style.overflow = "hidden";
     selectors.body.style.overflow = "hidden";
     selectors.scrollContainer.style.overflowY = "scroll";
-    selectors.scrollContainer.style.scrollBehavior = "auto";
+    selectors.scrollContainer.style.scrollBehavior = "auto"; // Important for custom animation
     requestAnimationFrame(() => {
       setTimeout(updateScrollVisibility, 50);
     });
@@ -593,73 +624,202 @@ document.addEventListener("DOMContentLoaded", () => {
       "scroll",
       () => {
         closeLanguageDropdown();
-        updateScrollVisibility();
+        if (!isScrollAnimating) {
+          // Only update if not currently animating
+          updateScrollVisibility();
+        }
       },
       { passive: true }
     );
   }
+
   function animateScroll(targetScrollTop) {
     if (
       isScrollAnimating &&
       Math.abs(selectors.scrollContainer.scrollTop - targetScrollTop) < 5
-    )
+    ) {
+      // Already animating to a very close position, or already there
       return;
+    }
+
     if (scrollAnimationId) cancelAnimationFrame(scrollAnimationId);
     isScrollAnimating = true;
-    closeLanguageDropdown();
+    closeLanguageDropdown(); // Close dropdown if open during scroll
+
     const startScrollTop = selectors.scrollContainer.scrollTop;
     const distance = targetScrollTop - startScrollTop;
+
+    // If no distance to scroll, finish immediately
+    if (Math.abs(distance) < 1) {
+      isScrollAnimating = false;
+      scrollAnimationId = null;
+      updateScrollVisibility(); // Ensure visibility is updated
+      return;
+    }
+
     let startTime = null;
+
     const step = (currentTime) => {
       if (startTime === null) startTime = currentTime;
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / SCROLL_ANIMATION_DURATION, 1);
       const easedProgress = easeInOutCubic(progress);
+
       selectors.scrollContainer.scrollTop =
         startScrollTop + distance * easedProgress;
-      if (elapsedTime < SCROLL_ANIMATION_DURATION)
+
+      if (elapsedTime < SCROLL_ANIMATION_DURATION) {
         scrollAnimationId = requestAnimationFrame(step);
-      else {
-        selectors.scrollContainer.scrollTop = targetScrollTop;
+      } else {
+        selectors.scrollContainer.scrollTop = targetScrollTop; // Ensure final position
         isScrollAnimating = false;
         scrollAnimationId = null;
-        updateScrollVisibility();
+        updateScrollVisibility(); // Update visibility after animation
       }
     };
     scrollAnimationId = requestAnimationFrame(step);
   }
+
+  // =====================================================================
+  // === CORRECTED scrollToSection FUNCTION ==============================
+  // =====================================================================
   function scrollToSection(index) {
     index = clamp(index, 0, selectors.sections.length - 1);
-    if (index === currentScrollIndex && !isScrollAnimating) {
+
+    // Small optimization: if already at the target and not animating, just update visibility
+    // Only return if truly at the section and not just having the same index from a previous partial scroll
+    const currentSectionElement = selectors.sections[index];
+    if (!currentSectionElement) return; // Should not happen if index is clamped
+
+    let currentHeaderOffset = 0;
+    if (
+      selectors.siteHeader &&
+      getComputedStyle(selectors.siteHeader).position === "fixed"
+    ) {
+      currentHeaderOffset = selectors.siteHeader.offsetHeight;
+      const headerTopStyle = getComputedStyle(selectors.siteHeader).top;
+      if (
+        headerTopStyle &&
+        headerTopStyle !== "auto" &&
+        headerTopStyle !== "0px"
+      ) {
+        const rootFontSize = parseFloat(
+          getComputedStyle(document.documentElement).fontSize
+        );
+        if (headerTopStyle.includes("rem")) {
+          currentHeaderOffset += parseFloat(headerTopStyle) * rootFontSize;
+        } else {
+          currentHeaderOffset += parseFloat(headerTopStyle); // Assumes px
+        }
+      }
+      currentHeaderOffset += 20; // Add 20px visual padding below header
+    }
+    const calculatedTargetScrollTop =
+      currentSectionElement.offsetTop - currentHeaderOffset;
+
+    if (
+      index === currentScrollIndex &&
+      !isScrollAnimating &&
+      Math.abs(
+        selectors.scrollContainer.scrollTop - calculatedTargetScrollTop
+      ) < 5
+    ) {
       updateScrollVisibility();
       return;
     }
-    const targetSection = selectors.sections[index];
+
+    const targetSection = selectors.sections[index]; // Re-fetch in case it was undefined before
     if (!targetSection) return;
+
     handleSectionBackgroundShapeAnimations(currentScrollIndex, "stop");
-    currentScrollIndex = index;
-    updateScrollVisibility();
-    const targetScrollTop = targetSection.offsetTop;
+    currentScrollIndex = index; // Set the new index
+    // updateScrollVisibility(); // Update visibility immediately for nav link, etc.
+
+    // === Calculate headerOffset dynamically ===
+    let headerOffset = 0;
+    if (
+      selectors.siteHeader &&
+      getComputedStyle(selectors.siteHeader).position === "fixed"
+    ) {
+      headerOffset = selectors.siteHeader.offsetHeight; // Actual height of the header element
+
+      // Add the `top` offset of the header itself (e.g., `top: 1.5rem;`)
+      const headerTopValue = getComputedStyle(selectors.siteHeader).top;
+      if (
+        headerTopValue &&
+        headerTopValue !== "auto" &&
+        headerTopValue !== "0px"
+      ) {
+        const rootFontSize = parseFloat(
+          getComputedStyle(document.documentElement).fontSize
+        ); // Get root font size for rem conversion
+        if (headerTopValue.includes("rem")) {
+          headerOffset += parseFloat(headerTopValue) * rootFontSize;
+        } else {
+          headerOffset += parseFloat(headerTopValue); // Assumes px
+        }
+      }
+      // Add a small additional padding for visual comfort below the header
+      headerOffset += 20; // Adjust this 20px value as needed for visual spacing
+    }
+
+    const targetScrollTop = targetSection.offsetTop - headerOffset;
+
     animateScroll(targetScrollTop);
+    // updateScrollVisibility() will be called at the end of animateScroll
   }
+  // =====================================================================
+  // === END OF CORRECTED scrollToSection FUNCTION =======================
+  // =====================================================================
+
   function updateScrollVisibility() {
     const containerHeight = selectors.scrollContainer.clientHeight;
     const scrollTop = selectors.scrollContainer.scrollTop;
-    let determinedIndex = currentScrollIndex;
-    let minDistance = Infinity;
+
+    let determinedIndex = -1; // Initialize to -1 to ensure it gets set
+    let minPositiveDistanceToViewportTop = Infinity;
+
     selectors.sections.forEach((section, idx) => {
       const sectionTop = section.offsetTop;
-      const distance = Math.abs(scrollTop - sectionTop);
       const sectionBottom = sectionTop + section.offsetHeight;
-      const containerBottom = scrollTop + containerHeight;
-      const isPartiallyVisible =
-        sectionTop < containerBottom && sectionBottom > scrollTop;
-      if (isPartiallyVisible && distance < minDistance) {
-        minDistance = distance;
-        determinedIndex = idx;
+
+      // Calculate distance of section top from current viewport top
+      const distanceToViewportTop = sectionTop - scrollTop;
+
+      // Check if the section is "mostly" in view or the one whose top is closest to viewport top
+      // A section is "active" if its top is at or above the viewport top, but not too far above,
+      // OR if it's the first section and the scroll is near the top.
+      const viewThreshold = containerHeight * 0.5; // Section considered active if its top is within top 50% of viewport
+
+      if (
+        distanceToViewportTop < viewThreshold &&
+        distanceToViewportTop > -section.offsetHeight + viewThreshold
+      ) {
+        // Prioritize section whose top is closest to (or just above) the viewport top
+        if (
+          distanceToViewportTop >= -(section.offsetHeight * 0.2) &&
+          distanceToViewportTop < minPositiveDistanceToViewportTop
+        ) {
+          minPositiveDistanceToViewportTop = distanceToViewportTop;
+          determinedIndex = idx;
+        }
       }
     });
+
+    // Fallback if no section met the precise criteria (e.g., during fast scroll or odd positions)
+    if (determinedIndex === -1) {
+      let closestDist = Infinity;
+      selectors.sections.forEach((section, idx) => {
+        const dist = Math.abs(scrollTop - section.offsetTop);
+        if (dist < closestDist) {
+          closestDist = dist;
+          determinedIndex = idx;
+        }
+      });
+    }
+
     determinedIndex = clamp(determinedIndex, 0, selectors.sections.length - 1);
+
     selectors.sections.forEach((section, idx) => {
       const isCurrent = idx === determinedIndex;
       const wasVisible = section.classList.contains("is-visible");
@@ -669,36 +829,51 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (!isCurrent && wasVisible)
         handleSectionBackgroundShapeAnimations(idx, "stop");
     });
+
     updateActiveNavLink(determinedIndex);
-    if (!isScrollAnimating && currentScrollIndex !== determinedIndex)
+
+    // Only update currentScrollIndex if not animating.
+    // The animation itself will set currentScrollIndex upon completion or when scrollToSection is called.
+    if (!isScrollAnimating) {
       currentScrollIndex = determinedIndex;
+    }
     checkFirstScroll();
   }
+
   function updateActiveNavLink(activeSectionIndex) {
+    if (
+      activeSectionIndex < 0 ||
+      activeSectionIndex >= selectors.sections.length
+    )
+      return; // Guard
     const currentSectionId = selectors.sections[activeSectionIndex]?.id;
     if (!currentSectionId) return;
+
     selectors.navLinks?.forEach((link) => {
       const linkHref = link.getAttribute("href");
       const linkTargetId =
         linkHref === "#" || (linkHref === "#hero" && activeSectionIndex === 0)
-          ? "hero"
+          ? "hero" // Special case for logo/hero link pointing to the first section
           : linkHref?.replace("#", "");
+
       link.classList.toggle(
         "active-nav-link",
         linkTargetId && linkTargetId === currentSectionId
       );
     });
   }
+
   function checkFirstScroll() {
     if (
       !firstScrollDone &&
-      currentScrollIndex > 0 &&
+      selectors.scrollContainer.scrollTop > 50 && // Check actual scroll position
       selectors.scrollIndicator
     ) {
       selectors.body.classList.add("has-scrolled");
       firstScrollDone = true;
     }
   }
+
   function handleWheelScroll(event) {
     if (isLanguageDropdownVisible) {
       const scrollableContent = selectors.languageSwitcherDropdown;
@@ -715,28 +890,33 @@ document.addEventListener("DOMContentLoaded", () => {
           (!atTop || event.deltaY > 0) &&
           (!atBottom || event.deltaY < 0)
         )
-          return;
+          return; // Allow native scroll within dropdown
       }
-      event.preventDefault();
+      event.preventDefault(); // Prevent page scroll if dropdown is open and not scrolling internally
       return;
     } else {
-      event.preventDefault();
+      event.preventDefault(); // Prevent default window scroll if dropdown is not open
     }
+
     const now = Date.now();
-    if (isScrollAnimating || now - lastScrollInitiationTime < 800) return;
+    if (isScrollAnimating || now - lastScrollInitiationTime < 800) return; // Debounce/throttle
+
     const direction = event.deltaY > 0 ? "down" : "up";
     let targetIndex = currentScrollIndex;
+
     if (
       direction === "down" &&
       currentScrollIndex < selectors.sections.length - 1
     )
       targetIndex++;
     else if (direction === "up" && currentScrollIndex > 0) targetIndex--;
+
     if (targetIndex !== currentScrollIndex) {
       lastScrollInitiationTime = now;
       scrollToSection(targetIndex);
     }
   }
+
   function handleTouchStart(event) {
     if (isLanguageDropdownVisible || event.touches.length !== 1) return;
     touchStartY = event.touches[0].clientY;
@@ -753,7 +933,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaY = event.touches[0].clientY - touchStartY;
     const deltaX = event.touches[0].clientX - touchStartX;
     if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10)
-      event.preventDefault();
+      // Prioritize vertical swipes
+      event.preventDefault(); // Prevent native scroll if a vertical swipe is detected
   }
   function handleTouchEnd(event) {
     if (
@@ -773,39 +954,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const swipeDistanceX = endX - touchStartX;
     const swipeTime = endTime - touchStartTime;
     const now = Date.now();
+
     if (now - lastScrollInitiationTime < 800) {
+      // Debounce
       touchStartY = 0;
       touchStartX = 0;
       touchStartTime = 0;
       return;
     }
+
     let targetIndex = currentScrollIndex;
     let shouldScroll = false;
+
+    // Check for vertical swipe
     if (Math.abs(swipeDistanceY) > Math.abs(swipeDistanceX) * 1.5) {
+      // More vertical than horizontal
       const isFastSwipe =
         Math.abs(swipeDistanceY) > 10 && swipeTime < TOUCH_TIME_THRESHOLD;
       const isLongSwipe = Math.abs(swipeDistanceY) > TOUCH_SWIPE_THRESHOLD_Y;
+
       if (isFastSwipe || isLongSwipe) {
         if (
-          swipeDistanceY < 0 &&
+          swipeDistanceY < 0 && // Swipe Up (content moves up, scroll down)
           currentScrollIndex < selectors.sections.length - 1
         ) {
           targetIndex++;
           shouldScroll = true;
         } else if (swipeDistanceY > 0 && currentScrollIndex > 0) {
+          // Swipe Down (content moves down, scroll up)
           targetIndex--;
           shouldScroll = true;
         }
       }
     }
+
     if (shouldScroll && targetIndex !== currentScrollIndex) {
       lastScrollInitiationTime = now;
       scrollToSection(targetIndex);
     }
     touchStartY = 0;
     touchStartX = 0;
-    touchStartTime = 0;
+    touchStartTime = 0; // Reset touch coordinates
   }
+
   function handleKeydownScroll(event) {
     if (event.key === "Escape") {
       if (isLanguageDropdownVisible) {
@@ -815,6 +1006,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     if (isLanguageDropdownVisible) {
+      // If dropdown is open, let it handle its own keyboard navigation if any, or prevent page scroll
       if (
         [
           "ArrowUp",
@@ -826,29 +1018,41 @@ document.addEventListener("DOMContentLoaded", () => {
           "PageDown",
           "Home",
           "End",
+          "Tab",
         ].includes(event.key)
-      )
-        event.preventDefault();
+      ) {
+        // Allow Tab for accessibility within the dropdown
+        if (event.key !== "Tab") event.preventDefault();
+      }
       return;
     }
+
     if (
       isScrollAnimating ||
       event.metaKey ||
       event.ctrlKey ||
-      event.altKey ||
-      event.shiftKey
-    )
-      return;
+      event.altKey
+      // Allow Shift + Space for scrolling up
+    ) {
+      if (event.key === " " && event.shiftKey) {
+        // Continue to allow Shift+Space
+      } else {
+        return;
+      }
+    }
+
     const activeEl = document.activeElement;
     const isInput =
       activeEl &&
       (activeEl.tagName === "INPUT" ||
         activeEl.tagName === "TEXTAREA" ||
         activeEl.isContentEditable);
-    if (isInput) return;
+    if (isInput) return; // Don't interfere with typing
+
     let targetIndex = currentScrollIndex;
     let shouldScroll = false;
     let preventDefault = false;
+
     switch (event.key) {
       case "ArrowDown":
       case "PageDown":
@@ -858,10 +1062,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         preventDefault = true;
         break;
-      case " ":
-        if (currentScrollIndex < selectors.sections.length - 1) {
-          targetIndex++;
-          shouldScroll = true;
+      case " ": // Space bar
+        if (event.shiftKey) {
+          // Shift + Space scrolls up
+          if (currentScrollIndex > 0) {
+            targetIndex--;
+            shouldScroll = true;
+          }
+        } else {
+          // Space scrolls down
+          if (currentScrollIndex < selectors.sections.length - 1) {
+            targetIndex++;
+            shouldScroll = true;
+          }
         }
         preventDefault = true;
         break;
@@ -888,56 +1101,101 @@ document.addEventListener("DOMContentLoaded", () => {
         preventDefault = true;
         break;
       default:
-        return;
+        return; // Do nothing for other keys
     }
+
     if (preventDefault) event.preventDefault();
+
     const now = Date.now();
-    if (shouldScroll && now - lastScrollInitiationTime > 500) {
+    if (
+      shouldScroll &&
+      targetIndex !== currentScrollIndex &&
+      now - lastScrollInitiationTime > 500
+    ) {
+      // Debounce
       lastScrollInitiationTime = now;
       scrollToSection(targetIndex);
     }
   }
+
   function handleNavLinkScroll(event) {
     event.preventDefault();
     if (isScrollAnimating) return;
-    const targetId = event.currentTarget.getAttribute("href");
+
+    const targetIdAttr = event.currentTarget.getAttribute("href");
     try {
-      if (!targetId || targetId === "#") {
+      if (!targetIdAttr || targetIdAttr === "#") {
+        // Link to top or empty href
         scrollToSection(0);
         return;
       }
-      const targetElementId = targetId.replace("#", "");
+
+      const targetElementId = targetIdAttr.replace("#", "");
       const targetElement = document.getElementById(targetElementId);
+
       if (!targetElement) {
+        // Target ID not found on page
+        console.warn(
+          `Target element with ID "${targetElementId}" not found. Scrolling to top.`
+        );
         scrollToSection(0);
         return;
       }
+
+      // Find if the target is one of our scroll-sections
       const targetIndex = selectors.sections.findIndex(
         (sec) => sec.id === targetElement.id
       );
-      if (targetIndex !== -1)
+
+      if (targetIndex !== -1) {
+        // It's one of our main sections
         scrollToSection(clamp(targetIndex, 0, selectors.sections.length - 1));
-      else targetElement.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // It's some other anchor on the page, not a main section.
+        // Fallback to browser's native scrollIntoView if it's not a managed section.
+        // This might be less smooth if it conflicts with the overall scroll container logic.
+        // For now, let's try to scroll to its top within our container.
+        console.warn(
+          `Target element "${targetElementId}" is not a managed scroll-section. Attempting direct scroll.`
+        );
+        let headerOffset = 0;
+        if (
+          selectors.siteHeader &&
+          getComputedStyle(selectors.siteHeader).position === "fixed"
+        ) {
+          headerOffset = selectors.siteHeader.offsetHeight;
+          const headerTopValue = getComputedStyle(selectors.siteHeader).top;
+          if (
+            headerTopValue &&
+            headerTopValue !== "auto" &&
+            headerTopValue !== "0px"
+          ) {
+            const rootFontSize = parseFloat(
+              getComputedStyle(document.documentElement).fontSize
+            );
+            headerOffset += headerTopValue.includes("rem")
+              ? parseFloat(headerTopValue) * rootFontSize
+              : parseFloat(headerTopValue);
+          }
+          headerOffset += 20;
+        }
+        const directTargetScrollTop = targetElement.offsetTop - headerOffset;
+        animateScroll(directTargetScrollTop);
+      }
     } catch (error) {
-      scrollToSection(0);
+      console.error("Error handling nav link scroll:", error);
+      scrollToSection(0); // Fallback to safety
     }
   }
 
-  // Background Shape Animations (Same as before)
   function setupBackgroundShapeAnimations() {
-    stopAllBackgroundShapeAnimations();
+    // CSS handles this based on .is-visible class now
   }
   function handleSectionBackgroundShapeAnimations(sectionIndex, action) {
-    if (document.hidden) {
-      stopAllBackgroundShapeAnimations();
-      return;
-    }
-    const state = sectionAnimationState[sectionIndex];
-    if (!state) return;
-    // CSS handles shape animations based on section's .is-visible class
+    if (document.hidden) return; // Handled by CSS via .is-visible
   }
   function stopAllBackgroundShapeAnimations() {
-    /* CSS driven */
+    // Handled by CSS via .is-visible
   }
 
   function handleGlobalClick(event) {
