@@ -2,14 +2,61 @@ document.addEventListener("DOMContentLoaded", () => {
   const IS_MOBILE_BREAKPOINT = 768;
   let currentScrollIndex = 0;
   let isScrollAnimating = false;
-  // ... (all other existing 'let' and 'const' variables from your previous script) ...
-  const SCROLL_ANIMATION_DURATION = 700; // Keep this
+  let scrollAnimationId = null;
+  let firstScrollDone = false;
+  let mouseX = 0,
+    mouseY = 0;
+  let rafIdCursor = null;
+  let isLanguageDropdownVisible = false;
+  let lastScrollInitiationTime = 0;
+  let currentLightScale = 1.0,
+    targetLightScale = 1.0,
+    scaleAnimationStartTime = null;
+  const SCALE_ANIMATION_DURATION = 400;
+  let touchStartY = 0,
+    touchStartX = 0,
+    touchStartTime = 0;
+  const TOUCH_SWIPE_THRESHOLD_Y = 50,
+    TOUCH_TIME_THRESHOLD = 300;
+  const SCROLL_ANIMATION_DURATION = 700;
 
+  // !!!!! PASTE YOUR FULL 'selectors' OBJECT HERE !!!!!
   const selectors = {
-    /* ... Keep your full selectors object ... */
+    body: document.body,
+    htmlElement: document.documentElement,
+    siteHeader: document.querySelector(".site-header"),
+    scrollContainer: document.querySelector(".scroll-container"),
+    sections: Array.from(document.querySelectorAll(".scroll-section")),
+    navLinks: document.querySelectorAll(
+      '.main-nav a[href^="#"], .logo a[href^="#"], .hero-cta.scroll-link'
+    ),
+    scrollIndicator: document.querySelector(".scroll-indicator"),
+    themeToggleButton: document.getElementById("theme-toggle"),
+    languageSwitcherToggleButton: document.getElementById(
+      "language-switcher-toggle"
+    ),
+    languageSwitcherDropdown: document.getElementById(
+      "language-switcher-dropdown"
+    ),
+    languageChoiceButtons: null, // Will be populated
+    cursorDot: document.getElementById("cursor-dot"),
+    backgroundLight: document.getElementById("background-light"),
+    interactiveElements: document.querySelectorAll(
+      'a, button, .feature-card, .header-button, [role="button"]'
+    ),
   };
+
+  // !!!!! PASTE YOUR FULL 'translations' OBJECT HERE !!!!!
   const translations = {
-    /* ... Keep your full translations object ... */
+    en: {
+      /* ... */
+    },
+    fr: {
+      /* ... */
+    },
+    es: {
+      /* ... */
+    }, // Example structure
   };
 
   function isMobile() {
@@ -23,17 +70,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getCssPixelValue(valueString, rootFontSize) {
-    if (!valueString) return 0;
-    if (valueString.includes("px")) return parseFloat(valueString);
-    if (valueString.includes("rem"))
-      return parseFloat(valueString) * rootFontSize;
-    if (valueString.includes("em"))
-      return parseFloat(valueString) * rootFontSize; // Assuming relative to root for simplicity
-    return parseFloat(valueString) || 0; // Fallback for unitless or unrecognized
+    if (typeof valueString !== "string" || !valueString.trim()) return 0;
+    const trimmedValue = valueString.trim();
+    if (trimmedValue.endsWith("px")) return parseFloat(trimmedValue);
+    if (trimmedValue.endsWith("rem"))
+      return parseFloat(trimmedValue) * rootFontSize;
+    if (trimmedValue.endsWith("em"))
+      return parseFloat(trimmedValue) * rootFontSize; // Context dependent, but often root for vars
+    const num = parseFloat(trimmedValue);
+    return isNaN(num) ? 0 : num; // Fallback for unitless or unparsed
   }
 
   function getHeaderClearanceInPx() {
-    let totalClearance = 100; // Default fallback
+    let totalClearance = 100; // Sensible default
 
     if (
       selectors.siteHeader &&
@@ -43,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const rootStyle = getComputedStyle(selectors.htmlElement);
       const rootFontSize = parseFloat(rootStyle.fontSize);
 
-      const headerElementHeightPx = selectors.siteHeader.offsetHeight; // Element's full rendered height
+      const headerElementHeightPx = selectors.siteHeader.offsetHeight;
 
       const headerCssTopValue =
         rootStyle.getPropertyValue("--header-css-top-val").trim() ||
@@ -62,9 +111,13 @@ document.addEventListener("DOMContentLoaded", () => {
         headerCssTopPx + headerElementHeightPx + visualGapBelowPx;
     } else {
       // Fallback if header isn't fixed, try to use the CSS variable if available
-      const approxClearanceCssVar = getComputedStyle(selectors.htmlElement)
-        .getPropertyValue("--actual-header-clearance-for-content")
-        .trim();
+      const approxClearanceCssVar =
+        selectors.htmlElement.style
+          .getPropertyValue("--actual-header-clearance-for-content")
+          .trim() ||
+        getComputedStyle(selectors.htmlElement)
+          .getPropertyValue("--actual-header-clearance-for-content")
+          .trim();
       totalClearance =
         getCssPixelValue(
           approxClearanceCssVar,
@@ -75,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function setDynamicHeaderClearanceCssVar() {
+    if (!selectors.htmlElement) return;
     const clearance = getHeaderClearanceInPx();
     selectors.htmlElement.style.setProperty(
       "--actual-header-clearance-for-content",
@@ -83,21 +137,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initializeApp() {
-    setDynamicHeaderClearanceCssVar(); // Set it on initial load
+    setDynamicHeaderClearanceCssVar();
 
-    // ... (Keep ALL your existing setup function calls: setupThemeSwitcher, setupLanguageSwitcher, etc.)
-    setupScrollManager(); // Ensure this is called
-    // ...
+    // --- START: PASTE YOUR EXISTING initializeApp content HERE ---
+    // (setupThemeSwitcher, setupLanguageSwitcher, setupScrollManager, setupCursorAndLight, etc.)
+    setupThemeSwitcher();
+    setupLanguageSwitcher();
+    setupScrollManager();
+    setupCursorAndLight();
+    // setupBackgroundShapeAnimations(); // CSS handles
+
+    document.addEventListener("click", handleGlobalClick);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    if (isMobile()) {
+      selectors.body.classList.add("is-mobile");
+      if (selectors.siteHeader)
+        selectors.siteHeader.style.removeProperty("animation");
+    } else {
+      selectors.body.classList.remove("is-mobile");
+      if (selectors.siteHeader)
+        selectors.siteHeader.style.removeProperty("animation");
+    }
 
     window.addEventListener("resize", () => {
       clearTimeout(selectors.scrollContainer.__resizeTimeout);
       selectors.scrollContainer.__resizeTimeout = setTimeout(() => {
-        setDynamicHeaderClearanceCssVar(); // Update on resize
-
+        setDynamicHeaderClearanceCssVar();
         const isCurrentlyMobile = isMobile();
-        // ... (rest of your existing resize logic for body class, cursor, etc.)
+        const wasMobile = selectors.body.classList.contains("is-mobile");
+        if (wasMobile !== isCurrentlyMobile) {
+          selectors.body.classList.toggle("is-mobile", isCurrentlyMobile);
+          setupCursorAndLight(); // Re-setup cursor based on mobile state
+          if (isCurrentlyMobile && selectors.siteHeader)
+            selectors.siteHeader.style.setProperty(
+              "animation",
+              "none",
+              "important"
+            );
+          else if (selectors.siteHeader)
+            selectors.siteHeader.style.removeProperty("animation");
+        }
 
-        // Adjust scroll position if not animating
         if (
           !isScrollAnimating &&
           selectors.sections.length > 0 &&
@@ -105,8 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
           const targetSection = selectors.sections[currentScrollIndex];
           if (targetSection) {
-            const newTargetScrollTop = targetSection.offsetTop; // Scroll to section's top
-            // Only adjust if significantly off to prevent jitter
+            const newTargetScrollTop = targetSection.offsetTop;
             if (
               Math.abs(
                 selectors.scrollContainer.scrollTop - newTargetScrollTop
@@ -116,30 +196,30 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           }
         }
-        updateScrollVisibility(); // Always update visibility states
+        updateScrollVisibility();
       }, 200);
     });
-    // ... (Rest of initializeApp like current year)
+
+    const currentYearEl = document.getElementById("current-year");
+    if (currentYearEl) currentYearEl.textContent = new Date().getFullYear();
+    // --- END: PASTE YOUR EXISTING initializeApp content HERE ---
+
+    if (
+      selectors.scrollContainer &&
+      selectors.scrollContainer.scrollTop === 0 &&
+      currentScrollIndex === 0
+    ) {
+      setTimeout(updateScrollVisibility, 150); // Initial update with slight delay
+    }
   }
 
   function scrollToSection(index) {
     index = clamp(index, 0, selectors.sections.length - 1);
     const targetSection = selectors.sections[index];
-    if (!targetSection) {
-      console.error(
-        "scrollToSection: Target section not found for index:",
-        index
-      );
-      return;
-    }
+    if (!targetSection) return;
 
-    // The target is simply the offsetTop of the section.
-    // The section's own CSS padding-top (set by --actual-header-clearance-for-content)
-    // will handle the space for the header.
     const calculatedTargetScrollTop = targetSection.offsetTop;
 
-    // Only animate if not already very close to target
-    // OR if currentScrollIndex is different (meaning we are intentionally changing sections)
     if (
       Math.abs(
         selectors.scrollContainer.scrollTop - calculatedTargetScrollTop
@@ -147,91 +227,133 @@ document.addEventListener("DOMContentLoaded", () => {
       currentScrollIndex === index &&
       !isScrollAnimating
     ) {
-      updateScrollVisibility(); // Ensure UI is consistent
+      updateScrollVisibility();
       return;
     }
-
-    // No need to handle background shape animations here if CSS is driving it by .is-visible
-
-    currentScrollIndex = index; // Update current index
-    // updateScrollVisibility(); // Call before animation to update nav links quickly if desired, or let animateScroll's end call it.
-
+    currentScrollIndex = index;
     animateScroll(calculatedTargetScrollTop);
   }
 
   function updateScrollVisibility() {
+    if (
+      !selectors.scrollContainer ||
+      !selectors.sections ||
+      selectors.sections.length === 0
+    )
+      return;
+
     const containerHeight = selectors.scrollContainer.clientHeight;
     const scrollTop = selectors.scrollContainer.scrollTop;
-    // The "effective top" of the viewport for content is where the header ends.
-    const headerClearance = getHeaderClearanceInPx(); // Use the accurate dynamic value
 
     let determinedIndex = -1;
-    let minDistanceToConsiderVisible = Infinity;
+    let minDistance = Infinity;
 
+    // This simple check assumes that the top of the section (which includes its own padding-top for header clearance)
+    // being closest to the scrollTop is the active one.
     selectors.sections.forEach((section, idx) => {
-      const sectionTop = section.offsetTop; // Top of the section element itself (includes its padding-top)
-      const sectionBottom = sectionTop + section.offsetHeight;
+      const sectionTop = section.offsetTop;
+      const distanceToViewportTop = Math.abs(scrollTop - sectionTop);
 
-      // A section is "active" if its top edge (which includes the header clearance padding)
-      // is at or very near the scroll container's top.
-      const distance = Math.abs(scrollTop - sectionTop);
-
-      // Also consider if a good portion of the section is visible overall
-      // Viewport content area starts after headerClearance
-      const viewportContentAreaTop = scrollTop; // ScrollTop is where the section's padding-top should align
-      const viewportContentAreaBottom = scrollTop + containerHeight;
-
-      // Content of the section starts at sectionTop (due to its own padding-top)
-      // and ends at sectionBottom.
-      const overlapStart = Math.max(sectionTop, viewportContentAreaTop);
-      const overlapEnd = Math.min(sectionBottom, viewportContentAreaBottom);
-      const visibleHeight = Math.max(0, overlapEnd - overlapStart);
-
-      if (visibleHeight > containerHeight * 0.2) {
-        // If at least 20% of section is visible
-        if (distance < minDistanceToConsiderVisible) {
-          minDistanceToConsiderVisible = distance;
-          determinedIndex = idx;
-        }
+      if (distanceToViewportTop < minDistance) {
+        minDistance = distanceToViewportTop;
+        determinedIndex = idx;
       }
     });
 
-    if (determinedIndex === -1 && selectors.sections.length > 0) {
-      // Fallback
-      let closestDist = Infinity;
-      selectors.sections.forEach((section, idx) => {
-        const dist = Math.abs(scrollTop - section.offsetTop);
-        if (dist < closestDist) {
-          closestDist = dist;
-          determinedIndex = idx;
-        }
-      });
-    }
-
-    determinedIndex = clamp(
-      determinedIndex,
-      0,
-      selectors.sections.length > 0 ? selectors.sections.length - 1 : 0
-    );
+    determinedIndex = clamp(determinedIndex, 0, selectors.sections.length - 1);
 
     selectors.sections.forEach((section, idx) => {
-      const isCurrent = idx === determinedIndex;
-      section.classList.toggle("is-visible", isCurrent);
+      section.classList.toggle("is-visible", idx === determinedIndex);
     });
-
     updateActiveNavLink(determinedIndex);
-
     if (!isScrollAnimating) {
       currentScrollIndex = determinedIndex;
     }
     checkFirstScroll();
   }
 
-  // ... (COPY ALL OTHER JS FUNCTIONS FROM YOUR PREVIOUS **COMPLETE** SCRIPT)
-  // Ensure functions like: animateScroll, setupScrollManager, updateActiveNavLink, checkFirstScroll,
-  // all event handlers (handleWheelScroll, handleTouchStart, etc.),
-  // setupThemeSwitcher, setupLanguageSwitcher, setupCursorAndLight, and their helpers
-  // are present and complete. The snippet above only shows the most critical modifications.
+  // --- START: PASTE ALL YOUR OTHER JS FUNCTIONS HERE ---
+  // (animateScroll, setupScrollManager, updateActiveNavLink, checkFirstScroll,
+  // all event handlers, setupThemeSwitcher & helpers, setupLanguageSwitcher & helpers,
+  // setupCursorAndLight & helpers, handleGlobalClick, handleVisibilityChange)
+  // FROM YOUR PREVIOUS COMPLETE SCRIPT.
+  // Ensure they are complete and correct. I'll add stubs for a few critical ones.
+
+  function animateScroll(targetScrollTop) {
+    if (scrollAnimationId) cancelAnimationFrame(scrollAnimationId);
+    isScrollAnimating = true;
+    closeLanguageDropdown(); // Assuming this function exists
+    const startScrollTop = selectors.scrollContainer.scrollTop;
+    const distance = targetScrollTop - startScrollTop;
+    if (Math.abs(distance) < 1) {
+      isScrollAnimating = false;
+      scrollAnimationId = null;
+      updateScrollVisibility();
+      return;
+    }
+    let startTime = null;
+    const step = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / SCROLL_ANIMATION_DURATION, 1);
+      const easedProgress = easeInOutCubic(progress);
+      selectors.scrollContainer.scrollTop =
+        startScrollTop + distance * easedProgress;
+      if (elapsedTime < SCROLL_ANIMATION_DURATION) {
+        scrollAnimationId = requestAnimationFrame(step);
+      } else {
+        selectors.scrollContainer.scrollTop = targetScrollTop;
+        isScrollAnimating = false;
+        scrollAnimationId = null;
+        updateScrollVisibility();
+      }
+    };
+    scrollAnimationId = requestAnimationFrame(step);
+  }
+
+  function setupScrollManager() {
+    /* PASTE YOUR FULL setupScrollManager HERE */
+  }
+  function updateActiveNavLink(activeSectionIndex) {
+    /* PASTE YOUR FULL updateActiveNavLink HERE */
+  }
+  function checkFirstScroll() {
+    /* PASTE YOUR FULL checkFirstScroll HERE */
+  }
+  function handleWheelScroll(event) {
+    /* PASTE YOUR FULL handleWheelScroll HERE */
+  }
+  function handleTouchStart(event) {
+    /* PASTE YOUR FULL handleTouchStart HERE */
+  }
+  function handleTouchMove(event) {
+    /* PASTE YOUR FULL handleTouchMove HERE */
+  }
+  function handleTouchEnd(event) {
+    /* PASTE YOUR FULL handleTouchEnd HERE */
+  }
+  function handleKeydownScroll(event) {
+    /* PASTE YOUR FULL handleKeydownScroll HERE */
+  }
+  function handleNavLinkScroll(event) {
+    /* PASTE YOUR FULL handleNavLinkScroll HERE */
+  }
+  function setupThemeSwitcher() {
+    /* PASTE YOUR FULL setupThemeSwitcher AND HELPERS HERE */
+  }
+  function setupLanguageSwitcher() {
+    /* PASTE YOUR FULL setupLanguageSwitcher AND HELPERS HERE */
+  }
+  function setupCursorAndLight() {
+    /* PASTE YOUR FULL setupCursorAndLight AND HELPERS HERE */
+  }
+  function handleGlobalClick(event) {
+    /* PASTE YOUR FULL handleGlobalClick HERE */
+  }
+  function handleVisibilityChange() {
+    /* PASTE YOUR FULL handleVisibilityChange HERE */
+  }
+  // --- END: PASTE ALL OTHER JS FUNCTIONS HERE ---
 
   initializeApp();
 });
