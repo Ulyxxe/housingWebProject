@@ -316,7 +316,7 @@ html[data-accent-color="crous-accent-gold"] {
   height: 100vh;
   overflow-y: scroll;
   position: relative;
-  scroll-behavior: auto;
+  scroll-behavior: auto; /* Keep auto for JS controlled scroll */
   scrollbar-width: none;
   -ms-overflow-style: none;
   width: 100%;
@@ -345,6 +345,20 @@ html[data-accent-color="crous-accent-gold"] {
   transition: background-image var(--transition-theme),
     background-color 0.3s ease, padding 0.3s ease;
 }
+
+/* === CORRECTION 1: Prevent header overlap on anchor navigation === */
+.scroll-section[id] {
+  scroll-margin-top: calc(
+    3rem + var(--header-height) + 2px
+  ); /* 1.5rem header top + header height + 2px border + 1.5rem desired gap */
+}
+/*
+   Note on scroll-section padding-top: The existing padding-top (e.g., 9rem)
+   will apply *after* scroll-margin-top has positioned the section below the header.
+   If this results in too much space, you can reduce the padding-top in .scroll-section
+   and its responsive variants. For now, it's kept as per your original CSS.
+*/
+
 .alternate-bg {
   background-color: var(--bg-secondary);
   background-image: radial-gradient(
@@ -952,7 +966,11 @@ body.has-scrolled .scroll-indicator {
 /* --- Main Footer --- */
 .site-footer-main {
   text-align: center;
-  padding: 2rem 1rem;
+  /* === CORRECTION 2: Ensure footer has enough bottom padding === */
+  padding-top: 2rem;
+  padding-right: 1rem;
+  padding-bottom: 4rem; /* Increased from original implicit 2rem */
+  padding-left: 1rem;
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color-subtle);
   position: relative;
