@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouseX = 0;
   let mouseY = 0;
   let rafIdCursor = null;
-  // let isPaletteVisible = false; // Renamed to isLanguageDropdownVisible
   let isLanguageDropdownVisible = false;
   let lastScrollInitiationTime = 0;
 
@@ -22,11 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const TOUCH_SWIPE_THRESHOLD_Y = 50;
   const TOUCH_TIME_THRESHOLD = 300;
 
-  const sectionAnimationState = {
-    1: { shapeTimeoutId: null },
-    3: { shapeTimeoutId: null },
-  };
-
   const SCROLL_ANIMATION_DURATION = 700;
 
   const selectors = {
@@ -40,14 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
     scrollIndicator: document.querySelector(".scroll-indicator"),
     themeToggleButton: document.getElementById("theme-toggle"),
-    // Language Switcher selectors
     languageSwitcherToggleButton: document.getElementById(
       "language-switcher-toggle"
     ),
     languageSwitcherDropdown: document.getElementById(
       "language-switcher-dropdown"
     ),
-    languageChoiceButtons: null, // Will be populated in setupLanguageSwitcher
+    languageChoiceButtons: null,
     cursorDot: document.getElementById("cursor-dot"),
     backgroundLight: document.getElementById("background-light"),
     interactiveElements: document.querySelectorAll(
@@ -55,8 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
   };
 
-  // Basic translation object (can be expanded or moved to a separate JSON file)
   const translations = {
+    /* ... Your existing translations object ... */
     en: {
       nav_features: "Features",
       nav_process: "Process",
@@ -208,13 +201,32 @@ document.addEventListener("DOMContentLoaded", () => {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
+  // Helper function to get computed CSS variable values in pixels
+  function getCssVariableInPx(variableName, fallback = 0) {
+    if (!selectors.htmlElement) return fallback;
+    const rootStyle = getComputedStyle(selectors.htmlElement);
+    const value = rootStyle.getPropertyValue(variableName).trim();
+    if (!value) return fallback;
+
+    const rootFontSize = parseFloat(rootStyle.fontSize);
+    if (value.includes("px")) {
+      return parseFloat(value);
+    } else if (value.includes("rem")) {
+      return parseFloat(value) * rootFontSize;
+    } else if (value.includes("em")) {
+      // Less common for global vars, but possible
+      return parseFloat(value) * rootFontSize; // Assuming em is relative to root for simplicity here
+    }
+    // Add more unit conversions if needed (e.g., vh, vw, but these are less likely for this var)
+    return fallback; // Return fallback if unit is unknown or value is complex
+  }
+
   function initializeApp() {
     setupThemeSwitcher();
-    // setupColorChooser(); // Replaced with setupLanguageSwitcher
     setupLanguageSwitcher();
     setupScrollManager();
     setupCursorAndLight();
-    setupBackgroundShapeAnimations();
+    // setupBackgroundShapeAnimations(); // CSS handles this now
 
     document.addEventListener("click", handleGlobalClick);
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -243,17 +255,35 @@ document.addEventListener("DOMContentLoaded", () => {
             );
           else selectors.siteHeader?.style.removeProperty("animation");
         }
+        // On resize, gently adjust scroll position to maintain current section view
+        if (!isScrollAnimating && selectors.sections[currentScrollIndex]) {
+          const targetSection = selectors.sections[currentScrollIndex];
+          const headerClearance = getHeaderClearanceInPx();
+          const targetScrollTop = targetSection.offsetTop - headerClearance;
+          if (
+            Math.abs(selectors.scrollContainer.scrollTop - targetScrollTop) > 10
+          ) {
+            // Only if significantly off
+            selectors.scrollContainer.scrollTop = Math.max(0, targetScrollTop);
+          }
+        }
         updateScrollVisibility();
       }, 200);
     });
 
     const currentYearEl = document.getElementById("current-year");
     if (currentYearEl) currentYearEl.textContent = new Date().getFullYear();
+
+    // Initial call to set up section visibility correctly after DOM is ready and CSS applied
+    if (selectors.scrollContainer.scrollTop === 0 && currentScrollIndex === 0) {
+      setTimeout(updateScrollVisibility, 100); // Small delay for layout
+    }
   }
 
   function handleVisibilityChange() {
+    /* ... Keep existing function ... */
     if (document.hidden) {
-      stopAllBackgroundShapeAnimations();
+      // stopAllBackgroundShapeAnimations(); // CSS handles
       if (rafIdCursor) {
         cancelAnimationFrame(rafIdCursor);
         rafIdCursor = null;
@@ -266,36 +296,33 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         rafIdCursor = requestAnimationFrame(updateCursorAndLightPosition);
       }
-      if (
-        currentScrollIndex >= 0 &&
-        currentScrollIndex < selectors.sections.length
-      ) {
-        handleSectionBackgroundShapeAnimations(currentScrollIndex, "start");
-      }
+      // handleSectionBackgroundShapeAnimations(currentScrollIndex, "start"); // CSS handles
     }
   }
-
   function setupThemeSwitcher() {
+    /* ... Keep existing function ... */
     if (!selectors.themeToggleButton) return;
     applyInitialTheme();
     selectors.themeToggleButton.addEventListener("click", toggleTheme);
   }
   function applyTheme(theme) {
+    /* ... Keep existing function ... */
     if (theme) selectors.htmlElement.setAttribute("data-theme", theme);
   }
   function applyInitialTheme() {
+    /* ... Keep existing function ... */
     const storedTheme = localStorage.getItem("crousXTheme") || "dark";
     applyTheme(storedTheme);
   }
   function toggleTheme() {
+    /* ... Keep existing function ... */
     const currentTheme = selectors.htmlElement.getAttribute("data-theme");
     const targetTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(targetTheme);
     localStorage.setItem("crousXTheme", targetTheme);
   }
-
-  // --- Language Switcher ---
   function setupLanguageSwitcher() {
+    /* ... Keep existing function ... */
     if (
       !selectors.languageSwitcherToggleButton ||
       !selectors.languageSwitcherDropdown
@@ -306,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ".language-choice-button"
       );
     if (selectors.languageChoiceButtons.length === 0) return;
-
     applyInitialLanguage();
     selectors.languageSwitcherToggleButton.addEventListener(
       "click",
@@ -317,8 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
       handleLanguageChoice
     );
   }
-
   function toggleLanguageDropdown(event) {
+    /* ... Keep existing function ... */
     event.stopPropagation();
     isLanguageDropdownVisible = !isLanguageDropdownVisible;
     selectors.siteHeader?.classList.toggle(
@@ -334,8 +360,8 @@ document.addEventListener("DOMContentLoaded", () => {
       !isLanguageDropdownVisible
     );
   }
-
   function closeLanguageDropdown() {
+    /* ... Keep existing function ... */
     if (isLanguageDropdownVisible) {
       isLanguageDropdownVisible = false;
       selectors.siteHeader?.classList.remove("language-dropdown-visible");
@@ -346,34 +372,30 @@ document.addEventListener("DOMContentLoaded", () => {
       selectors.languageSwitcherDropdown?.setAttribute("aria-hidden", "true");
     }
   }
-
   function applyLanguage(lang) {
+    /* ... Keep existing function ... */
     if (!lang || !translations[lang]) return;
     selectors.htmlElement.setAttribute("lang", lang);
-    // Update text content
     document.querySelectorAll("[data-lang-key]").forEach((el) => {
       const key = el.dataset.langKey;
       let translation =
-        translations[lang][key] || translations.en[key] || el.textContent; // Fallback
+        translations[lang][key] || translations.en[key] || el.textContent;
       if (key === "footer_copyright") {
         translation = translation.replace("{year}", new Date().getFullYear());
       }
       el.textContent = translation;
     });
-
-    // Update active button state
     selectors.languageChoiceButtons?.forEach((button) => {
       button.classList.toggle("active", button.dataset.lang === lang);
     });
     localStorage.setItem("crousXLang", lang);
   }
-
   function applyInitialLanguage() {
+    /* ... Keep existing function ... */
     const storedLang = localStorage.getItem("crousXLang");
     const validLangs = ["en", "fr", "es"];
-    const browserLang = navigator.language.split("-")[0]; // Get 'en' from 'en-US'
-    let initialLang = "en"; // Default
-
+    const browserLang = navigator.language.split("-")[0];
+    let initialLang = "en";
     if (storedLang && validLangs.includes(storedLang)) {
       initialLang = storedLang;
     } else if (validLangs.includes(browserLang)) {
@@ -381,8 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     applyLanguage(initialLang);
   }
-
   function handleLanguageChoice(event) {
+    /* ... Keep existing function ... */
     const button = event.target.closest(".language-choice-button");
     if (!button) return;
     const chosenLang = button.dataset.lang;
@@ -391,14 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
       closeLanguageDropdown();
     }
   }
-
-  // Cursor and Light (Same as before, no changes needed for language switcher)
   function setupCursorAndLight() {
+    /* ... Keep existing function ... */
     const customCursorActive =
       !isMobile() && selectors.cursorDot && selectors.backgroundLight;
     const mobileLightActive = isMobile() && selectors.backgroundLight;
     selectors.body.classList.toggle("custom-cursor-active", customCursorActive);
-
     document.removeEventListener("mousemove", handleMouseMoveForEffects);
     document.documentElement.removeEventListener(
       "mouseleave",
@@ -416,11 +436,9 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelAnimationFrame(rafIdCursor);
       rafIdCursor = null;
     }
-
     currentLightScale = 1.0;
     targetLightScale = 1.0;
     scaleAnimationStartTime = null;
-
     if (customCursorActive) {
       selectors.cursorDot.style.display = "";
       selectors.backgroundLight.style.display = "";
@@ -458,6 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function handleMouseEnterInteractive() {
+    /* ... Keep existing function ... */
     if (!isMobile()) {
       selectors.cursorDot?.classList.add("hover");
       if (targetLightScale !== 0.6) {
@@ -470,6 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function handleMouseLeaveInteractive() {
+    /* ... Keep existing function ... */
     if (!isMobile()) {
       selectors.cursorDot?.classList.remove("hover");
       if (targetLightScale !== 1.0) {
@@ -482,6 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function handleMouseMoveForEffects(event) {
+    /* ... Keep existing function ... */
     if (isMobile()) return;
     mouseX = event.clientX;
     mouseY = event.clientY;
@@ -499,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
       rafIdCursor = requestAnimationFrame(updateCursorAndLightPosition);
   }
   function updateCursorAndLightPosition() {
+    /* ... Keep existing function ... */
     if (!selectors.backgroundLight || isMobile()) {
       if (rafIdCursor) cancelAnimationFrame(rafIdCursor);
       rafIdCursor = null;
@@ -528,6 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
     rafIdCursor = requestAnimationFrame(updateCursorAndLightPosition);
   }
   function handleMouseLeaveEffects() {
+    /* ... Keep existing function ... */
     if (!selectors.cursorDot || !selectors.backgroundLight || isMobile())
       return;
     selectors.cursorDot.classList.remove("visible", "hover");
@@ -542,6 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectors.backgroundLight.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%) scale(${currentLightScale})`;
   }
   function handleMouseEnterEffects() {
+    /* ... Keep existing function ... */
     if (!selectors.cursorDot || !selectors.backgroundLight || isMobile())
       return;
     if (!selectors.cursorDot.classList.contains("visible"))
@@ -552,16 +576,20 @@ document.addEventListener("DOMContentLoaded", () => {
       rafIdCursor = requestAnimationFrame(updateCursorAndLightPosition);
   }
 
-  // Scroll Management (Same as before)
   function setupScrollManager() {
     if (!selectors.scrollContainer || selectors.sections.length === 0) {
+      console.warn(
+        "Scroll container or sections not found. Full page scroll disabled."
+      );
       selectors.sections.forEach((sec) => sec.classList.add("is-visible"));
       if (selectors.scrollIndicator)
         selectors.scrollIndicator.style.display = "none";
       selectors.htmlElement.style.overflow = "";
       selectors.body.style.overflow = "";
-      selectors.scrollContainer.style.overflowY = "";
-      selectors.scrollContainer.style.scrollBehavior = "";
+      if (selectors.scrollContainer) {
+        selectors.scrollContainer.style.overflowY = "";
+        selectors.scrollContainer.style.scrollBehavior = "";
+      }
       return;
     }
     selectors.scrollContainer.scrollTop = 0;
@@ -569,10 +597,12 @@ document.addEventListener("DOMContentLoaded", () => {
     selectors.htmlElement.style.overflow = "hidden";
     selectors.body.style.overflow = "hidden";
     selectors.scrollContainer.style.overflowY = "scroll";
-    selectors.scrollContainer.style.scrollBehavior = "auto";
+    selectors.scrollContainer.style.scrollBehavior = "auto"; // JS handles smooth scroll
+
     requestAnimationFrame(() => {
-      setTimeout(updateScrollVisibility, 50);
+      setTimeout(updateScrollVisibility, 100); // Initial visibility update
     });
+
     selectors.scrollContainer.addEventListener("wheel", handleWheelScroll, {
       passive: false,
     });
@@ -593,22 +623,26 @@ document.addEventListener("DOMContentLoaded", () => {
       "scroll",
       () => {
         closeLanguageDropdown();
-        updateScrollVisibility();
+        if (!isScrollAnimating) {
+          updateScrollVisibility();
+        }
       },
       { passive: true }
     );
   }
+
   function animateScroll(targetScrollTop) {
-    if (
-      isScrollAnimating &&
-      Math.abs(selectors.scrollContainer.scrollTop - targetScrollTop) < 5
-    )
-      return;
     if (scrollAnimationId) cancelAnimationFrame(scrollAnimationId);
     isScrollAnimating = true;
     closeLanguageDropdown();
     const startScrollTop = selectors.scrollContainer.scrollTop;
     const distance = targetScrollTop - startScrollTop;
+    if (Math.abs(distance) < 1) {
+      isScrollAnimating = false;
+      scrollAnimationId = null;
+      updateScrollVisibility();
+      return;
+    }
     let startTime = null;
     const step = (currentTime) => {
       if (startTime === null) startTime = currentTime;
@@ -617,9 +651,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const easedProgress = easeInOutCubic(progress);
       selectors.scrollContainer.scrollTop =
         startScrollTop + distance * easedProgress;
-      if (elapsedTime < SCROLL_ANIMATION_DURATION)
+      if (elapsedTime < SCROLL_ANIMATION_DURATION) {
         scrollAnimationId = requestAnimationFrame(step);
-      else {
+      } else {
         selectors.scrollContainer.scrollTop = targetScrollTop;
         isScrollAnimating = false;
         scrollAnimationId = null;
@@ -628,53 +662,144 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     scrollAnimationId = requestAnimationFrame(step);
   }
+
+  function getHeaderClearanceInPx() {
+    let headerClearance = getCssVariableInPx(
+      "--calculated-header-clearance-px",
+      100
+    ); // Fallback
+
+    if (
+      selectors.siteHeader &&
+      getComputedStyle(selectors.siteHeader).position === "fixed"
+    ) {
+      const headerStyle = getComputedStyle(selectors.siteHeader);
+      const rootStyle = getComputedStyle(selectors.htmlElement);
+      const rootFontSize = parseFloat(rootStyle.fontSize);
+
+      let headerActualHeight = selectors.siteHeader.offsetHeight;
+      let headerTopPositionPx = 0;
+      const headerTopCss = headerStyle.top;
+      if (headerTopCss && headerTopCss !== "auto" && headerTopCss !== "0px") {
+        headerTopPositionPx = headerTopCss.includes("rem")
+          ? parseFloat(headerTopCss) * rootFontSize
+          : parseFloat(headerTopCss);
+      }
+      let visualGapBelowPx = getCssVariableInPx("--header-visual-gap", 20); // Default 20px gap
+
+      headerClearance =
+        headerTopPositionPx + headerActualHeight + visualGapBelowPx;
+    }
+    return headerClearance;
+  }
+
   function scrollToSection(index) {
     index = clamp(index, 0, selectors.sections.length - 1);
-    if (index === currentScrollIndex && !isScrollAnimating) {
-      updateScrollVisibility();
-      return;
-    }
     const targetSection = selectors.sections[index];
     if (!targetSection) return;
-    handleSectionBackgroundShapeAnimations(currentScrollIndex, "stop");
-    currentScrollIndex = index;
-    updateScrollVisibility();
-    const targetScrollTop = targetSection.offsetTop;
-    animateScroll(targetScrollTop);
+
+    const headerClearance = getHeaderClearanceInPx();
+    let calculatedTargetScrollTop = targetSection.offsetTop - headerClearance;
+    calculatedTargetScrollTop = Math.max(0, calculatedTargetScrollTop); // Don't scroll to negative
+
+    // Only animate if not already very close to target
+    if (
+      Math.abs(
+        selectors.scrollContainer.scrollTop - calculatedTargetScrollTop
+      ) < 5 &&
+      currentScrollIndex === index &&
+      !isScrollAnimating
+    ) {
+      updateScrollVisibility(); // Ensure UI is consistent
+      return;
+    }
+
+    if (currentScrollIndex !== index && !isScrollAnimating) {
+      // handleSectionBackgroundShapeAnimations(currentScrollIndex, "stop"); // CSS driven
+    }
+    currentScrollIndex = index; // Update current index immediately for nav link, etc.
+    // updateScrollVisibility(); // Call this before animating to update nav link state quickly
+
+    animateScroll(calculatedTargetScrollTop);
   }
+
   function updateScrollVisibility() {
     const containerHeight = selectors.scrollContainer.clientHeight;
     const scrollTop = selectors.scrollContainer.scrollTop;
-    let determinedIndex = currentScrollIndex;
-    let minDistance = Infinity;
+    const headerClearance = getHeaderClearanceInPx(); // Get current header clearance
+
+    let determinedIndex = -1;
+    // Threshold for considering a section "in view" based on where its content starts
+    // (i.e., top of section element, as its internal padding handles header clearance)
+    const effectiveViewportTop = scrollTop + headerClearance;
+
+    let minDistanceToEffectiveTop = Infinity;
+
     selectors.sections.forEach((section, idx) => {
-      const sectionTop = section.offsetTop;
-      const distance = Math.abs(scrollTop - sectionTop);
+      const sectionTop = section.offsetTop; // Top of the section element
+      const sectionContentStartsAt = sectionTop; // Top of section element IS where content effectively starts due to CSS scroll-margin/JS calc
       const sectionBottom = sectionTop + section.offsetHeight;
-      const containerBottom = scrollTop + containerHeight;
-      const isPartiallyVisible =
-        sectionTop < containerBottom && sectionBottom > scrollTop;
-      if (isPartiallyVisible && distance < minDistance) {
-        minDistance = distance;
-        determinedIndex = idx;
+
+      // Is the point where content *should* start visible or just above?
+      const distance = Math.abs(effectiveViewportTop - sectionContentStartsAt);
+
+      // Check if the section's content area is overlapping with the visible area below the header
+      const visibleContentTop = Math.max(
+        sectionContentStartsAt,
+        effectiveViewportTop
+      );
+      const visibleContentBottom = Math.min(
+        sectionBottom,
+        scrollTop + containerHeight
+      );
+      const visibleHeight = visibleContentBottom - visibleContentTop;
+
+      if (visibleHeight > containerHeight * 0.1) {
+        // At least 10% of section content visible
+        if (distance < minDistanceToEffectiveTop) {
+          minDistanceToEffectiveTop = distance;
+          determinedIndex = idx;
+        }
       }
     });
+
+    if (determinedIndex === -1) {
+      // Fallback: find closest section top to scroll position
+      let closestDist = Infinity;
+      selectors.sections.forEach((section, idx) => {
+        const dist = Math.abs(
+          scrollTop - (section.offsetTop - headerClearance)
+        );
+        if (dist < closestDist) {
+          closestDist = dist;
+          determinedIndex = idx;
+        }
+      });
+    }
+
     determinedIndex = clamp(determinedIndex, 0, selectors.sections.length - 1);
+
     selectors.sections.forEach((section, idx) => {
       const isCurrent = idx === determinedIndex;
-      const wasVisible = section.classList.contains("is-visible");
       section.classList.toggle("is-visible", isCurrent);
-      if (isCurrent && !wasVisible)
-        handleSectionBackgroundShapeAnimations(idx, "start");
-      else if (!isCurrent && wasVisible)
-        handleSectionBackgroundShapeAnimations(idx, "stop");
+      // Background shape animations are CSS driven by .is-visible
     });
+
     updateActiveNavLink(determinedIndex);
-    if (!isScrollAnimating && currentScrollIndex !== determinedIndex)
-      currentScrollIndex = determinedIndex;
+
+    if (!isScrollAnimating) {
+      currentScrollIndex = determinedIndex; // Update master index if not mid-animation
+    }
     checkFirstScroll();
   }
+
   function updateActiveNavLink(activeSectionIndex) {
+    /* ... Keep existing function from previous good version ... */
+    if (
+      activeSectionIndex < 0 ||
+      activeSectionIndex >= selectors.sections.length
+    )
+      return;
     const currentSectionId = selectors.sections[activeSectionIndex]?.id;
     if (!currentSectionId) return;
     selectors.navLinks?.forEach((link) => {
@@ -690,9 +815,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   function checkFirstScroll() {
+    /* ... Keep existing function ... */
     if (
       !firstScrollDone &&
-      currentScrollIndex > 0 &&
+      selectors.scrollContainer.scrollTop > 50 &&
       selectors.scrollIndicator
     ) {
       selectors.body.classList.add("has-scrolled");
@@ -700,6 +826,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function handleWheelScroll(event) {
+    /* ... Keep existing function ... */
     if (isLanguageDropdownVisible) {
       const scrollableContent = selectors.languageSwitcherDropdown;
       if (scrollableContent?.contains(event.target)) {
@@ -738,12 +865,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function handleTouchStart(event) {
+    /* ... Keep existing function ... */
     if (isLanguageDropdownVisible || event.touches.length !== 1) return;
     touchStartY = event.touches[0].clientY;
     touchStartX = event.touches[0].clientX;
     touchStartTime = Date.now();
   }
   function handleTouchMove(event) {
+    /* ... Keep existing function ... */
     if (
       isLanguageDropdownVisible ||
       isScrollAnimating ||
@@ -756,6 +885,7 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
   }
   function handleTouchEnd(event) {
+    /* ... Keep existing function ... */
     if (
       isLanguageDropdownVisible ||
       isScrollAnimating ||
@@ -807,6 +937,7 @@ document.addEventListener("DOMContentLoaded", () => {
     touchStartTime = 0;
   }
   function handleKeydownScroll(event) {
+    /* ... Keep existing function ... */
     if (event.key === "Escape") {
       if (isLanguageDropdownVisible) {
         closeLanguageDropdown();
@@ -826,19 +957,19 @@ document.addEventListener("DOMContentLoaded", () => {
           "PageDown",
           "Home",
           "End",
+          "Tab",
         ].includes(event.key)
-      )
-        event.preventDefault();
+      ) {
+        if (event.key !== "Tab") event.preventDefault();
+      }
       return;
     }
-    if (
-      isScrollAnimating ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.altKey ||
-      event.shiftKey
-    )
-      return;
+    if (isScrollAnimating || event.metaKey || event.ctrlKey || event.altKey) {
+      if (event.key === " " && event.shiftKey) {
+      } else {
+        return;
+      }
+    }
     const activeEl = document.activeElement;
     const isInput =
       activeEl &&
@@ -859,9 +990,16 @@ document.addEventListener("DOMContentLoaded", () => {
         preventDefault = true;
         break;
       case " ":
-        if (currentScrollIndex < selectors.sections.length - 1) {
-          targetIndex++;
-          shouldScroll = true;
+        if (event.shiftKey) {
+          if (currentScrollIndex > 0) {
+            targetIndex--;
+            shouldScroll = true;
+          }
+        } else {
+          if (currentScrollIndex < selectors.sections.length - 1) {
+            targetIndex++;
+            shouldScroll = true;
+          }
         }
         preventDefault = true;
         break;
@@ -892,21 +1030,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (preventDefault) event.preventDefault();
     const now = Date.now();
-    if (shouldScroll && now - lastScrollInitiationTime > 500) {
+    if (
+      shouldScroll &&
+      targetIndex !== currentScrollIndex &&
+      now - lastScrollInitiationTime > 500
+    ) {
       lastScrollInitiationTime = now;
       scrollToSection(targetIndex);
     }
   }
   function handleNavLinkScroll(event) {
+    /* ... Keep existing function from previous good version ... */
     event.preventDefault();
     if (isScrollAnimating) return;
-    const targetId = event.currentTarget.getAttribute("href");
+    const targetIdAttr = event.currentTarget.getAttribute("href");
     try {
-      if (!targetId || targetId === "#") {
+      if (!targetIdAttr || targetIdAttr === "#") {
         scrollToSection(0);
         return;
       }
-      const targetElementId = targetId.replace("#", "");
+      const targetElementId = targetIdAttr.replace("#", "");
       const targetElement = document.getElementById(targetElementId);
       if (!targetElement) {
         scrollToSection(0);
@@ -915,32 +1058,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetIndex = selectors.sections.findIndex(
         (sec) => sec.id === targetElement.id
       );
-      if (targetIndex !== -1)
+      if (targetIndex !== -1) {
         scrollToSection(clamp(targetIndex, 0, selectors.sections.length - 1));
-      else targetElement.scrollIntoView({ behavior: "smooth" });
+      } else {
+        const headerClearance = getHeaderClearanceInPx();
+        const directTargetScrollTop = targetElement.offsetTop - headerClearance;
+        animateScroll(Math.max(0, directTargetScrollTop));
+      }
     } catch (error) {
       scrollToSection(0);
     }
   }
-
-  // Background Shape Animations (Same as before)
-  function setupBackgroundShapeAnimations() {
-    stopAllBackgroundShapeAnimations();
-  }
-  function handleSectionBackgroundShapeAnimations(sectionIndex, action) {
-    if (document.hidden) {
-      stopAllBackgroundShapeAnimations();
-      return;
-    }
-    const state = sectionAnimationState[sectionIndex];
-    if (!state) return;
-    // CSS handles shape animations based on section's .is-visible class
-  }
-  function stopAllBackgroundShapeAnimations() {
-    /* CSS driven */
-  }
-
   function handleGlobalClick(event) {
+    /* ... Keep existing function ... */
     if (
       isLanguageDropdownVisible &&
       selectors.languageSwitcherToggleButton &&
