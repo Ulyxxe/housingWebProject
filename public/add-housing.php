@@ -12,6 +12,35 @@ if (!isset($_SESSION['user_id'])) {
 // 2. Include Database Configuration
 require_once __DIR__ . '/../config/config.php'; // Defines $pdo
 
+function get_mime_type_from_file_content($filepath) {
+    if (!file_exists($filepath) || !is_readable($filepath)) {
+        return null;
+    }
+    $handle = fopen($filepath, 'rb');
+    if (!$handle) {
+        return null;
+    }
+    // Read the first 12 bytes, common for many image types
+    $bytes = fread($handle, 12);
+    fclose($handle);
+
+    if ($bytes === false || strlen($bytes) < 4) {
+        return null; // Not enough bytes to determine
+    }
+
+    // Check for common image types by their magic numbers
+    if (substr($bytes, 0, 2) === "\xFF\xD8") return 'image/jpeg'; // JPEG
+    if (substr($bytes, 0, 8) === "\x89PNG\x0D\x0A\x1A\x0A") return 'image/png'; // PNG
+    if (substr($bytes, 0, 6) === "GIF87a" || substr($bytes, 0, 6) === "GIF89a") return 'image/gif'; // GIF
+    if (substr($bytes, 0, 4) === "RIFF" && strlen($bytes) >= 12 && substr($bytes, 8, 4) === "WEBP") return 'image/webp'; // WEBP
+
+    // Fallback for safety: if unsure, return generic binary or null
+    // You might also consider checking $_FILES['type'] here as a last resort,
+    // but with a strong understanding it's unreliable.
+    // For now, we'll return null if magic numbers don't match known types.
+    return null;
+}
+
 // --- Configuration for Image Uploads ---
 define('UPLOAD_DIR_BASE', __DIR__ . '/assets/uploads/housing_images/'); // Base directory for uploads
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5 MB
@@ -106,12 +135,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_tmp_path = $_FILES['primary_image']['tmp_name'];
         $file_name = $_FILES['primary_image']['name'];
         $file_size = $_FILES['primary_image']['size'];
-        $file_type = mime_content_type($file_tmp_path); // More reliable than $_FILES['primary_image']['type']
+        $file_type = get_mime_type_from_file_content($file_tmp_path); 
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
         if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
-            $errors['primary_image'] = "Invalid file type for primary image. Allowed: " . implode(', ', $allowed_extensions);
-        } elseif ($file_size > MAX_FILE_SIZE) {
+    // If $file_type is null from our function, !in_array(null, $allowed_mime_types) will be true,
+    // correctly flagging it as an error if the type couldn't be determined or wasn't allowed.
+    $errors['primary_image'] = "Invalid file type for primary image. Allowed: " . implode(', ', $allowed_extensions);
+}           elseif ($file_size > MAX_FILE_SIZE) {
             $errors['primary_image'] = "Primary image exceeds maximum size of " . (MAX_FILE_SIZE / 1024 / 1024) . "MB.";
         }
     } elseif (isset($_FILES['primary_image']) && $_FILES['primary_image']['error'] !== UPLOAD_ERR_NO_FILE) {
