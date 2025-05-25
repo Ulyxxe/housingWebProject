@@ -119,7 +119,7 @@ SQL
                 <h1 class="housing-main-title"><?php echo htmlspecialchars($housing['title']); ?></h1>
                 
                 <div class="housing-top-meta">
-                    <span class="status-indicator-tag mockup-style" data-i18n-key="status_for_rent">Tag</span> {/* Text will be replaced by i18n if "Tag" is a key, or manually set. Mockup is "Tag" so using it as placeholder for styling */}
+                    <span class="status-indicator-tag mockup-style" data-i18n-key="status_for_rent">Premium</span> 
                     <div class="price-display-area">
                         <span class="amount">$<?php echo number_format((float)$housing['rent_amount'], 0); ?></span>
                         <span class="frequency">/ <?php echo htmlspecialchars($housing['rent_frequency']); ?></span>
@@ -191,11 +191,11 @@ SQL
                     </div>
                     <?php endif;
                 } ?>
-                 <div class="info-item-mockup full-width-info" style="grid-column: 1 / -1; margin-top: 0.5rem;"> {/* Availability Date, styled like other info items but full width */}
+                 <div class="info-item-mockup full-width-info" style="grid-column: 1 / -1; margin-top: 0.5rem;"> 
                     <span class="info-label-mockup" data-i18n-key="info_label_available_date">Available from</span>
                      <div class="info-value-wrapper-mockup">
                         <span class="info-value"><?php echo htmlspecialchars(date("F j, Y", strtotime($housing['availability_date']))); ?></span>
-                        {/* No dropdown arrow for date usually */}
+                        
                     </div>
                 </div>
             </div>
@@ -213,7 +213,7 @@ SQL
             <div class="reviews-grid-layout mockup-style">
                 <div class="review-card-item">
                     <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
-                    <h3 class="review-card-heading">Review title</h3> {/* Mockup text */}
+                    <h3 class="review-card-heading">Review title</h3> 
                     <p class="review-card-text">Review body. This is an example of a review for the housing unit. It could be a bit longer.</p> {/* Mockup text */}
                     <div class="review-card-author-area">
                         <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
