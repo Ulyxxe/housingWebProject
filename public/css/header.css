@@ -62,11 +62,6 @@
   transform: scale(1.03);
 }
 
-/* Main Navigation (Desktop) */
-.main-nav {
-  /* margin-right: 1.5rem; Removed, header-group-left gap handles spacing */
-}
-
 .main-nav ul {
   list-style: none;
   display: flex;

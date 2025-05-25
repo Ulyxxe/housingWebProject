@@ -13,7 +13,7 @@ if (session_status() == PHP_SESSION_NONE) {
       </div>
       <nav class="main-nav">
         <ul>
-          <li><a href="home.php" data-lang-key="nav_newsstand">News stand</a></li>
+          <li><a href="news.php" data-lang-key="nav_newsstand">News stand</a></li>
           <li><a href="help.php" data-lang-key="nav_help">Need help?</a></li>
           <li><a href="faq.php" data-lang-key="nav_faq">FAQ</a></li>
           <?php if (isset($_SESSION['user_id'])): // Show "My profile" only if logged in ?>
