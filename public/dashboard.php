@@ -17,6 +17,16 @@ $userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 
 $userType = isset($_SESSION['user_type']) ? htmlspecialchars(ucfirst($_SESSION['user_type'])) : 'N/A'; // Capitalize first letter
 $userID = $_SESSION['user_id'];
 
+// --- NEW: Fetch recent applications ---
+require_once __DIR__ . '/../config/config.php'; // Defines $pdo
+require_once __DIR__ . '/../src/Models/BookingModel.php'; // Include the BookingModel
+
+$recentApplications = [];
+if (isset($pdo)) { // Ensure $pdo is available from config.php
+    $bookingModel = new BookingModel($pdo);
+    $recentApplications = $bookingModel->getApplicationsByUserId($userID, 3); // Fetch latest 3 applications
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
