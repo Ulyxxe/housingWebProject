@@ -268,13 +268,17 @@ SQL
                 <input type="hidden" name="listing_id" value="<?php echo htmlspecialchars($housing_id); ?>">
                 
                 <div class="form-group">
-                    <label for="rating" data-i18n-key="review_rating_label">Your Rating *</label>
-                    <div class="star-rating-input">
-                        <?php for ($i = 5; $i >= 1; $i--): ?>
-                            <input type="radio" id="star<?php echo $i; ?>" name="rating" value="<?php echo $i; ?>" required />
-                            <label for="star<?php echo $i; ?>" title="<?php echo $i; ?> stars"><i class="fas fa-star"></i></label>
-                        <?php endfor; ?>
-                    </div>
+                    <!-- Use fieldset and legend for a group of radio buttons -->
+                    <fieldset class="star-rating-fieldset">
+                        <legend class="form-label" data-i18n-key="review_rating_label">Your Rating *</legend>
+                        <div class="star-rating-input">
+                            <?php for ($i = 5; $i >= 1; $i--): ?>
+                                <input type="radio" id="star<?php echo $i; ?>" name="rating" value="<?php echo $i; ?>" 
+                                       <?php echo (isset($_SESSION['form_data']['rating']) && $_SESSION['form_data']['rating'] == $i) ? 'checked' : ''; ?> required />
+                                <label for="star<?php echo $i; ?>" title="<?php echo $i; ?> stars"><i class="fas fa-star"></i></label>
+                            <?php endfor; ?>
+                        </div>
+                    </fieldset>
                 </div>
 
                 <div class="form-group">
