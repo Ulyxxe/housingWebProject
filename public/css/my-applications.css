@@ -1,0 +1,186 @@
+/* public/css/my-applications.css */
+
+.my-applications-page-wrapper {
+    padding: 2rem 1.5rem;
+    max-width: 900px; /* Applications list might be narrower than listings */
+    margin: 0 auto;
+}
+
+.my-applications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.my-applications-header .page-main-heading {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+    text-align: left;
+    font-size: 1.8rem;
+}
+.my-applications-header .btn { /* For "Find More Housing" */
+    font-size: 0.9rem;
+}
+.my-applications-header .btn i {
+    margin-right: 0.5em;
+}
+
+.no-applications-message.card {
+    text-align: center;
+    padding: 2.5rem;
+    margin-top: 2rem;
+    background-color: var(--input-bg);
+}
+.no-applications-message .card-body i {
+    font-size: 3.5rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    display: block;
+}
+.no-applications-message p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+.no-applications-message .btn-primary {
+    margin-top: 1rem;
+}
+
+.my-applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.application-card { /* Extends .card from components.css */
+    display: flex;
+    flex-direction: row; /* Horizontal layout for card content */
+    gap: 1.5rem;
+    padding: 1.2rem;
+    align-items: flex-start; /* Align items at the top */
+}
+
+.application-card-image-section {
+    flex-shrink: 0;
+}
+
+.application-housing-image {
+    width: 120px; /* Adjust as needed */
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border-color-subtle);
+}
+.application-housing-image-placeholder {
+    width: 120px;
+    height: 90px;
+    background-color: var(--bg-tertiary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+.application-housing-image-placeholder i {
+    font-size: 2rem;
+}
+
+
+.application-card-details-section {
+    flex-grow: 1; /* Takes up available space */
+}
+
+.application-housing-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-headings);
+    margin-bottom: 0.5rem;
+}
+.application-housing-title a {
+    color: inherit;
+    text-decoration: none;
+}
+.application-housing-title a:hover {
+    color: var(--accent-primary);
+}
+
+.application-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+}
+.application-info strong {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.application-info.user-notes {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--border-color-subtle);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+
+.application-card-status-section {
+    flex-shrink: 0;
+    text-align: right;
+    min-width: 120px; /* Ensure status badge has some space */
+}
+
+.application-status-badge {
+    display: inline-block;
+    padding: 0.3em 0.8em;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 16px; /* Pill shape */
+    color: var(--bg-primary); /* Default text color for badges */
+    text-transform: capitalize;
+    margin-bottom: 0.5rem; /* Space if there's a button below */
+}
+[data-theme="dark"] .application-status-badge {
+    color: #000; /* Ensure contrast for dark theme */
+}
+
+.application-status-badge.status-pending { background-color: #f0ad4e; /* Orange */ }
+.application-status-badge.status-approved { background-color: #5cb85c; /* Green */ }
+.application-status-badge.status-rejected { background-color: #d9534f; /* Red */ }
+.application-status-badge.status-cancelled { background-color: #777;    /* Grey */ }
+/* Adjust text color for pending on light theme if needed */
+[data-theme="light"] .application-status-badge.status-pending { color: #333; }
+
+
+.btn-cancel-app { /* Link-style button for cancelling */
+    font-size: 0.8rem;
+    color: var(--text-link);
+    padding: 0.2rem 0;
+}
+.btn-cancel-app:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 768px) {
+    .my-applications-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .application-card {
+        flex-direction: column; /* Stack sections vertically on smaller screens */
+        gap: 1rem;
+    }
+    .application-card-status-section {
+        text-align: left; /* Align status to left when stacked */
+        min-width: auto;
+    }
+    .application-housing-image,
+    .application-housing-image-placeholder {
+        width: 100%; /* Full width image when stacked */
+        height: 150px; /* Adjust height */
+    }
+}

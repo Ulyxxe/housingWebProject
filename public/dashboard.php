@@ -64,7 +64,7 @@ $userID = $_SESSION['user_id'];
                 <nav class="dashboard-nav">
                     <a href="dashboard.php" class="dashboard-nav-link active" data-i18n-key="dashboard_nav_overview"><i class="fas fa-tachometer-alt"></i> Overview</a>
                     <a href="my-listings.php" class="dashboard-nav-link" data-i18n-key="dashboard_nav_my_listings"><i class="fas fa-home"></i> My Listings</a> <!-- If applicable -->
-                    <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_my_applications"><i class="fas fa-clipboard-list"></i> My Applications</a>
+                    <a href="my-applications.php" class="dashboard-nav-link" data-i18n-key="dashboard_nav_my_applications"><i class="fas fa-clipboard-list"></i> My Applications</a>
                     <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_saved_listings"><i class="fas fa-heart"></i> Saved Listings</a>
                     <a href="#" class="dashboard-nav-link" data-i18n-key="dashboard_nav_settings"><i class="fas fa-cog"></i> Account Settings</a>
                 </nav>
