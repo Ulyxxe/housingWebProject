@@ -103,6 +103,11 @@ $isLoggedIn = true;
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">   <!-- General styles, variables -->
+    <link rel="stylesheet" href="css/header.css">   <!-- Header styling -->
+    <link rel="stylesheet" href="css/components.css"> <!-- Common buttons, chat -->
+    <link rel="stylesheet" href="css/forms.css">    <!-- General form styling -->
+    <link rel="stylesheet" href="css/booking.css">
     <link rel="icon" type="image/png" href="assets/images/icon.png">
 </head>
 <body>
