@@ -10,11 +10,16 @@
   left: 0;
   width: 100%;
   z-index: 1050; /* High z-index to stay on top of other content */
-  background-color: rgba(var(--header-bg-rgb), var(--header-bg-opacity, 0.85)); /* Use variables from global.css */
-  border-bottom: 1px solid rgba(var(--header-border-rgb), var(--header-border-opacity, 0.1));
+  background-color: rgba(
+    var(--header-bg-rgb),
+    var(--header-bg-opacity, 0.85)
+  ); /* Use variables from global.css */
+  border-bottom: 1px solid
+    rgba(var(--header-border-rgb), var(--header-border-opacity, 0.1));
   -webkit-backdrop-filter: blur(var(--header-blur, 8px));
   backdrop-filter: blur(var(--header-blur, 8px));
-  transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    backdrop-filter 0.3s ease;
 }
 
 .header-inner {
@@ -80,7 +85,8 @@
   transition: color 0.3s ease;
 }
 
-.main-nav a::after { /* Underline effect */
+.main-nav a::after {
+  /* Underline effect */
   content: "";
   position: absolute;
   bottom: -5px; /* Position underline below text */
@@ -96,7 +102,8 @@
   color: var(--header-text-primary);
 }
 .main-nav a:hover::after,
-.main-nav a.active-nav-link::after { /* Show underline on hover or if active */
+.main-nav a.active-nav-link::after {
+  /* Show underline on hover or if active */
   width: 100%;
 }
 
@@ -104,7 +111,6 @@
   color: var(--header-text-primary);
   font-weight: 500; /* Slightly bolder for active link */
 }
-
 
 /* Header Actions (Right side: Theme, Language, Auth) */
 .header-group-right {
@@ -118,7 +124,8 @@
   gap: 0.8rem; /* Space between action buttons */
 }
 
-.header-button { /* General styling for icon buttons like theme/language */
+.header-button {
+  /* General styling for icon buttons like theme/language */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +139,10 @@
 
 .header-button:hover {
   color: var(--header-text-primary);
-  background-color: rgba(var(--header-border-rgb), 0.1); /* Subtle background on hover */
+  background-color: rgba(
+    var(--header-border-rgb),
+    0.1
+  ); /* Subtle background on hover */
   transform: translateY(-1px);
 }
 
@@ -163,17 +173,25 @@
 }
 
 /* Theme toggle icons visibility based on theme */
-[data-theme="dark"] .theme-toggle-button .sun-icon { display: block; }
-[data-theme="dark"] .theme-toggle-button .moon-icon { display: none; }
-[data-theme="light"] .theme-toggle-button .sun-icon { display: none; }
-[data-theme="light"] .theme-toggle-button .moon-icon { display: block; }
+[data-theme="dark"] .theme-toggle-button .sun-icon {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle-button .moon-icon {
+  display: none;
+}
+[data-theme="light"] .theme-toggle-button .sun-icon {
+  display: none;
+}
+[data-theme="light"] .theme-toggle-button .moon-icon {
+  display: block;
+}
 
 /* Auth Buttons (Sign In, Register, User Greeting/Logout) */
 .user-greeting {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--header-text-secondary);
-    margin-right: 0.8rem; /* Space before logout button */
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--header-text-secondary);
+  margin-right: 0.8rem; /* Space before logout button */
 }
 
 .auth-button {
@@ -187,7 +205,8 @@
   border-radius: 8px; /* Consistent with other buttons */
 }
 
-.auth-button.primary { /* For "Register" or prominent action */
+.auth-button.primary {
+  /* For "Register" or prominent action */
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
   color: var(--bg-primary); /* Text color for on accent */
@@ -207,13 +226,13 @@
   color: var(--bg-primary); /* Ensure text color remains correct on hover */
 }
 [data-theme="dark"] .auth-button.primary:hover {
-    color: #000;
+  color: #000;
 }
 
-.auth-button i { /* If icons are used in auth buttons */
+.auth-button i {
+  /* If icons are used in auth buttons */
   margin-right: 0.4em;
 }
-
 
 /* Language Switcher Dropdown */
 .language-switcher-dropdown {
@@ -233,7 +252,8 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px) scale(0.95);
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  transition: opacity 0.25s ease, transform 0.25s ease,
+    visibility 0s linear 0.25s;
   z-index: 1051; /* Above header content, below modals if any */
   min-width: 120px; /* Ensure enough width for language names */
 }
@@ -270,7 +290,6 @@
 [data-theme="dark"] .language-choice-button.active {
   color: #000; /* Ensure contrast on dark theme for active language */
 }
-
 
 /* ========================================
    Hamburger Menu (Mobile Navigation)
@@ -309,12 +328,12 @@
   transform: translateY(-9.5px) rotate(-45deg);
 }
 
-
 /* ========================================
    Responsive Adjustments for Header
    ======================================== */
 
-@media screen and (max-width: 768px) { /* Tablet & Mobile */
+@media screen and (max-width: 768px) {
+  /* Tablet & Mobile */
   .header-inner {
     padding: 0 1rem; /* Reduce padding on smaller screens */
   }
@@ -323,13 +342,16 @@
     font-size: 1.8rem; /* Smaller logo */
   }
 
-  .main-nav { /* This is the container for the <ul> that becomes the mobile menu */
+  .main-nav {
+    /* This is the container for the <ul> that becomes the mobile menu */
     display: none; /* Hidden by default, toggled by JS/active class */
     position: absolute;
     top: var(--header-height); /* Position below the header */
     left: 0;
     width: 100%;
-    background-color: var(--bg-overlay); /* Use overlay background for dropdown */
+    background-color: var(
+      --bg-overlay
+    ); /* Use overlay background for dropdown */
     border-top: 1px solid var(--border-color-subtle);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000; /* Below hamburger icon but above page content */
@@ -337,7 +359,8 @@
     overflow-y: auto; /* Allow scrolling if many items */
   }
 
-  .main-nav.active { /* Class added by JS to show mobile menu */
+  .main-nav.active {
+    /* Class added by JS to show mobile menu */
     display: block;
   }
 
@@ -354,8 +377,7 @@
 
   .main-nav a,
   .main-nav .auth-button, /* Style auth buttons inside mobile nav */
-  #language-switcher-toggle.header-button.in-mobile-nav /* If you move it here */
-  {
+  #language-switcher-toggle.header-button.in-mobile-nav /* If you move it here */ {
     display: block; /* Full width links/buttons */
     padding: 0.8rem 1.5rem;
     width: 100%;
@@ -369,7 +391,7 @@
     color: var(--text-primary); /* Ensure text is visible on overlay */
   }
   .main-nav a::after {
-      display: none; /* Hide desktop underline effect */
+    display: none; /* Hide desktop underline effect */
   }
 
   .main-nav li:last-child > a,
@@ -382,17 +404,18 @@
     width: calc(100% - 3rem); /* Make them slightly less than full width */
     text-align: center;
   }
-   .main-nav .auth-button.primary {
+  .main-nav .auth-button.primary {
     margin-top: 0.8rem;
-   }
+  }
 
   .hamburger {
     display: flex; /* Show hamburger icon */
   }
 
   /* Hide desktop-only header action elements if not moved to mobile nav */
-  .header-group-left .main-nav { /* Hide desktop nav links container */
-      display: none;
+  .header-group-left .main-nav {
+    /* Hide desktop nav links container */
+    display: none;
   }
   /* If language/theme toggles are NOT moved into the JS-controlled .main-nav for mobile,
      they might still be part of .header-actions.
@@ -400,11 +423,12 @@
      If your JS moves ALL nav items including auth/lang/theme into the .main-nav.active panel,
      then .header-actions might be empty or hidden except for the hamburger. */
   .header-actions .main-nav {
-      display: none; /* Ensure desktop nav is hidden if hamburger is active */
+    display: none; /* Ensure desktop nav is hidden if hamburger is active */
   }
 }
 
-@media screen and (max-width: 480px) { /* Small Mobile */
+@media screen and (max-width: 480px) {
+  /* Small Mobile */
   .logo a {
     font-size: 1.6rem;
   }
@@ -417,75 +441,114 @@
   */
 }
 
-
 /* public/css/header.css - REFINED IDF Logo as a "Button-like" Element */
 
 /* Container for the IDF logo link - this will act as the "button" */
 .idf-header-logo-container {
-    display: inline-flex;         /* Align image within the link */
-    align-items: center;          /* Vertically center the image */
-    justify-content: center;      /* Horizontally center the image */
-    padding: 0.3rem 0.4rem;       /* Padding around the logo to give it a button feel */
-                                  /* Adjust padding to control the "button" size around the logo */
-    border-radius: 8px;           /* Rounded corners like other header buttons */
-    transition: background-color var(--transition-smooth), transform var(--transition-smooth);
-    height: calc(var(--header-height) * 0.6); /* Consistent height with other icon buttons */
-    max-height: 32px;             /* Absolute max height to ensure it doesn't get too big */
-    line-height: 0;               /* Prevents extra space if image doesn't load */
-    vertical-align: middle;       /* Helps align with other items in header-actions */
-    flex-shrink: 0;               /* Prevent shrinking */
+  display: inline-flex; /* Align image within the link */
+  align-items: center; /* Vertically center the image */
+  justify-content: center; /* Horizontally center the image */
+  padding: 0.3rem 0.4rem; /* Padding around the logo to give it a button feel */
+  /* Adjust padding to control the "button" size around the logo */
+  border-radius: 8px; /* Rounded corners like other header buttons */
+  transition: background-color var(--transition-smooth),
+    transform var(--transition-smooth);
+  height: calc(
+    var(--header-height) * 0.6
+  ); /* Consistent height with other icon buttons */
+  max-height: 32px; /* Absolute max height to ensure it doesn't get too big */
+  line-height: 0; /* Prevents extra space if image doesn't load */
+  vertical-align: middle; /* Helps align with other items in header-actions */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .idf-header-logo-container:hover {
-    background-color: rgba(var(--header-border-rgb), 0.1); /* Subtle background on hover, like other icon buttons */
-    transform: translateY(-1px); /* Slight lift on hover */
+  background-color: rgba(
+    var(--header-border-rgb),
+    0.1
+  ); /* Subtle background on hover, like other icon buttons */
+  transform: translateY(-1px); /* Slight lift on hover */
 }
 
-.idf-header-logo-container:focus-visible { /* Accessibility: keyboard focus */
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 1px;
-    background-color: rgba(var(--header-border-rgb), 0.05);
+.idf-header-logo-container:focus-visible {
+  /* Accessibility: keyboard focus */
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 1px;
+  background-color: rgba(var(--header-border-rgb), 0.05);
 }
 
 /* The IDF logo image itself */
 .idf-header-logo {
-    display: block;
-    max-height: 100%;             /* Image fills the constrained height of the container */
-    width: auto;                  /* Width adjusts based on aspect ratio and constrained height */
-    max-width: 100px;             /* Max width to prevent overly wide logos */
-    object-fit: contain;          /* Scales image down to fit, maintains aspect ratio */
-    transition: opacity 0.2s ease-in-out;
+  display: block;
+  max-height: 100%; /* Image fills the constrained height of the container */
+  width: auto; /* Width adjusts based on aspect ratio and constrained height */
+  max-width: 100px; /* Max width to prevent overly wide logos */
+  object-fit: contain; /* Scales image down to fit, maintains aspect ratio */
+  transition: opacity 0.2s ease-in-out;
 }
 
 /* Ensure .header-actions has a gap and aligns items */
 .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem; /* Adjust gap for spacing between all action items */
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; /* Adjust gap for spacing between all action items */
 }
 
 /* Responsive adjustments for the IDF logo */
 @media screen and (max-width: 768px) {
-    .idf-header-logo-container {
-        padding: 0.2rem 0.3rem;
-        max-height: 28px;
-    }
-    .idf-header-logo {
-        max-width: 80px;
-    }
+  .idf-header-logo-container {
+    padding: 0.2rem 0.3rem;
+    max-height: 28px;
+  }
+  .idf-header-logo {
+    max-width: 80px;
+  }
 }
 
 @media screen and (max-width: 480px) {
-    .idf-header-logo-container {
-        max-height: 24px;
-    }
-    .idf-header-logo {
-        max-width: 70px;
-    }
-     /* Optional: Hide on very small screens if it still feels too crowded */
-    /*
+  .idf-header-logo-container {
+    max-height: 24px;
+  }
+  .idf-header-logo {
+    max-width: 70px;
+  }
+  /* Optional: Hide on very small screens if it still feels too crowded */
+  /*
     .idf-header-logo-container {
         display: none;
     }
     */
+}
+
+/* In public/css/header.css or components.css */
+.user-greeting {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--header-text-secondary);
+  margin-right: 0.8rem; /* Space before logout button */
+  display: inline-flex; /* To align icon and text */
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid transparent; /* For consistency with buttons if you want to add hover bg */
+  border-radius: 6px;
+}
+
+.user-greeting:hover {
+  color: var(--header-text-primary);
+  /* background-color: rgba(var(--header-border-rgb), 0.05); Optional hover background */
+}
+
+.user-greeting i {
+  /* color: var(--accent-primary); Optional: Accent color for user icon */
+  opacity: 0.8;
+}
+
+.admin-greeting {
+  /* Specific styling if admin greeting needs to be different */
+  font-weight: 500;
+  color: var(--accent-secondary); /* Example: Make admin name stand out */
+}
+
+.admin-greeting i {
+  color: var(--accent-secondary); /* Example: Accent color for admin icon */
 }
