@@ -56,7 +56,11 @@ SQL
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="css/housing-detail.css">
   <link rel="icon" type="image/png" href="assets/images/icon.png"> 
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
