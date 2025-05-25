@@ -111,36 +111,8 @@ $isLoggedIn = true;
 </head>
 <body>
 
-    <header class="site-header">
-        <a href="home.php" class="logo-link"><div class="logo">CROUS-X</div></a>
-        <button class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </button>
-        <nav class="main-nav" aria-hidden="true">
-            <ul>
-                <li><a href="home.php" data-i18n-key="nav_news">News stand</a></li>
-                <li><a href="help.php" data-i18n-key="nav_help">Need help ?</a></li>
-                <li><a href="faq.php" data-i18n-key="nav_faq">FAQ</a></li>
-                <li><a href="dashboard.php" data-i18n-key="nav_profile">My profile</a></li>
-                <li class="language-switcher">
-                    <button id="language-toggle" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-globe"></i> <span class="current-lang">EN</span>
-                    </button>
-                    <ul id="language-options" class="language-dropdown" role="menu">
-                        <li role="menuitem"><a href="#en" data-lang="en">English</a></li>
-                        <li role="menuitem"><a href="#fr" data-lang="fr">Français</a></li>
-                        <li role="menuitem"><a href="#es" data-lang="es">Español</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <button id="theme-toggle" class="btn btn-dark-mode" aria-label="Toggle dark mode">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                </li>
-                <li><a href="logout.php" class="btn btn-signin">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+   
+   <?php require 'header.php'; ?>
 
     <div class="main-content-wrapper booking-page-wrapper">
         <div class="content-box" style="max-width: 700px; margin: 20px auto;">

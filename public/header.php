@@ -1,20 +1,19 @@
 <?php
-// It's good practice to ensure session_start() is called on pages that use this header.
-// Alternatively, you could place session_start(); here, but it's often better at the very top of the main script.
 // if (session_status() == PHP_SESSION_NONE) {
-//     session_start();
+//     session_start(); // Ensure session is started if not already
 // }
 ?>
 <header class="site-header">
   <div class="header-inner">
     <div class="header-group-left">
       <div class="logo">
-        <!-- Make sure this path is correct from wherever the header is included, or use a root-relative path e.g., /crous-x-landing.html -->
-        <a href="index.html" aria-label="Go to Landing Page">CROUS-X</a>
+        <!-- Change href to index.php (landing) or home.php (app main) -->
+        <a href="index.php" aria-label="Go to Landing Page">CROUS-X</a>
       </div>
       <nav class="main-nav">
         <ul>
-          <!-- Adjust href paths to be root-relative (e.g., /help.php) or use a base URL for robustness -->
+          <!-- Add News stand link -->
+          <li><a href="home.php" data-lang-key="nav_newsstand">News stand</a></li>
           <li><a href="help.php" data-lang-key="nav_help">Need help?</a></li>
           <li><a href="faq.php" data-lang-key="nav_faq">FAQ</a></li>
           <li><a href="dashboard.php" data-lang-key="nav_profile">My profile</a></li>
@@ -34,7 +33,7 @@
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <i class="fas fa-globe" aria-hidden="true"></i> <!-- Ensure Font Awesome is linked if you use its classes -->
+          <i class="fas fa-globe" aria-hidden="true"></i>
         </button>
         <button
           id="theme-toggle"
@@ -46,7 +45,7 @@
         </button>
         
         <?php if (isset($_SESSION['user_id']) && isset($_SESSION['username'])): ?>
-          <span class="user-greeting" data-lang-key="nav_welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
+          <!-- <span class="user-greeting" data-lang-key="nav_welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span> --> <!-- Welcome message can be optional -->
           <a href="logout.php" class="header-button auth-button" data-lang-key="nav_logout">Logout</a>
         <?php else: ?>
           <a href="login.php" class="header-button auth-button" data-lang-key="nav_signin_app">Sign In</a>
