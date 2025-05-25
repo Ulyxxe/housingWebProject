@@ -154,13 +154,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['other_images'])) {
         foreach ($_FILES['other_images']['name'] as $key => $name) {
             if ($_FILES['other_images']['error'][$key] === UPLOAD_ERR_OK) {
-                $file_tmp_path = $_FILES['other_images']['tmp_name'][$key];
-                $file_name = $name;
-                $file_size = $_FILES['other_images']['size'][$key];
-                $file_type = mime_content_type($file_tmp_path);
-                $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            $file_tmp_path = $_FILES['other_images']['tmp_name'][$key];
+            $file_name = $name;
+            $file_size = $_FILES['other_images']['size'][$key];
+            // OLD: $file_type = mime_content_type($file_tmp_path);
+            $file_type = get_mime_type_from_file_content($file_tmp_path); // USE OUR NEW FUNCTION
+            $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-                if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
+            if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
+                $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions) {
                     $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions);
                 } elseif ($file_size > MAX_FILE_SIZE) {
                     $errors['other_images_' . $key] = "Image '{$file_name}' exceeds maximum size of " . (MAX_FILE_SIZE / 1024 / 1024) . "MB.";
