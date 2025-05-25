@@ -518,3 +518,80 @@
   justify-content: center;
   margin-bottom: 1rem;
 }
+
+/* Add Review Section Styling */
+.add-review-section {
+  margin-top: 2.5rem; /* Space above the "Write a Review" section */
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color-subtle);
+}
+
+.add-review-section .section-title-styled {
+  margin-bottom: 1.5rem; /* Space below "Write a Review" title */
+}
+
+.add-review-form {
+  /* The form element */
+  background-color: var(--input-bg); /* Subtle background for the form area */
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.add-review-form .form-group {
+  margin-bottom: 1.2rem; /* Consistent spacing */
+}
+
+/* Star Rating Input */
+.star-rating-input {
+  display: flex;
+  flex-direction: row-reverse; /* So stars fill left-to-right on hover/selection */
+  justify-content: flex-end; /* Align stars to the left */
+  gap: 2px; /* Small gap between stars */
+}
+
+.star-rating-input input[type="radio"] {
+  display: none; /* Hide the actual radio buttons */
+}
+
+.star-rating-input label {
+  font-size: 1.8rem; /* Size of the star icons */
+  color: var(--border-color); /* Default color for empty stars */
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+  padding: 0 0.1em; /* Slight spacing for click area */
+  margin-bottom: 0; /* Override default label margin */
+}
+
+/* Hover effect: color stars up to the hovered one */
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+  /* Color preceding stars on hover */
+  color: var(--accent-secondary); /* A slightly different hover color */
+}
+
+/* Selected stars: color stars up to the selected one */
+.star-rating-input input[type="radio"]:checked ~ label {
+  color: var(--accent-primary); /* Color for selected stars */
+}
+
+.btn-submit-review {
+  /* Style for the submit review button */
+  width: auto; /* Don't make it full width unless desired */
+  padding: 0.7rem 1.5rem;
+  margin-top: 0.5rem; /* Space above the button */
+  /* It will inherit .btn and .btn-primary from components.css */
+}
+
+/* Prompt to login */
+.add-review-section .info-message-display p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+.add-review-section .info-message-display a {
+  color: var(--text-link);
+  font-weight: 500;
+}
+.add-review-section .info-message-display a:hover {
+  text-decoration: underline;
+}
