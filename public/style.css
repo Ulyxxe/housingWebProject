@@ -2797,11 +2797,39 @@ button {
     color: var(--bg-primary);
     text-transform: capitalize;
 }
-[data-theme="dark"] .application-status-badge { color: #000; }
-.application-status-badge.status-pending { background-color: #f0ad4e; }
-.application-status-badge.status-approved { background-color: #5cb85c; }
-.application-status-badge.status-rejected { background-color: #d9534f; }
-.application-status-badge.status-cancelled { background-color: #777; }
+[data-theme="dark"] .application-status-badge {
+    display: inline-block;
+    padding: 0.3em 0.8em; /* Slightly adjusted padding for better look */
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 12px; /* Pill shape */
+    color: #ffffff; /* Default to white text, good for most dark badge backgrounds */
+    text-transform: capitalize; /* Ensures 'pending' becomes 'Pending' etc. */
+    line-height: 1.2; /* Helps with vertical centering of text */
+    text-align: center;
+    min-width: 70px; /* Optional: give badges a minimum width */
+}
+
+/* Specific status colors */
+.application-status-badge.status-pending {
+    background-color: #f0ad4e; /* Orange/Yellow */
+    color: #333333; /* Dark text for better contrast on orange/yellow */
+}
+
+.application-status-badge.status-confirmed { /* Matches your database value */
+    background-color: #5cb85c; /* Green */
+    color: #ffffff;
+}
+
+.application-status-badge.status-rejected {
+    background-color: #d9534f; /* Red */
+    color: #ffffff;
+}
+
+.application-status-badge.status-cancelled {
+    background-color: #777777; /* Grey */
+    color: #ffffff;
+}
 [data-theme="light"] .application-status-badge.status-pending { color: #333; }
 
 
