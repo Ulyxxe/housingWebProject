@@ -104,7 +104,8 @@ $isLoggedIn = true;
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/global.css">   <!-- General styles, variables -->
-    <link rel="stylesheet" href="css/header.css">   <!-- Header styling -->
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/add-housing.css">   <!-- Header styling -->
     <link rel="stylesheet" href="css/components.css"> <!-- Common buttons, chat -->
     <link rel="stylesheet" href="css/forms.css">    <!-- General form styling -->
     <link rel="stylesheet" href="css/booking.css">
