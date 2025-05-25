@@ -416,3 +416,76 @@
   .header-actions .auth-button i { margin-right: 0; }
   */
 }
+
+
+/* public/css/header.css - REFINED IDF Logo as a "Button-like" Element */
+
+/* Container for the IDF logo link - this will act as the "button" */
+.idf-header-logo-container {
+    display: inline-flex;         /* Align image within the link */
+    align-items: center;          /* Vertically center the image */
+    justify-content: center;      /* Horizontally center the image */
+    padding: 0.3rem 0.4rem;       /* Padding around the logo to give it a button feel */
+                                  /* Adjust padding to control the "button" size around the logo */
+    border-radius: 8px;           /* Rounded corners like other header buttons */
+    transition: background-color var(--transition-smooth), transform var(--transition-smooth);
+    height: calc(var(--header-height) * 0.6); /* Consistent height with other icon buttons */
+    max-height: 32px;             /* Absolute max height to ensure it doesn't get too big */
+    line-height: 0;               /* Prevents extra space if image doesn't load */
+    vertical-align: middle;       /* Helps align with other items in header-actions */
+    flex-shrink: 0;               /* Prevent shrinking */
+}
+
+.idf-header-logo-container:hover {
+    background-color: rgba(var(--header-border-rgb), 0.1); /* Subtle background on hover, like other icon buttons */
+    transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.idf-header-logo-container:focus-visible { /* Accessibility: keyboard focus */
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 1px;
+    background-color: rgba(var(--header-border-rgb), 0.05);
+}
+
+/* The IDF logo image itself */
+.idf-header-logo {
+    display: block;
+    max-height: 100%;             /* Image fills the constrained height of the container */
+    width: auto;                  /* Width adjusts based on aspect ratio and constrained height */
+    max-width: 100px;             /* Max width to prevent overly wide logos */
+    object-fit: contain;          /* Scales image down to fit, maintains aspect ratio */
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Ensure .header-actions has a gap and aligns items */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem; /* Adjust gap for spacing between all action items */
+}
+
+/* Responsive adjustments for the IDF logo */
+@media screen and (max-width: 768px) {
+    .idf-header-logo-container {
+        padding: 0.2rem 0.3rem;
+        max-height: 28px;
+    }
+    .idf-header-logo {
+        max-width: 80px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .idf-header-logo-container {
+        max-height: 24px;
+    }
+    .idf-header-logo {
+        max-width: 70px;
+    }
+     /* Optional: Hide on very small screens if it still feels too crowded */
+    /*
+    .idf-header-logo-container {
+        display: none;
+    }
+    */
+}
