@@ -280,3 +280,44 @@ li {
     transform: rotate(360deg);
   }
 }
+
+/* public/css/global.css - Add these styles */
+
+.site-footer-app {
+    background-color: var(--bg-secondary); /* Or var(--bg-primary) for darker */
+    color: var(--text-secondary);
+    padding: 2rem 1rem;
+    text-align: center;
+    border-top: 1px solid var(--border-color-subtle);
+    margin-top: auto; /* This helps push the footer to the bottom of the viewport if content is short */
+    font-size: 0.9rem;
+    width: 100%; /* Ensure it spans full width */
+}
+
+.footer-content-app {
+    max-width: 900px; /* Optional: constrain content width */
+    margin: 0 auto;
+}
+
+.funding-acknowledgment {
+    margin-bottom: 0.75rem;
+    font-weight: 500; /* Make it slightly more prominent */
+    color: var(--text-primary); /* Or var(--text-secondary) for less prominence */
+    /* If using a logo: */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* gap: 0.5em; */
+}
+
+.funding-logo {
+    height: 25px; /* Adjust size as needed */
+    vertical-align: middle; /* Good if text is next to it */
+    margin-left: 0.5em;
+}
+
+.copyright-app {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}

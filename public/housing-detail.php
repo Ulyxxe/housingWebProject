@@ -367,5 +367,6 @@ SQL
 
   <script src="script.js" defer></script>
   <script src="chatbot.js" defer></script>
+  <?php require 'footer.php'; // ADD THIS LINE ?>
 </body>
 </html>
