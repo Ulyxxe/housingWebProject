@@ -9,7 +9,7 @@
       name="description"
       content="Find your perfect student accommodation with CROUS-X. Easy search, verified listings, and a supportive community."
     />
-    <link rel="icon" href="images/crous-x-icon.svg" type="image/svg+xml" /> 
+    <link rel="icon" href="images/crous-x-icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="landing/landing-style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -185,12 +185,6 @@
         class="scroll-section alternate-bg"
         data-section-index="1"
       >
-        <div class="animated-shapes">
-          <div class="shape shape-1"></div>
-          <div class="shape shape-2"></div>
-          <div class="shape shape-3"></div>
-        </div>
-        <div class="noise-overlay"></div>
         <div class="section-content">
           <h2 class="section-title" data-lang-key="features_title">
             Key Features
@@ -324,11 +318,7 @@
             Start your search for the perfect student home today. If you have
             questions or need assistance, we're here to help.
           </p>
-          <a
-            href="home.php"
-            class="contact-button"
-            data-lang-key="contact_cta"
-          >
+          <a href="home.php" class="contact-button" data-lang-key="contact_cta">
             <span>Explore All Listings</span>
             <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>
@@ -345,8 +335,8 @@
 
       <footer class="site-footer-main">
         <p data-lang-key="footer_copyright">
-          © <span id="current-year"></span> CROUS-X. Student Housing Made
-          Simple by La Friteuse.
+          © <span id="current-year"></span> CROUS-X. Student Housing Made Simple
+          by La Friteuse.
         </p>
         <div class="footer-socials">
           <a href="#" aria-label="Facebook"
