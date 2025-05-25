@@ -214,7 +214,7 @@ SQL
                 <div class="review-card-item">
                     <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
                     <h3 class="review-card-heading">Review title</h3> 
-                    <p class="review-card-text">Review body. This is an example of a review for the housing unit. It could be a bit longer.</p> {/* Mockup text */}
+                    <p class="review-card-text">Review body. This is an example of a review for the housing unit. It could be a bit longer.</p> 
                     <div class="review-card-author-area">
                         <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
                         <div>

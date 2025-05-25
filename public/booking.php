@@ -102,12 +102,10 @@ $isLoggedIn = true;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/global.css">   <!-- General styles, variables -->
+    <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/add-housing.css">   <!-- Header styling -->
-    <link rel="stylesheet" href="css/components.css"> <!-- Common buttons, chat -->
-    <link rel="stylesheet" href="css/forms.css">    <!-- General form styling -->
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/forms.css">
     <link rel="stylesheet" href="css/booking.css">
     <link rel="icon" type="image/png" href="assets/images/icon.png">
 </head>

@@ -1,1 +1,265 @@
-    
+    /* public/css/booking.css */
+
+/* ========================================
+   Page Wrapper & Content Box
+   ======================================== */
+.booking-page-wrapper {
+    /* .main-content-wrapper might provide some base padding from global.css or style.css */
+    /* If not, add some general page padding here */
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.content-box { /* This is the main container for the booking form */
+    max-width: 750px; /* Max width for the form area */
+    margin: 2rem auto; /* Center it with top/bottom margin */
+    padding: 2rem 2.5rem; /* Inner padding */
+    background-color: var(--container-bg);
+    border: 1px solid var(--grey-border);
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .content-box {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.content-box > h1 { /* "Request Booking For: ..." */
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--text-headings);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color-subtle);
+    text-align: center;
+}
+
+/* ========================================
+   Housing Summary Section
+   ======================================== */
+.housing-summary-booking {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--input-bg); /* Subtle background for this section */
+    border-radius: 8px;
+    border: 1px solid var(--border-color-subtle);
+}
+
+.booking-summary-image {
+    width: 120px;
+    height: 100px; /* Or use aspect-ratio if images vary */
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.booking-summary-image-placeholder {
+    width: 120px;
+    height: 100px;
+    background-color: var(--bg-tertiary);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+.booking-summary-image-placeholder i {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+}
+
+.booking-summary-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.booking-summary-details h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-headings);
+    margin-bottom: 0.3rem;
+}
+
+.booking-summary-details p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+    line-height: 1.4;
+}
+.booking-summary-details p strong {
+    color: var(--text-primary);
+}
+
+/* ========================================
+   Form Styling (extending forms.css)
+   ======================================== */
+.styled-form { /* The <form> element itself */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between form groups */
+}
+
+/* .form-group, label, input, textarea, select should get base styles from forms.css */
+
+/* Specific input styling for booking page if needed */
+.styled-form input[type="email"][readonly][disabled] {
+    background-color: var(--bg-tertiary); /* Different background for disabled */
+    opacity: 0.7;
+    cursor: not-allowed;
+    color: var(--text-secondary);
+    border-style: dashed; /* Optional visual cue */
+}
+[data-theme="light"] .styled-form input[type="email"][readonly][disabled] {
+    background-color: var(--bg-secondary);
+}
+
+
+.styled-form small { /* Helper text below email input */
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+}
+
+/* Flatpickr input styling */
+.styled-form input#move_in_date.flatpickr-input {
+    /* Flatpickr adds its own classes, ensure it looks consistent */
+    /* Most styling should come from forms.css for general inputs */
+    /* You might only need minor adjustments here if any */
+    background-color: var(--input-bg); /* Ensure it matches other inputs */
+}
+
+
+/* Terms and Conditions Checkbox Area */
+.terms-group {
+    /* Uses .checkbox-item-inline from forms.css */
+    margin-top: 0.5rem; /* Add a bit of space before terms */
+}
+/* .terms-group label (checkbox-item-inline) styling should come from forms.css */
+.terms-group label {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* ========================================
+   Submit Button
+   ======================================== */
+.styled-form .btn-register-submit { /* Targeting the specific button */
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary); /* Text color on accent */
+    border: none;
+    border-radius: 8px;
+    margin-top: 1rem; /* Space above the button */
+    /* Other .btn styles from components.css will apply (hover, active) */
+}
+[data-theme="dark"] .styled-form .btn-register-submit {
+    color: #000; /* Ensure contrast */
+}
+/* If you need to override .btn-register from components.css specifically: */
+.styled-form .btn-register.btn-register-submit:hover {
+    background-color: var(--accent-secondary);
+}
+
+
+/* ========================================
+   Alert Messages (Success/Error)
+   ======================================== */
+.alert { /* Base alert styling, if not already in forms.css or components.css */
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+.alert i {
+    margin-right: 0.8rem;
+    font-size: 1.2em;
+}
+
+.alert-danger {
+    background-color: rgba(217, 83, 79, 0.15);
+    border-color: rgba(217, 83, 79, 0.3);
+    color: #d9534f;
+}
+[data-theme="dark"] .alert-danger {
+    background-color: rgba(217, 83, 79, 0.25);
+    border-color: rgba(217, 83, 79, 0.5);
+    color: #e7726e;
+}
+
+.alert-success {
+    background-color: rgba(92, 184, 92, 0.15);
+    border-color: rgba(92, 184, 92, 0.3);
+    color: #5cb85c;
+}
+[data-theme="dark"] .alert-success {
+    background-color: rgba(92, 184, 92, 0.25);
+    border-color: rgba(92, 184, 92, 0.5);
+    color: #79c779;
+}
+
+/* Links within success message for dashboard/listings */
+.alert-success p {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    text-align: center;
+}
+.alert-success .btn { /* Targeting buttons within the alert */
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+}
+
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+@media screen and (max-width: 768px) {
+    .content-box {
+        margin: 1.5rem 1rem; /* Adjust margin for smaller screens */
+        padding: 1.5rem;
+    }
+    .content-box > h1 {
+        font-size: 1.4rem;
+    }
+    .housing-summary-booking {
+        flex-direction: column; /* Stack image and details */
+        align-items: center; /* Center items when stacked */
+        text-align: center;
+    }
+    .booking-summary-image,
+    .booking-summary-image-placeholder {
+        width: 150px; /* Adjust size for stacked layout */
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+    .booking-summary-details h3 {
+        font-size: 1.1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .content-box {
+        padding: 1.2rem;
+        border-radius: 8px;
+    }
+    .content-box > h1 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+    }
+    .styled-form {
+        gap: 1.2rem;
+    }
+}
