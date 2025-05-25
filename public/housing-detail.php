@@ -11,14 +11,29 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $housing = null;
 $error_message = null;
 $housing_id = null;
+$reviews = []; // Initialize reviews array
+
+// Helper function to render star ratings
+function render_stars_for_detail_page(int $rating, int $max_stars = 5) {
+    $output = '<div class="review-card-stars">';
+    for ($i = 1; $i <= $max_stars; $i++) {
+        if ($i <= $rating) {
+            $output .= '<i class="fas fa-star"></i>'; // Full star
+        } else {
+            $output .= '<i class="far fa-star"></i>'; // Empty star
+        }
+    }
+    $output .= '</div>';
+    return $output;
+}
 
 if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $error_message = 'Invalid or missing housing ID.';
 } else {
     $housing_id = (int)$_GET['id'];
     try {
-        // fetch main record + primary image
-        $stmt = $pdo->prepare(<<<SQL
+        // Fetch main housing record + primary image
+        $stmt_housing = $pdo->prepare(<<<SQL
 SELECT
   h.*,
   hi.image_url AS primary_image
@@ -26,18 +41,40 @@ FROM housings AS h
 LEFT JOIN housing_images AS hi
   ON hi.listing_id = h.listing_id
  AND hi.is_primary = 1
-WHERE h.listing_id = ?
+WHERE h.listing_id = :housing_id
 SQL
         );
-        $stmt->execute([$housing_id]);
-        $housing = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt_housing->bindParam(':housing_id', $housing_id, PDO::PARAM_INT);
+        $stmt_housing->execute();
+        $housing = $stmt_housing->fetch(PDO::FETCH_ASSOC);
 
         if (!$housing) {
             $error_message = 'Listing not found.';
+        } else {
+            // Fetch images for the gallery (excluding primary if already fetched, or fetch all and distinguish in loop)
+            $stmt_images_gallery = $pdo->prepare("SELECT image_url, is_primary FROM housing_images WHERE listing_id = :listing_id ORDER BY is_primary DESC, image_id ASC");
+            $stmt_images_gallery->bindParam(':listing_id', $housing_id, PDO::PARAM_INT);
+            $stmt_images_gallery->execute();
+            $gallery_images = $stmt_images_gallery->fetchAll(PDO::FETCH_ASSOC);
+
+
+            // Fetch approved reviews for this listing
+            $reviews_limit = 5; // Number of reviews to display
+            $sql_reviews = "SELECT r.*, u.username, u.first_name, u.last_name
+                            FROM reviews r
+                            JOIN users u ON r.user_id = u.user_id
+                            WHERE r.listing_id = :listing_id AND r.is_approved = 1
+                            ORDER BY r.review_date DESC
+                            LIMIT :limit_val";
+            $stmt_reviews = $pdo->prepare($sql_reviews);
+            $stmt_reviews->bindParam(':listing_id', $housing_id, PDO::PARAM_INT);
+            $stmt_reviews->bindParam(':limit_val', $reviews_limit, PDO::PARAM_INT);
+            $stmt_reviews->execute();
+            $reviews = $stmt_reviews->fetchAll(PDO::FETCH_ASSOC);
         }
     } catch (PDOException $e) {
-        error_log("housing-detail error: ".$e->getMessage());
-        $error_message = 'A database error occurred.';
+        error_log("housing-detail.php DB error: " . $e->getMessage());
+        $error_message = 'A database error occurred while fetching details. Please try again later.';
     }
 }
 ?>
@@ -56,11 +93,11 @@ SQL
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="style.css">
-   <link rel="stylesheet" href="css/housing-detail.css">
+  <!-- <link rel="stylesheet" href="style.css"> -- REMOVED as style.css also has .detail-page-wrapper etc. which might conflict. Global.css is primary. -->
+  <link rel="stylesheet" href="css/housing-detail.css">
   <link rel="icon" type="image/png" href="assets/images/icon.png"> 
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> 
@@ -73,12 +110,7 @@ SQL
     <div class="detail-content-area">
       <p class="back-to-listings-link"><a href="home.php"><i class="fas fa-arrow-left"></i> <span data-i18n-key="back_to_listings">Back to Listings</span></a></p>
 
-      <?php if ($error_message): ?>
-        <section class="error-message-display">
-          <h2>Error</h2>
-          <p><?php echo htmlspecialchars($error_message); ?></p>
-        </section>
-      <?php elseif ($housing): ?>
+      <?php if ($housing): // Check if $housing is successfully fetched before trying to display details ?>
         
         <div class="housing-detail-grid">
             
@@ -95,21 +127,16 @@ SQL
                         <?php endif; ?>
                     </div>
                     <?php
-                    $other_images_html = '';
-                    if ($housing_id) { 
-                        $stmt_images = $pdo->prepare("SELECT image_url FROM housing_images WHERE listing_id=? AND is_primary=0 LIMIT 4");
-                        $stmt_images->execute([$housing_id]);
-                        while ($row = $stmt_images->fetch(PDO::FETCH_ASSOC)){
-                            $other_images_html .= '<img src="'.htmlspecialchars($row['image_url']).'" alt="Additional photo" class="gallery-thumb-image" data-fullsrc="'.htmlspecialchars($row['image_url']).'">';
-                        }
-                    }
-                    if ($housing['primary_image'] || $other_images_html):
+                    // $gallery_images should be populated from the DB query above
+                    if (!empty($gallery_images) && count($gallery_images) > 1): // Show thumbnails if there's more than just the primary (or if primary is part of this array)
                     ?>
                     <div class="gallery-thumbnails-container">
-                        <?php if ($housing['primary_image']): ?>
-                            <img src="<?php echo htmlspecialchars($housing['primary_image']); ?>" alt="Primary photo thumbnail" class="gallery-thumb-image active" data-fullsrc="<?php echo htmlspecialchars($housing['primary_image']); ?>">
-                        <?php endif; ?>
-                        <?php echo $other_images_html; ?>
+                        <?php foreach ($gallery_images as $img_item): ?>
+                            <img src="<?php echo htmlspecialchars($img_item['image_url']); ?>" 
+                                 alt="Thumbnail of <?php echo htmlspecialchars($housing['title']); ?>" 
+                                 class="gallery-thumb-image <?php echo ($img_item['image_url'] == $housing['primary_image']) ? 'active' : ''; ?>" 
+                                 data-fullsrc="<?php echo htmlspecialchars($img_item['image_url']); ?>">
+                        <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
                 </section>
@@ -142,10 +169,9 @@ SQL
                     ];
 
                     foreach ($key_details_for_mockup as $detail) {
-                        // Only render if there's a value. For boolean 'No', it's fine.
                         if (!empty($detail['value']) || $detail['value'] === 0 || $detail['value'] === '0' || (is_string($detail['value']) && strtolower($detail['value']) === 'no') ) {
                             echo '<div class="info-item-mockup">';
-                            echo '  <span class="info-label-mockup" data-i18n-key="' . $detail['label_key'] . '">' . htmlspecialchars($detail['label_text']) . '</span>'; // JS will fill with i18n
+                            echo '  <span class="info-label-mockup" data-i18n-key="' . $detail['label_key'] . '">' . htmlspecialchars($detail['label_text']) . '</span>';
                             echo '  <div class="info-value-wrapper-mockup">';
                             echo '    <span class="info-value">' . htmlspecialchars($detail['value']) . '</span>';
                             echo '    <i class="fas fa-chevron-down mockup-dropdown-arrow"></i>';
@@ -171,31 +197,37 @@ SQL
                 <?php endif; ?>
 
                 <?php
+                // Assuming amenities are fetched similar to add-housing (if table exists)
+                // This part is kept from original for structural similarity; actual amenity fetching would be needed.
+                $amenities_list = []; // Placeholder
                 if ($housing_id) {
-                    $stmt_amenities = $pdo->prepare("SELECT a.name FROM housing_amenities ha JOIN amenities a USING(amenity_id) WHERE ha.listing_id=?");
-                    $stmt_amenities->execute([$housing_id]);
-                    $amenities_list = $stmt_amenities->fetchAll(PDO::FETCH_COLUMN);
-                    if ($amenities_list): ?>
-                    <div class="content-accordion-item mockup-style">
-                        <button class="accordion-trigger-button" aria-expanded="false">
-                            <span data-i18n-key="amenities_heading_accordion">Amenities</span>
-                            <i class="fas fa-chevron-down accordion-icon"></i>
-                        </button>
-                        <div class="accordion-panel-content">
-                            <ul class="amenities-styled-list">
-                            <?php foreach ($amenities_list as $amenity): ?>
-                                <li><i class="fas fa-check"></i> <?php echo htmlspecialchars($amenity); ?></li>
-                            <?php endforeach; ?>
-                            </ul>
-                        </div>
+                    try {
+                        $stmt_amenities = $pdo->prepare("SELECT a.name FROM housing_amenities ha JOIN amenities a USING(amenity_id) WHERE ha.listing_id=?");
+                        $stmt_amenities->execute([$housing_id]);
+                        $amenities_list = $stmt_amenities->fetchAll(PDO::FETCH_COLUMN);
+                    } catch (PDOException $e) {
+                        error_log("Error fetching amenities for listing {$housing_id}: ".$e->getMessage());
+                    }
+                }
+                if ($amenities_list): ?>
+                <div class="content-accordion-item mockup-style">
+                    <button class="accordion-trigger-button" aria-expanded="false">
+                        <span data-i18n-key="amenities_heading_accordion">Amenities</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-panel-content">
+                        <ul class="amenities-styled-list">
+                        <?php foreach ($amenities_list as $amenity): ?>
+                            <li><i class="fas fa-check"></i> <?php echo htmlspecialchars($amenity); ?></li>
+                        <?php endforeach; ?>
+                        </ul>
                     </div>
-                    <?php endif;
-                } ?>
+                </div>
+                <?php endif; ?>
                  <div class="info-item-mockup full-width-info" style="grid-column: 1 / -1; margin-top: 0.5rem;"> 
                     <span class="info-label-mockup" data-i18n-key="info_label_available_date">Available from</span>
                      <div class="info-value-wrapper-mockup">
                         <span class="info-value"><?php echo htmlspecialchars(date("F j, Y", strtotime($housing['availability_date']))); ?></span>
-                        
                     </div>
                 </div>
             </div>
@@ -210,49 +242,47 @@ SQL
         
         <section class="page-section-layout reviews-container-section mockup-style">
             <h2 class="section-title-styled" data-i18n-key="latest_reviews_title">Latest reviews</h2>
-            <div class="reviews-grid-layout mockup-style">
-                <div class="review-card-item">
-                    <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
-                    <h3 class="review-card-heading">Review title</h3> 
-                    <p class="review-card-text">Review body. This is an example of a review for the housing unit. It could be a bit longer.</p> 
-                    <div class="review-card-author-area">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
-                        <div>
-                            <span class="author-name-text">Reviewer name</span>
-                            <span class="review-date-text">Date</span>
-                        </div>
-                    </div>
+            
+            <?php if (empty($reviews)): ?>
+                <div class="info-message-display no-reviews">
+                    <i class="fas fa-comment-slash"></i>
+                    <p data-i18n-key="no_reviews_yet">No reviews yet for this listing. Be the first to write one!</p>
                 </div>
-                <div class="review-card-item">
-                     <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                    <h3 class="review-card-heading">Another Review Title</h3>
-                    <p class="review-card-text">This is another example. The user found this place to be excellent and well-maintained.</p>
-                    <div class="review-card-author-area">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
-                        <div>
-                            <span class="author-name-text">Jane Doe</span>
-                            <span class="review-date-text">A month ago</span>
+            <?php else: ?>
+                <div class="reviews-grid-layout mockup-style">
+                    <?php foreach ($reviews as $review): ?>
+                        <div class="review-card-item">
+                            <?php echo render_stars_for_detail_page((int)$review['rating']); ?>
+                            <h3 class="review-card-heading"><?php echo htmlspecialchars($review['title'] ?? 'Review'); ?></h3> 
+                            <p class="review-card-text"><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p> 
+                            <div class="review-card-author-area">
+                                <img src="assets/images/placeholder-avatar.png" alt="Reviewer <?php echo htmlspecialchars($review['first_name'] ?? $review['username']); ?>" class="author-avatar-image">
+                                <div>
+                                    <span class="author-name-text">
+                                        <?php 
+                                        $reviewerName = trim(htmlspecialchars($review['first_name'] ?? '') . ' ' . htmlspecialchars($review['last_name'] ?? ''));
+                                        echo $reviewerName ?: htmlspecialchars($review['username']); 
+                                        ?>
+                                    </span>
+                                    <span class="review-date-text"><?php echo htmlspecialchars(date("F j, Y", strtotime($review['review_date']))); ?></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                 <div class="review-card-item">
-                    <div class="review-card-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
-                    <h3 class="review-card-heading">Decent Place</h3>
-                    <p class="review-card-text">It was okay for the price. Some minor issues but overall a satisfactory stay for a student.</p>
-                    <div class="review-card-author-area">
-                        <img src="assets/images/placeholder-avatar.png" alt="Reviewer" class="author-avatar-image">
-                        <div>
-                            <span class="author-name-text">John Smith</span>
-                            <span class="review-date-text">Two weeks ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endif; ?>
         </section>
 
+      <?php elseif ($error_message): ?>
+        <section class="error-message-display" style="padding: 2rem; text-align: center; background-color: var(--input-bg); border-radius: 8px;">
+          <h2 style="color: var(--accent-secondary); margin-bottom: 1rem;">Error</h2>
+          <p><?php echo htmlspecialchars($error_message); ?></p>
+          <p style="margin-top: 1.5rem;"><a href="home.php" class="btn btn-secondary">Return to Listings</a></p>
+        </section>
       <?php else: ?>
-        <section class="info-message-display">
-          <p data-i18n-key="no_housing_details_found">No housing details to display.</p>
+        <section class="info-message-display" style="padding: 2rem; text-align: center;">
+          <p data-i18n-key="no_housing_details_found">No housing details to display or listing not found.</p>
+          <p style="margin-top: 1.5rem;"><a href="home.php" class="btn btn-secondary">Return to Listings</a></p>
         </section>
       <?php endif; ?>
     </div>
@@ -302,15 +332,21 @@ SQL
                 const panel = this.nextElementSibling;
                 const isExpanded = this.getAttribute('aria-expanded') === 'true';
                 
-                this.setAttribute('aria-expanded', !isExpanded);
-                panel.style.maxHeight = !isExpanded ? panel.scrollHeight + "px" : null;
-                panel.style.opacity = !isExpanded ? 1 : 0;
-                // Added padding transition for smoother look with mockup style
-                panel.style.paddingTop = !isExpanded ? '0.8rem' : '0'; 
-                panel.style.paddingBottom = !isExpanded ? '0.8rem' : '0';
+                this.setAttribute('aria-expanded', String(!isExpanded)); // Set to string 'true' or 'false'
+                if (!isExpanded) {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                    panel.style.opacity = 1;
+                    panel.style.paddingTop = '0.8rem'; // Add padding when expanding
+                    panel.style.paddingBottom = '0.8rem';
+                } else {
+                    panel.style.maxHeight = null;
+                    panel.style.opacity = 0;
+                    panel.style.paddingTop = '0'; // Remove padding when collapsing
+                    panel.style.paddingBottom = '0';
+                }
                 
                 const icon = this.querySelector('.accordion-icon');
-                if (icon) { // Ensure icon exists
+                if (icon) { 
                     icon.classList.toggle('fa-chevron-up', !isExpanded);
                     icon.classList.toggle('fa-chevron-down', isExpanded);
                 }

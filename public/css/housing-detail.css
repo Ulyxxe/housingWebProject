@@ -4,436 +4,517 @@
    Main Page Wrapper & Layout
    ======================================== */
 .detail-page-wrapper .detail-content-area {
-    max-width: 1100px;
-    margin: 1rem auto 3rem auto; /* Reduced top margin */
-    padding: 1rem 1.5rem; /* Consistent padding */
+  max-width: 1100px;
+  margin: 1rem auto 3rem auto; /* Reduced top margin */
+  padding: 1rem 1.5rem; /* Consistent padding */
 }
 
 .back-to-listings-link {
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
 }
 .back-to-listings-link a {
-    color: var(--text-link);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
+  color: var(--text-link);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
 }
 .back-to-listings-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .housing-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column */
-    gap: 2.5rem; /* Increased gap */
-    margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: 1fr; /* Default to single column */
+  gap: 2.5rem; /* Increased gap */
+  margin-bottom: 3rem;
 }
 
 @media (min-width: 768px) {
-    .housing-detail-grid {
-        grid-template-columns: 1.5fr 1fr; /* Gallery takes more space */
-    }
+  .housing-detail-grid {
+    grid-template-columns: 1.5fr 1fr; /* Gallery takes more space */
+  }
 }
 @media (min-width: 1024px) {
-    .housing-detail-grid {
-        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); /* More refined ratio */
-    }
+  .housing-detail-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); /* More refined ratio */
+  }
 }
 
 /* ========================================
    Gallery Column
    ======================================== */
 .housing-gallery-column .main-image-wrapper {
-    position: relative;
-    background-color: var(--input-bg); /* Match mockup placeholder bg */
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 16 / 10; /* Adjust to match mockup, looks wider than 4/3 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem; /* Space for thumbnails */
+  position: relative;
+  background-color: var(--input-bg); /* Match mockup placeholder bg */
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10; /* Adjust to match mockup, looks wider than 4/3 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem; /* Space for thumbnails */
 }
 .housing-gallery-column .current-gallery-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .housing-gallery-column .image-placeholder-large {
-    font-size: 4rem;
-    color: var(--border-color);
+  font-size: 4rem;
+  color: var(--border-color);
 }
 
 .housing-gallery-column .favorite-toggle-button {
-    position: absolute;
-    top: 1rem;
-    left: 1rem; /* Mockup shows top-left */
-    background-color: rgba(var(--bg-primary-rgb, 20, 18, 31), 0.7); /* Darker semi-transparent background */
-    color: var(--text-primary); /* White heart icon */
-    border-radius: 50%;
-    width: 44px; /* Slightly larger */
-    height: 44px;
-    font-size: 1.3rem;
-    border: 1px solid rgba(var(--text-primary-rgb, 240, 240, 245), 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, color 0.2s;
+  position: absolute;
+  top: 1rem;
+  left: 1rem; /* Mockup shows top-left */
+  background-color: rgba(
+    var(--bg-primary-rgb, 20, 18, 31),
+    0.7
+  ); /* Darker semi-transparent background */
+  color: var(--text-primary); /* White heart icon */
+  border-radius: 50%;
+  width: 44px; /* Slightly larger */
+  height: 44px;
+  font-size: 1.3rem;
+  border: 1px solid rgba(var(--text-primary-rgb, 240, 240, 245), 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
 }
 .housing-gallery-column .favorite-toggle-button:hover {
-    background-color: rgba(var(--bg-primary-rgb, 20, 18, 31), 0.9);
+  background-color: rgba(var(--bg-primary-rgb, 20, 18, 31), 0.9);
 }
 .housing-gallery-column .favorite-toggle-button.active {
-    color: var(--accent-primary); /* Pink when active */
-    background-color: rgba(var(--accent-primary-rgb), 0.15);
-    border-color: var(--accent-primary);
+  color: var(--accent-primary); /* Pink when active */
+  background-color: rgba(var(--accent-primary-rgb), 0.15);
+  border-color: var(--accent-primary);
 }
-.housing-gallery-column .favorite-toggle-button.active i.fas { /* Ensure solid heart is pink */
-    color: var(--accent-primary);
+.housing-gallery-column .favorite-toggle-button.active i.fas {
+  /* Ensure solid heart is pink */
+  color: var(--accent-primary);
 }
-
 
 .gallery-thumbnails-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
 }
 .gallery-thumb-image {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.2s, opacity 0.2s;
-    opacity: 0.7;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, opacity 0.2s;
+  opacity: 0.7;
 }
 .gallery-thumb-image:hover {
-    opacity: 1;
-    border-color: var(--accent-secondary);
+  opacity: 1;
+  border-color: var(--accent-secondary);
 }
 .gallery-thumb-image.active {
-    border-color: var(--accent-primary);
-    opacity: 1;
-    box-shadow: 0 0 8px rgba(var(--accent-primary-rgb), 0.5);
+  border-color: var(--accent-primary);
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(var(--accent-primary-rgb), 0.5);
 }
 
 /* ========================================
    Info Column
    ======================================== */
 .housing-info-column .housing-main-title {
-    font-size: clamp(1.8rem, 3vw, 2.2rem); /* Responsive title */
-    font-weight: 700; /* Bolder */
-    color: var(--text-headings);
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
+  font-size: clamp(1.8rem, 3vw, 2.2rem); /* Responsive title */
+  font-weight: 700; /* Bolder */
+  color: var(--text-headings);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
 }
 
 .housing-info-column .housing-top-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 1.2rem; /* More space */
-    gap: 0.6rem; /* Space between tag and price */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1.2rem; /* More space */
+  gap: 0.6rem; /* Space between tag and price */
 }
 
 .housing-info-column .status-indicator-tag.mockup-style {
-    background-color: var(--accent-primary); /* Pink like mockup */
-    color: var(--bg-primary); /* Text color on accent */
-    padding: 0.3em 0.9em; /* Adjusted padding */
-    border-radius: 16px; /* Pill shape */
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  background-color: var(--accent-primary); /* Pink like mockup */
+  color: var(--bg-primary); /* Text color on accent */
+  padding: 0.3em 0.9em; /* Adjusted padding */
+  border-radius: 16px; /* Pill shape */
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 [data-theme="dark"] .housing-info-column .status-indicator-tag.mockup-style {
-    color: #000; /* Ensure contrast */
+  color: #000; /* Ensure contrast */
 }
-
 
 .housing-info-column .price-display-area .amount {
-    font-size: clamp(2rem, 4vw, 2.5rem); /* Responsive price */
-    font-weight: 700;
-    color: var(--text-headings);
+  font-size: clamp(2rem, 4vw, 2.5rem); /* Responsive price */
+  font-weight: 700;
+  color: var(--text-headings);
 }
 .housing-info-column .price-display-area .frequency {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-left: 0.3rem;
-    font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-left: 0.3rem;
+  font-weight: 400;
 }
 
 .housing-info-column .location-address-text.detail-page-address-mockup {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.8rem; /* More space */
-    display: flex;
-    align-items: center;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.8rem; /* More space */
+  display: flex;
+  align-items: center;
 }
 .housing-info-column .location-address-text.detail-page-address-mockup i {
-    margin-right: 0.5rem;
-    color: var(--text-secondary);
-    font-size: 1.1em;
+  margin-right: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 1.1em;
 }
 
 /* Key Info Block */
 .key-info-block-mockup-layout {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem; /* Mockup has tighter spacing */
-    margin-bottom: 2rem; /* More space */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem; /* Mockup has tighter spacing */
+  margin-bottom: 2rem; /* More space */
 }
-.info-item-mockup { /* This is the container for each label/value pair */
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem; /* Small gap between label and value box */
+.info-item-mockup {
+  /* This is the container for each label/value pair */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* Small gap between label and value box */
 }
 .info-label-mockup {
-    font-size: 0.75rem; /* Smaller label */
-    color: var(--text-secondary);
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0; /* Remove bottom margin as gap is on parent */
+  font-size: 0.75rem; /* Smaller label */
+  color: var(--text-secondary);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0; /* Remove bottom margin as gap is on parent */
 }
 .info-value-wrapper-mockup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.7rem 0.9rem; /* Adjusted padding */
-    background-color: var(--bg-secondary); /* Match mockup box bg */
-    border: 1px solid var(--border-color-subtle);
-    border-radius: 8px; /* More rounded */
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 0.9rem; /* Adjusted padding */
+  background-color: var(--bg-secondary); /* Match mockup box bg */
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 8px; /* More rounded */
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 [data-theme="light"] .info-value-wrapper-mockup {
-    background-color: var(--bg-tertiary);
+  background-color: var(--bg-tertiary);
 }
 .mockup-dropdown-arrow {
-    color: var(--text-secondary);
-    font-size: 0.8em;
-    margin-left: 0.5rem;
-    opacity: 0.7;
+  color: var(--text-secondary);
+  font-size: 0.8em;
+  margin-left: 0.5rem;
+  opacity: 0.7;
 }
 
 /* Availability Date - styled like other info items */
 .info-item-mockup.full-width-info {
-    grid-column: 1 / -1; /* Make it span both columns */
-    margin-top: 0; /* Reset margin from HTML */
+  grid-column: 1 / -1; /* Make it span both columns */
+  margin-top: 0; /* Reset margin from HTML */
 }
 .info-item-mockup.full-width-info .info-value-wrapper-mockup {
-    background-color: var(--bg-secondary); /* Consistent with other info items */
+  background-color: var(--bg-secondary); /* Consistent with other info items */
 }
-[data-theme="light"] .info-item-mockup.full-width-info .info-value-wrapper-mockup {
-    background-color: var(--bg-tertiary);
+[data-theme="light"]
+  .info-item-mockup.full-width-info
+  .info-value-wrapper-mockup {
+  background-color: var(--bg-tertiary);
 }
 
 /* Apply/Booking Button */
 .cta-button.primary-cta-button.mockup-style {
-    background-color: var(--accent-primary);
-    color: var(--bg-primary);
-    text-align: center;
-    padding: 0.9rem 1.5rem; /* Slightly taller */
-    font-size: 1rem;
-    font-weight: 600; /* Bolder */
-    border-radius: 8px; /* More rounded */
-    display: block;
-    width: 100%;
-    margin-bottom: 2rem;
-    border: none;
-    box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.2);
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  text-align: center;
+  padding: 0.9rem 1.5rem; /* Slightly taller */
+  font-size: 1rem;
+  font-weight: 600; /* Bolder */
+  border-radius: 8px; /* More rounded */
+  display: block;
+  width: 100%;
+  margin-bottom: 2rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(var(--accent-primary-rgb), 0.2);
 }
 [data-theme="dark"] .cta-button.primary-cta-button.mockup-style {
-    color: #000;
+  color: #000;
 }
 .cta-button.primary-cta-button.mockup-style:hover {
-    filter: brightness(0.92);
-    box-shadow: 0 6px 16px rgba(var(--accent-primary-rgb), 0.25);
-    transform: translateY(-2px);
+  filter: brightness(0.92);
+  box-shadow: 0 6px 16px rgba(var(--accent-primary-rgb), 0.25);
+  transform: translateY(-2px);
 }
 
 /* Accordions */
 .content-accordion-item.mockup-style {
-    border: 1px solid var(--border-color-subtle); /* Subtler border */
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    background-color: var(--bg-secondary); /* Background for the whole accordion item */
+  border: 1px solid var(--border-color-subtle); /* Subtler border */
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background-color: var(
+    --bg-secondary
+  ); /* Background for the whole accordion item */
 }
 [data-theme="light"] .content-accordion-item.mockup-style {
-    background-color: var(--bg-tertiary);
+  background-color: var(--bg-tertiary);
 }
 .content-accordion-item.mockup-style .accordion-trigger-button {
-    padding: 1rem 1.2rem; /* More padding */
-    font-size: 1rem;
-    font-weight: 600; /* Bolder */
-    color: var(--text-headings);
-    background-color: transparent;
+  padding: 1rem 1.2rem; /* More padding */
+  font-size: 1rem;
+  font-weight: 600; /* Bolder */
+  color: var(--text-headings);
+  background-color: transparent;
 }
 .content-accordion-item.mockup-style .accordion-trigger-button:hover {
-    background-color: rgba(var(--accent-primary-rgb), 0.05);
+  background-color: rgba(var(--accent-primary-rgb), 0.05);
 }
 .content-accordion-item.mockup-style .accordion-panel-content {
-    padding: 0 1.2rem; /* Consistent horizontal padding */
-    background-color: transparent; /* Panel bg matches item bg */
-    /* JS handles max-height, opacity, and top/bottom padding for transition */
+  padding: 0 1.2rem; /* Consistent horizontal padding */
+  background-color: transparent; /* Panel bg matches item bg */
+  /* JS handles max-height, opacity, and top/bottom padding for transition */
 }
 .content-accordion-item.mockup-style .accordion-panel-content p,
 .content-accordion-item.mockup-style .accordion-panel-content ul {
-    /* JS adds padding-bottom. Can add padding-top here if needed before JS adds it. */
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
+  /* JS adds padding-bottom. Can add padding-top here if needed before JS adds it. */
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
 }
 .amenities-styled-list {
-    list-style: none;
-    padding-left: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Multi-column amenities */
-    gap: 0.5rem 1rem;
+  list-style: none;
+  padding-left: 0;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 1fr)
+  ); /* Multi-column amenities */
+  gap: 0.5rem 1rem;
 }
 .amenities-styled-list li {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
 }
 .amenities-styled-list li i.fa-check {
-    color: var(--accent-primary);
-    margin-right: 0.5em;
-    font-size: 0.9em;
+  color: var(--accent-primary);
+  margin-right: 0.5em;
+  font-size: 0.9em;
 }
-
 
 /* ========================================
    Full-Width Sections (Map, Reviews)
    ======================================== */
 .page-section-layout {
-    margin-top: 3rem; /* Space above these sections */
-    padding-top: 2rem; /* Internal padding */
-    border-top: 1px solid var(--border-color-subtle);
-}
-.page-section-layout:first-of-type { /* If map is the first full-width section */
-    /* border-top: none;
-    margin-top: 2rem; */
+  margin-top: 3rem; /* Space above these sections */
+  padding-top: 2rem; /* Internal padding */
+  border-top: 1px solid var(--border-color-subtle);
 }
 
 .section-title-styled {
-    font-size: 1.6rem;
-    font-weight: 700; /* Bolder */
-    color: var(--text-headings); /* Default to heading color */
-    margin-bottom: 1.8rem;
-    text-align: left;
+  font-size: 1.6rem;
+  font-weight: 700; /* Bolder */
+  color: var(--text-headings); /* Default to heading color */
+  margin-bottom: 1.8rem;
+  text-align: left;
 }
 
 /* Map Section */
-.map-container-section .section-title-styled { /* "Location" title */
-    color: var(--text-headings); /* Not pink in mockup */
+.map-container-section .section-title-styled {
+  /* "Location" title */
+  color: var(--text-headings); /* Not pink in mockup */
 }
 #detailPageMap.map-render-area {
-    height: 350px; /* Adjust height as needed */
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
+  height: 350px; /* Adjust height as needed */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
 }
-[data-theme="dark"] .leaflet-tile-pane { /* Keep dark map tiles */
-    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+[data-theme="dark"] .leaflet-tile-pane {
+  /* Keep dark map tiles */
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
+    brightness(0.7);
 }
 
 /* Reviews Section */
-.reviews-container-section.mockup-style .section-title-styled { /* "Latest reviews" title */
-    color: var(--accent-primary); /* Pink as per mockup */
+.reviews-container-section.mockup-style .section-title-styled {
+  /* "Latest reviews" title */
+  color: var(--accent-primary); /* Pink as per mockup */
 }
 
 .reviews-grid-layout.mockup-style {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 .review-card-item {
-    background-color: var(--bg-secondary); /* Match mockup card bg */
-    border: 1px solid var(--border-color-subtle);
-    border-radius: 10px; /* Slightly less rounded than main image */
-    padding: 1.2rem;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
+  background-color: var(--bg-secondary); /* Match mockup card bg */
+  border: 1px solid var(--border-color-subtle);
+  border-radius: 10px; /* Slightly less rounded than main image */
+  padding: 1.2rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 [data-theme="light"] .review-card-item {
-    background-color: var(--bg-tertiary);
+  background-color: var(--bg-tertiary);
 }
 [data-theme="dark"] .review-card-item {
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
 }
 
 .review-card-stars {
-    margin-bottom: 0.6rem;
-    color: #ffc107; /* Gold for stars */
-    font-size: 0.9rem;
+  margin-bottom: 0.6rem;
+  color: #ffc107; /* Gold for stars */
+  font-size: 0.9rem;
 }
 .review-card-stars .far.fa-star {
-    color: var(--border-color); /* Grey for empty star */
+  color: var(--border-color); /* Grey for empty star */
 }
 
 .review-card-heading {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text-headings);
-    margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-headings);
+  margin-bottom: 0.5rem;
 }
 .review-card-text {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    flex-grow: 1; /* Allow text to take space and push author down */
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  flex-grow: 1; /* Allow text to take space and push author down */
 }
 .review-card-author-area {
-    display: flex;
-    align-items: center;
-    margin-top: auto; /* Push to bottom */
+  display: flex;
+  align-items: center;
+  margin-top: auto; /* Push to bottom */
 }
 .author-avatar-image {
-    width: 32px; /* Smaller avatar */
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 0.6rem;
-    border: 1px solid var(--border-color);
+  width: 32px; /* Smaller avatar */
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.6rem;
+  border: 1px solid var(--border-color);
 }
 .author-name-text {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: block;
 }
 .review-date-text {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 767px) {
-    .detail-page-wrapper .detail-content-area {
-        padding: 1rem;
-    }
-    .housing-detail-grid {
-        gap: 1.5rem;
-    }
-    .key-info-block-mockup-layout {
-        grid-template-columns: 1fr; /* Stack info items on small screens */
-    }
-    .info-item-mockup.full-width-info {
-         grid-column: auto; /* Reset span if parent is single column */
-    }
-    .section-title-styled {
-        font-size: 1.4rem;
-    }
-    .reviews-grid-layout.mockup-style {
-        grid-template-columns: 1fr;
-    }
+  .detail-page-wrapper .detail-content-area {
+    padding: 1rem;
+  }
+  .housing-detail-grid {
+    gap: 1.5rem;
+  }
+  .key-info-block-mockup-layout {
+    grid-template-columns: 1fr; /* Stack info items on small screens */
+  }
+  .info-item-mockup.full-width-info {
+    grid-column: auto; /* Reset span if parent is single column */
+  }
+  .section-title-styled {
+    font-size: 1.4rem;
+  }
+  .reviews-grid-layout.mockup-style {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Star Rating Styles */
+.review-card-stars {
+  margin-bottom: 0.6rem; /* Keep or adjust existing */
+  font-size: 0.9rem; /* Keep or adjust existing */
+}
+.review-card-stars i.fas.fa-star {
+  /* Filled star */
+  color: var(--accent-primary); /* Example: Pink stars */
+  /* Or use a gold color: color: #ffc107; */
+}
+.review-card-stars i.far.fa-star {
+  /* Empty star */
+  color: var(--border-color); /* Or a lighter grey */
+}
+
+/* "No reviews yet" Message Styling */
+.info-message-display.no-reviews {
+  text-align: center;
+  padding: 2rem 1rem;
+  background-color: var(
+    --input-bg
+  ); /* Subtle background, consistent with other elements */
+  border-radius: 8px;
+  border: 1px dashed var(--border-color-subtle); /* Dashed border to make it noticeable */
+  margin-top: 2rem; /* Space above the message */
+  color: var(--text-secondary);
+}
+.info-message-display.no-reviews i.fa-comment-slash {
+  /* The icon itself */
+  font-size: 2.5rem; /* Make icon larger */
+  margin-bottom: 1rem;
+  display: block; /* Allows centering if text-align: center is on parent */
+  opacity: 0.7;
+}
+.info-message-display.no-reviews p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0; /* Remove default p margin if any */
+}
+
+/* Ensure accordion panel padding is handled by JS for smooth transition */
+.content-accordion-item.mockup-style .accordion-panel-content {
+  /* padding: 0 1.2rem;  Initial horizontal padding */
+  /* JS will add/remove paddingTop and paddingBottom */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding-top 0.3s ease,
+    padding-bottom 0.3s ease; /* Add padding to transition */
+  background-color: transparent;
+}
+/* This one was for the original static HTML, ensure it doesn't conflict if accordion is now empty initially */
+/*
+.content-accordion-item.mockup-style .accordion-panel-content p,
+.content-accordion-item.mockup-style .accordion-panel-content ul {
+    padding-bottom: 0.8rem;
+}
+*/
+
+/* Adjusting main image wrapper for gallery */
+.housing-gallery-column .main-image-wrapper {
+  position: relative;
+  background-color: var(--input-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
