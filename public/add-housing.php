@@ -162,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
             if (!in_array($file_type, $allowed_mime_types) || !in_array($file_extension, $allowed_extensions)) {
-                $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions) {
-                    $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions);
+                $errors['other_images_' . $key] = "Invalid file type for image '{$file_name}'. Allowed: " . implode(', ', $allowed_extensions) ;
+                   
                 } elseif ($file_size > MAX_FILE_SIZE) {
                     $errors['other_images_' . $key] = "Image '{$file_name}' exceeds maximum size of " . (MAX_FILE_SIZE / 1024 / 1024) . "MB.";
                 }
