@@ -108,13 +108,50 @@ $userID = $_SESSION['user_id'];
                     </div>
                 </div>
 
-                 <div class="dashboard-placeholder-section">
-                    <h3 data-i18n-key="dashboard_placeholder_my_applications_title">My Applications</h3>
-                    <div class="placeholder-content">
-                        <i class="fas fa-folder-open"></i>
-                        <p data-i18n-key="dashboard_placeholder_no_applications">No active applications yet. Start searching!</p>
+                                <div class="dashboard-section-card" id="dashboard-my-applications">
+                    <div class="dashboard-section-header">
+                        <h2 class="dashboard-section-title" data-i18n-key="dashboard_section_my_applications_title">My Recent Applications</h2>
+                        <a href="my-applications.php" class="btn-view-all" data-i18n-key="dashboard_link_view_all_applications">View All <i class="fas fa-arrow-right"></i></a>
                     </div>
+
+                    <?php if (empty($recentApplications)): ?>
+                        <div class="placeholder-content light-placeholder">
+                            <i class="fas fa-file-alt"></i>
+                            <p data-i18n-key="dashboard_placeholder_no_applications">You haven't submitted any applications yet.</p>
+                            <a href="home.php" class="btn btn-secondary" data-i18n-key="dashboard_btn_browse_housing">Browse Housing</a>
+                        </div>
+                    <?php else: ?>
+                        <div class="dashboard-applications-list">
+                            <?php foreach ($recentApplications as $app): ?>
+                                <div class="dashboard-application-item">
+                                    <div class="app-item-image">
+                                        <?php if (!empty($app['housing_primary_image'])): ?>
+                                            <img src="<?php echo htmlspecialchars($app['housing_primary_image']); ?>" alt="<?php echo htmlspecialchars($app['housing_title']); ?>" loading="lazy">
+                                        <?php else: ?>
+                                            <i class="far fa-image"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="app-item-details">
+                                        <h4 class="app-item-title">
+                                            <a href="housing-detail.php?id=<?php echo htmlspecialchars($app['listing_id']); ?>">
+                                                <?php echo htmlspecialchars($app['housing_title']); ?>
+                                            </a>
+                                        </h4>
+                                        <p class="app-item-meta">
+                                            Requested Move-in: <?php echo htmlspecialchars(date('M j, Y', strtotime($app['requested_move_in_date']))); ?>
+                                        </p>
+                                    </div>
+                                    <div class="app-item-status">
+                                        <span class="application-status-badge status-<?php echo htmlspecialchars(strtolower($app['application_status'])); ?>">
+                                            <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $app['application_status']))); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
+
                  <div class="dashboard-placeholder-section">
                     <h3 data-i18n-key="dashboard_placeholder_saved_listings_title">Saved Listings</h3>
                     <div class="placeholder-content">
