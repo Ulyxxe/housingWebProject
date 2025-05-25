@@ -9,13 +9,14 @@ class BookingModel {
     }
 
     /**
-     * Fetches all booking applications for a specific user.
+     * Fetches booking applications for a specific user.
      * Includes details about the housing listing and its primary image.
      *
      * @param int $userId The ID of the user whose applications to fetch.
+     * @param int|null $limit Optional. Number of applications to fetch. Null for all.
      * @return array An array of booking applications.
      */
-    public function getApplicationsByUserId(int $userId): array {
+    public function getApplicationsByUserId(int $userId, ?int $limit = null): array {
         $sql = "SELECT 
                     b.booking_id,
                     b.listing_id,
@@ -34,18 +35,23 @@ class BookingModel {
                 WHERE b.user_id = :user_id
                 ORDER BY b.request_date DESC";
         
+        if ($limit !== null && $limit > 0) {
+            $sql .= " LIMIT :limit"; // Add LIMIT clause if $limit is provided
+        }
+        
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+            if ($limit !== null && $limit > 0) {
+                $stmt->bindParam(':limit', $limit, PDO::PARAM_INT); // Bind the limit
+            }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error fetching applications by user ID: " . $e->getMessage());
-            return []; // Return empty array on error
+            return [];
         }
     }
-
-    // You could add methods here like:
-    // cancelApplication(int $bookingId, int $userId)
+    // ... other methods ...
 }
 ?>
