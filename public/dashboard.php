@@ -62,7 +62,7 @@ if (isset($pdo)) { // Ensure $pdo is available from config.php
                 <div class="profile-summary-card">
                     <div class="profile-avatar-placeholder">
                         <i class="fas fa-user-circle"></i>
-                        <!-- Or <img src="path/to/user-avatar.jpg" alt="User Avatar"> if you have avatars -->
+                        
                     </div>
                     <h3 class="profile-name"><?php echo $userFullName; ?></h3>
                     <p class="profile-email"><?php echo $userEmail; ?></p>
@@ -90,7 +90,7 @@ if (isset($pdo)) { // Ensure $pdo is available from config.php
                         </a>
                         <a href="add-housing.php" class="quick-action-item">
                             <i class="fas fa-plus-circle"></i>
-                            <span data-i18n-key="dashboard_quick_action_add_listing">Add New Listing</span> <!-- If applicable -->
+                            <span data-i18n-key="dashboard_quick_action_add_listing">Add New Listing</span> 
                         </a>
                          <a href="#" class="quick-action-item">
                             <i class="fas fa-envelope"></i>

@@ -12,17 +12,15 @@ if (session_status() == PHP_SESSION_NONE) {
       </div>
       <nav class="main-nav">
         <ul>
-          <li><a href="home.php" data-lang-key="nav_newsstand">News stand</a></li>
-          <li><a href="news.php" data-lang-key="nav_news_stand">Actualités</a></li> <!-- Assuming you added this -->
+          <li><a href="news.php" data-lang-key="nav_news_stand">Actualités</a></li>
           <li><a href="help.php" data-lang-key="nav_help">Need help?</a></li>
           <li><a href="faq.php" data-lang-key="nav_faq">FAQ</a></li>
           
-          <?php if (isset($_SESSION['user_id'])): // Show "My profile" only if logged in ?>
+          <?php if (isset($_SESSION['user_id'])):?>
             <li><a href="dashboard.php" data-lang-key="nav_profile">My profile</a></li>
           <?php endif; ?>
           
           <?php 
-          // Check if user is logged in AND is an admin to show Admin Panel link
           if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): 
           ?>
             <li><a href="admin_dashboard.php" data-lang-key="nav_admin_panel">Admin Panel</a></li>
@@ -52,7 +50,7 @@ if (session_status() == PHP_SESSION_NONE) {
         </button>
         
         <?php 
-        // Check for any logged-in user (admin or regular)
+        
         if (isset($_SESSION['user_id']) && isset($_SESSION['username'])): 
             $displayName = htmlspecialchars($_SESSION['username']);
             $userTitle = htmlspecialchars($_SESSION['first_name'] ?? '') . ' ' . htmlspecialchars($_SESSION['last_name'] ?? '') . ' (' . htmlspecialchars($_SESSION['email'] ?? '') . ')';
@@ -63,7 +61,7 @@ if (session_status() == PHP_SESSION_NONE) {
           </span>
           <a href="logout.php" class="header-button auth-button" data-lang-key="nav_logout">Logout</a>
         <?php 
-        // If no user is logged in, show Sign In and Register
+        
         else: 
         ?>
           <a href="login.php" class="header-button auth-button" data-lang-key="nav_signin_app">Sign In</a>
