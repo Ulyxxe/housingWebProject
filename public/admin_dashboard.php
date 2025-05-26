@@ -1,7 +1,7 @@
 <?php
 // public/admin_dashboard.php
 session_start();
-
+require_once __DIR__ . '/../config/config.php'; // Defines $pdo
 // 1. Check if user is logged in and is an admin
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
     $_SESSION['login_error'] = "You do not have permission to access the admin area. Please log in as an administrator.";
