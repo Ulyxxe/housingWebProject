@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_type']) || $_SESSION[
 
 $pageTitle = "Admin Dashboard - CROUS-X";
 $adminUsername = htmlspecialchars($_SESSION['username'] ?? 'Admin');
-$isLoggedIn = true; // For header.php to know a session is active
+$isLoggedIn = true; // For header.php to know a session is active   
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark" data-accent-color="crous-pink-primary">
