@@ -44,15 +44,15 @@ if ($sort_order === 'oldest') {
 
 
 try {
-    $sql = "SELECT r.*, 
-                   h.title AS housing_title, h.slug AS housing_slug,
+    $sql = "SELECT r.*,
+                   h.title AS housing_title, /* REMOVED h.slug AS housing_slug, */
                    u.username AS reviewer_username
             FROM reviews r
             JOIN housings h ON r.listing_id = h.listing_id
             JOIN users u ON r.user_id = u.user_id
             $sql_where
             $sql_order";
-    
+
     $stmt = $pdo->prepare($sql); // Prepare if using params, query if not. For dynamic WHERE/ORDER, direct query is simpler here.
     // If using params for WHERE:
     // foreach ($params as $key => $value) {
