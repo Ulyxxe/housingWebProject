@@ -1,0 +1,209 @@
+/* public/css/admin_panel.css */
+
+.admin-welcome {
+  margin-bottom: 2rem;
+  font-size: 1.2em;
+  color: var(--text-primary);
+  padding: 1rem;
+  background-color: var(--input-bg);
+  border-radius: 8px;
+  border-left: 5px solid var(--accent-primary);
+}
+
+.admin-quick-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.admin-nav-card {
+  display: block; /* Make the whole card a link */
+  text-decoration: none;
+  background-color: var(--container-bg);
+  border: 1px solid var(--grey-border);
+  border-radius: 10px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+}
+
+.admin-nav-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(var(--accent-primary-rgb), 0.12);
+  border-color: var(--accent-primary);
+}
+
+.admin-nav-card i {
+  font-size: 2.8rem;
+  color: var(--accent-primary);
+  margin-bottom: 1.2rem;
+  display: block;
+  transition: transform 0.2s ease-in-out;
+}
+.admin-nav-card:hover i {
+  transform: scale(1.1);
+}
+
+.admin-nav-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.6rem;
+  color: var(--text-headings);
+}
+
+.admin-nav-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  min-height: 3em; /* Give some consistent height for the description */
+}
+
+.admin-nav-card .btn.btn-secondary {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  /* display: inline-block; /* Ensure it behaves as a button */
+}
+.admin-nav-card:hover .btn.btn-secondary {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
+[data-theme="dark"] .admin-nav-card:hover .btn.btn-secondary {
+  color: #000;
+}
+
+/* General Table Styling for Admin Pages (can be expanded) */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  background-color: var(--container-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden; /* For border-radius on table */
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--grey-border);
+}
+.admin-table th {
+  background-color: var(--input-bg);
+  font-weight: 600;
+  color: var(--text-headings);
+  text-transform: capitalize;
+}
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table tr:hover {
+  background-color: var(--input-bg);
+}
+.admin-table .actions a {
+  margin-right: 0.7rem;
+  color: var(--text-link);
+  font-size: 0.9em;
+}
+.admin-table .actions a:hover {
+  text-decoration: underline;
+}
+.admin-table .actions .delete-link {
+  color: #d9534f;
+}
+.admin-table .actions .delete-link:hover {
+  color: #c9302c;
+}
+
+.admin-table img.thumbnail {
+  max-width: 80px;
+  max-height: 50px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.admin-header-actions {
+  /* For "Add New" buttons above tables */
+  margin-bottom: 1.5rem;
+  text-align: right;
+}
+
+.filter-controls {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background-color: var(--input-bg);
+  border-radius: 8px;
+}
+.filter-controls label {
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.filter-controls select,
+.filter-controls button.btn-sm {
+  /* Target smaller buttons if you use that class */
+  padding: 0.5rem 0.9rem; /* Adjusted padding for select and button */
+  font-size: 0.9rem;
+  height: auto; /* Ensure select height matches button */
+  /* width: auto; is already default for select, can be explicit if needed */
+}
+
+.review-comment-short {
+  max-width: 300px; /* Adjust as needed */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block; /* Allows title attribute to work reliably on hover for full text */
+  vertical-align: middle; /* Align better if in a flex/grid cell */
+}
+
+.admin-table .actions i.fa-check-circle {
+  color: #5cb85c;
+} /* Green for approve */
+.admin-table .actions i.fa-times-circle {
+  color: #f0ad4e;
+} /* Orange for unapprove */
+.admin-table .actions i.fa-trash-alt {
+  color: #d9534f;
+} /* Red for delete (already has .delete-link) */
+
+.admin-table td .listing-status-badge {
+  /* For status badges within the table */
+  font-size: 0.75em; /* Slightly smaller in table */
+  padding: 0.2em 0.5em;
+}
+
+/* Styles for status badges in news management table */
+.admin-table td .listing-status-badge.status-published {
+  background-color: #5cb85c;
+  color: white;
+}
+.admin-table td .listing-status-badge.status-draft {
+  background-color: #f0ad4e;
+  color: #333;
+}
+.admin-table td .listing-status-badge.status-archived {
+  background-color: #777;
+  color: white;
+}
+
+/* Icon colors for news actions */
+.admin-table .actions i.fa-upload {
+  color: #5cb85c;
+} /* Green for publish */
+.admin-table .actions i.fa-download {
+  color: #f0ad4e;
+} /* Orange for unpublish/to-draft */
+
+/* Specific styling for add/edit news forms if reusing add-housing-form-container */
+.add-housing-form-container textarea#content {
+  min-height: 250px; /* Larger text area for article content */
+}

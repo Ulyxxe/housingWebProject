@@ -1,6 +1,5 @@
 <?php
 // Ensure session is started if not already.
-// Some of your pages start it, but it's good practice for a shared header to ensure it.
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,16 +12,20 @@ if (session_status() == PHP_SESSION_NONE) {
       </div>
       <nav class="main-nav">
         <ul>
-          <li><a href="news.php" data-lang-key="nav_newsstand">News stand</a></li>
+          <li><a href="home.php" data-lang-key="nav_newsstand">News stand</a></li>
+          <li><a href="news.php" data-lang-key="nav_news_stand">Actualités</a></li> <!-- Assuming you added this -->
           <li><a href="help.php" data-lang-key="nav_help">Need help?</a></li>
           <li><a href="faq.php" data-lang-key="nav_faq">FAQ</a></li>
+          
           <?php if (isset($_SESSION['user_id'])): // Show "My profile" only if logged in ?>
             <li><a href="dashboard.php" data-lang-key="nav_profile">My profile</a></li>
           <?php endif; ?>
-          <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): // Check if admin session variable is set for admin link ?>
-            <li><a href="admin_dashboard.php" data-lang-key="nav_admin_app">Admin</a></li>
-          <?php elseif (isset($_SESSION['user_is_admin']) && $_SESSION['user_is_admin']): // Alternative admin check from your original code ?>
-             <li><a href="admin.php" data-lang-key="nav_admin_app">Admin</a></li>
+          
+          <?php 
+          // Check if user is logged in AND is an admin to show Admin Panel link
+          if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin'): 
+          ?>
+            <li><a href="admin_dashboard.php" data-lang-key="nav_admin_panel">Admin Panel</a></li>
           <?php endif; ?>
         </ul>
       </nav>
@@ -49,27 +52,18 @@ if (session_status() == PHP_SESSION_NONE) {
         </button>
         
         <?php 
-        // Check for regular user login
+        // Check for any logged-in user (admin or regular)
         if (isset($_SESSION['user_id']) && isset($_SESSION['username'])): 
+            $displayName = htmlspecialchars($_SESSION['username']);
+            $userTitle = htmlspecialchars($_SESSION['first_name'] ?? '') . ' ' . htmlspecialchars($_SESSION['last_name'] ?? '') . ' (' . htmlspecialchars($_SESSION['email'] ?? '') . ')';
+            $userIcon = (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin') ? 'fas fa-user-shield' : 'fas fa-user-circle';
         ?>
-          <span class="user-greeting" data-lang-key="nav_welcome_user" 
-                title="<?php echo htmlspecialchars($_SESSION['first_name'] ?? '') . ' ' . htmlspecialchars($_SESSION['last_name'] ?? ''); ?> (<?php echo htmlspecialchars($_SESSION['email']); ?>)">
-                <i class="fas fa-user-circle" style="margin-right: 0.3em;"></i><?php echo htmlspecialchars($_SESSION['username']); ?>
+          <span class="user-greeting" title="<?php echo $userTitle; ?>">
+                <i class="<?php echo $userIcon; ?>" style="margin-right: 0.4em;"></i><?php echo $displayName; ?>
           </span>
           <a href="logout.php" class="header-button auth-button" data-lang-key="nav_logout">Logout</a>
         <?php 
-        // Check for admin login (if it uses a different session variable like 'is_admin')
-        elseif (isset($_SESSION['is_admin']) && $_SESSION['is_admin']):
-            // You might want to display "Admin" or some other indicator
-            // For now, let's assume ADMIN_USER is defined in your config/config.php for admin username
-            $adminUsername = defined('ADMIN_USER') ? ADMIN_USER : 'Admin';
-        ?>
-            <span class="user-greeting admin-greeting">
-                <i class="fas fa-user-shield" style="margin-right: 0.3em;"></i><?php echo htmlspecialchars($adminUsername); ?>
-            </span>
-            <a href="admin_logout.php" class="header-button auth-button" data-lang-key="nav_logout_admin">Admin Logout</a>
-        <?php 
-        // If no user or admin is logged in, show Sign In and Register
+        // If no user is logged in, show Sign In and Register
         else: 
         ?>
           <a href="login.php" class="header-button auth-button" data-lang-key="nav_signin_app">Sign In</a>

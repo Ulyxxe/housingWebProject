@@ -1,7 +1,9 @@
 <?php
 session_start();
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// It's good practice to have error reporting on for development
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,12 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['first_name'] = $user['first_name'];
                 $_SESSION['last_name'] = $user['last_name'];
-                $_SESSION['user_type'] = $user['user_type'];
+                $_SESSION['user_type'] = $user['user_type']; // STORE USER TYPE
 
                 // Regenerate session ID for security
                 session_regenerate_id(true);
 
-                // *** MODIFICATION STARTS HERE ***
                 // Check for a redirect URL (set by pages like booking.php if user was unauthenticated)
                 if (isset($_SESSION['redirect_url'])) {
                     $redirect_to = $_SESSION['redirect_url'];
@@ -59,11 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: " . $redirect_to);
                     exit;
                 } else {
-                    // Default redirect to dashboard if no specific redirect_url was set
-                    header("Location: dashboard.php");
+                    // Default redirect: admin to admin_dashboard, others to dashboard
+                    if ($user['user_type'] === 'admin') {
+                        header("Location: admin_dashboard.php");
+                    } else {
+                        header("Location: dashboard.php");
+                    }
                     exit;
                 }
-                // *** MODIFICATION ENDS HERE ***
 
             } else {
                 $_SESSION['login_error'] = "Your account is inactive. Please contact support.";
